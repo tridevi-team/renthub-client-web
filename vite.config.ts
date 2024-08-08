@@ -55,7 +55,7 @@ const pwaOptions: Partial<VitePWAOptions> = {
     globPatterns: [
       '**/*.{html,css,js,json,txt,ico,svg,jpg,png,webp,woff,woff2,ttf,eot,otf,wasm}',
     ],
-    globIgnores: ['node_modules/**/*', 'sw.js', 'workbox-*.js'],
+    globIgnores: ['/node_modules/**/*', 'sw.js', 'workbox-*.js'],
   },
 };
 

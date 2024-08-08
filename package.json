@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Hệ thống Quản lý Nhà trọ",
+  "packageManager": "bun@1.1.22",
   "scripts": {
     "gen:pwa-assets": "pwa-assets-generator --preset minimal-2023 public/favicon.svg",
     "clean:biome": "biome clean",
@@ -125,7 +126,5 @@
     "workbox-routing": "^7.1.0",
     "workbox-window": "^7.1.0"
   },
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ]
+  "trustedDependencies": ["@biomejs/biome"]
 }

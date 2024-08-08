@@ -29,12 +29,12 @@ cp .env.staging.example .env.staging
 cp .env.production.example .env.production
 
 # install dependencies
-yarn
+bun
 ```
 
 # Development
 
 ```bash
 # start the development server
-yarn dev
+bun dev
 ```
