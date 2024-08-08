@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@root/*": [
+        "./*"
+      ],
+      "@app/*": [
+        "./app/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@shared/*": [
+        "./modules/shared/*"
+      ],
+      "@home/*": [
+        "./modules/home/*"
+      ],
+      "@playground/*": [
+        "./modules/playground/*"
+      ],
+      "@auth/*": [
+        "./modules/auth/*"
+      ],
+      "@todo/*": [
+        "./modules/todo/*"
+      ]
+    }
+  }
+}
