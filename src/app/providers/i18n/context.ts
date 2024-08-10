@@ -1,11 +1,11 @@
 import React, { createContext, useState } from 'react';
 
-export type LocaleDictLanguage = 'en-US';
+export type LocaleDictLanguage = 'vi-VN';
 export type I18nContextInterface = ReturnType<typeof useI18nContext>;
 
 // It's extracted into a function to be able to type the Context before it's even initialized.
 export function useI18nContext() {
-  const [locale, setLocale] = useState<LocaleDictLanguage>('en-US');
+  const [locale, setLocale] = useState<LocaleDictLanguage>('vi-VN');
 
   const actions = React.useMemo(
     () => ({

@@ -1,10 +1,8 @@
-import { enLocale } from './en.locale';
-import { idLocale } from './id.locale';
 import type { LocaleDict } from './locale.type';
+import { viLocale } from './vi.locale';
 
 const localeDict: LocaleDict = {
-  'en-US': enLocale,
-  'id-ID': idLocale,
+  'vi-VN': viLocale,
 } as const;
 
-export { enLocale, idLocale, localeDict };
+export { localeDict, viLocale };

@@ -1,9 +1,9 @@
 import type { LocaleDictLanguage } from '@app/providers/i18n/context';
-import type { enLocale } from '.';
+import type { viLocale } from '.';
 
 export type LocaleDict = Record<LocaleDictLanguage, Record<string, string>>;
 
-export type Translations = typeof enLocale;
+export type Translations = typeof viLocale;
 export type InterpolateInner<
   S extends string,
   // biome-ignore lint/complexity/noBannedTypes: intended
