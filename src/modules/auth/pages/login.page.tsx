@@ -5,7 +5,9 @@ import {
   type AuthLoginRequestSchema,
 } from '@auth/apis/auth.api';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
-import { homePath } from '@home/routes';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Icon } from '@iconify/react';
+import { dashboardPath } from '@modules/dashboard/routes';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
@@ -13,8 +15,6 @@ import { Link } from '@shared/components/ui/link';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
 import { HTTPError } from 'ky';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
@@ -39,7 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
       unstable_batchedUpdates(() => {
         useAuthUserStore.getState().setUser(loginResponse); // set user data to store
       });
-      return redirect(homePath.root);
+      return redirect(dashboardPath.root);
     } catch (error) {
       if (error instanceof HTTPError) {
         const response = (await error.response.json()) as ErrorResponseSchema;
@@ -57,8 +57,8 @@ export const loader: LoaderFunction = () => {
 
   // redirect auth user to home
   if (authed) {
-    toast.info('Already Logged In');
-    return redirect(homePath.root);
+    // toast.info('Already Logged In');
+    return redirect(dashboardPath.root);
   }
 
   return null;
@@ -71,19 +71,21 @@ export function Element() {
     <div className="min-h-screen w-full flex">
       {/* form */}
       <section className="min-h-screen w-full flex flex-col justify-center px-10 xl:px-20 md:w-1/2">
-        <h1 className="text-center text-3xl text-primary">{t('welcome')}</h1>
+        <h1 className="text-center text-3xl text-primary">
+          {t('auth_welcome')}
+        </h1>
 
         <LoginForm />
 
         <p className="py-12 text-center">
-          {t('noAccount')}{' '}
+          {t('auth_noAccount')}{' '}
           <Link
-            aria-label={t('registerHere')}
+            aria-label={t('auth_registerHere')}
             className="hover:underline"
             href="/does-not-exists"
             variant="link"
           >
-            {t('registerHere')}
+            {t('auth_registerHere')}
           </Link>
         </p>
       </section>
@@ -137,8 +139,8 @@ function LoginForm() {
             isInvalid={invalid}
             isRequired
           >
-            <Label>{t('username')}</Label>
-            <Input placeholder={t('usernamePlaceholder')} ref={ref} />
+            <Label>{t('auth_username')}</Label>
+            <Input placeholder={t('ph_username')} ref={ref} />
             <FieldError className="text-destructive">
               {error?.message}
             </FieldError>
@@ -165,12 +167,8 @@ function LoginForm() {
             isInvalid={invalid}
             isRequired
           >
-            <Label>{t('password')}</Label>
-            <Input
-              type="password"
-              placeholder={t('passwordPlaceholder')}
-              ref={ref}
-            />
+            <Label>{t('auth_password')}</Label>
+            <Input type="password" placeholder={t('ph_password')} ref={ref} />
             <FieldError className="text-destructive">
               {error?.message}
             </FieldError>
@@ -192,10 +190,11 @@ function LoginForm() {
       <Button
         type="submit"
         className="mt-8"
-        isDisabled={fetcher.state === 'submitting' || !formState.isValid}
+        disabled={fetcher.state === 'submitting' || !formState.isValid}
       >
-        {t(fetcher.state === 'submitting' ? 'loginLoading' : 'login')}{' '}
-        (emilyspass)
+        {t(
+          fetcher.state === 'submitting' ? 'auth_loginLoading' : 'auth_login',
+        )}{' '}
       </Button>
     </fetcher.Form>
   );
