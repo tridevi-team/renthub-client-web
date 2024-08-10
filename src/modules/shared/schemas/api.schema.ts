@@ -1,5 +1,4 @@
 import { z } from 'zod';
-
 // #region COMMON SCHEMAS
 export const errorResponseSchema = z.object({
   message: z.string(),

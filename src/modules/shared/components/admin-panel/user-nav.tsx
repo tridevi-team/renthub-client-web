@@ -1,6 +1,8 @@
 import { LayoutGrid, LogOut, User } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
 import {
   Avatar,
   AvatarFallback,
@@ -22,8 +24,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@shared/components/ui/tooltip';
+import { useNavigate } from 'react-router-dom';
 
 export function UserNav() {
+  const navigate = useNavigate();
+  const { clearUser } = useAuthUserStore();
+
   return (
     <DropdownMenu>
       <TooltipProvider disableHoverableContent>
@@ -70,7 +76,14 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="hover:cursor-pointer" onClick={() => {}}>
+        <DropdownMenuItem
+          className="hover:cursor-pointer"
+          onClick={() => {
+            console.log('Sign out');
+            clearUser(); // reset `user` store
+            navigate(authPath.login); // back to login
+          }}
+        >
           <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
           Sign out
         </DropdownMenuItem>

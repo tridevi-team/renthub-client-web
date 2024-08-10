@@ -8,6 +8,8 @@
     "source.organizeImports": "explicit",
     "source.fixAll": "explicit"
   },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
@@ -24,55 +26,36 @@
     "*.css": "tailwindcss"
   },
   "tailwindCSS.experimental.classRegex": [
-    [
-      "cva\\(([^)]*)\\)",
-      "[\"'`]([^\"'`]*).*?[\"'`]"
-    ],
-    [
-      "cx\\(([^)]*)\\)",
-      "(?:'|\"|`)([^']*)(?:'|\"|`)"
-    ],
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
     /*
-    * tailwind-merge
-    */
-    [
-      "(?:twMerge|twJoin)\\(([^;]*)[\\);]",
-      "[`'\"`]([^'\"`;]*)[`'\"`]"
-    ],
+     * tailwind-merge
+     */
+    ["(?:twMerge|twJoin)\\(([^;]*)[\\);]", "[`'\"`]([^'\"`;]*)[`'\"`]"],
     /*
-    * DOM
-    */
-    [
-      "classList.(?:add|remove)\\(([^)]*)\\)",
-      "(?:'|\"|`)([^\"'`]*)(?:'|\"|`)"
-    ],
+     * DOM
+     */
+    ["classList.(?:add|remove)\\(([^)]*)\\)", "(?:'|\"|`)([^\"'`]*)(?:'|\"|`)"],
     /*
-    * comment tagging
-    * /** @tw *\/ "px-5 text-center bg-white py-16 &:not[hidden]"
-    */
-    [
-      "@tw\\s\\*\/\\s+[\"'`]([^\"'`]*)"
-    ],
+     * comment tagging
+     * /** @tw *\/ "px-5 text-center bg-white py-16 &:not[hidden]"
+     */
+    ["@tw\\s\\*/\\s+[\"'`]([^\"'`]*)"],
     /*
-    * classList
-    */
-    [
-      "classList={{([^;]*)}}",
-      "\\s*?[\"'`]([^\"'`]*).*?:"
-    ],
+     * classList
+     */
+    ["classList={{([^;]*)}}", "\\s*?[\"'`]([^\"'`]*).*?:"],
     /*
-    * variables
-    * const styles = "bg-red-500 text-white";
-    */
+     * variables
+     * const styles = "bg-red-500 text-white";
+     */
     [
       "(?:\\b(?:const|let|var)\\s+)?[\\w$_]*(?:[Ss]tyles|[Cc]lasses|[Cc]lassnames)[\\w\\d]*\\s*(?:=|\\+=)\\s*['\"]([^'\"]*)['\"]"
     ],
     /*
-    * POJO
-    */
-    [
-      ":\\s*?[\"'`]([^\"'`]*).*?,"
-    ]
+     * POJO
+     */
+    [":\\s*?[\"'`]([^\"'`]*).*?,"]
   ],
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
