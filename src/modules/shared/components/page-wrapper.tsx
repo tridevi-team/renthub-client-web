@@ -1,4 +1,3 @@
-import { Navbar } from '@shared/components/navbar/navbar';
 import { RouterProvider as RACRouterProvider } from 'react-aria-components';
 import {
   Outlet,
@@ -6,6 +5,7 @@ import {
   useNavigate,
   type NavigateOptions,
 } from 'react-router-dom';
+import AdminPanelLayout from './admin-panel/admin-panel-layout';
 
 declare module 'react-aria-components' {
   interface RouterConfig {
@@ -24,9 +24,9 @@ export function PageWrapper() {
 
   return (
     <RACRouterProvider navigate={navigate} useHref={useHref}>
-      <Navbar />
-
-      <Outlet />
+      <AdminPanelLayout>
+        <Outlet />
+      </AdminPanelLayout>
     </RACRouterProvider>
   );
 }

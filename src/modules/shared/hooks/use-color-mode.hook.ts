@@ -72,7 +72,7 @@ export function useColorMode<T extends string = BasicColorMode>(
     attribute = 'class',
     initialValue = 'auto',
     storageKey = 'app-color-scheme',
-    disableTransition = true,
+    disableTransition = false,
   } = options;
 
   const store = useLocalStorageState(storageKey, {

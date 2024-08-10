@@ -2,6 +2,7 @@ import type { LocaleDictLanguage } from '@app/providers/i18n/context';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { authPath, loginRoute } from '@auth/routes';
 import { homeRoute } from '@home/routes';
+import { Icon } from '@iconify/react';
 import { playgroundRoute } from '@playground/routes';
 import { SvgIcon } from '@shared/components/svg-icon';
 import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
@@ -25,7 +26,6 @@ import {
 } from '@shared/components/ui/menu';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { todosRoute } from '@todo/routes';
-import { Icon } from '@iconify/react';
 import { Link, useLocale, type Selection } from 'react-aria-components';
 import { useNavigate } from 'react-router-dom';
 import { NavbarMenuTheme } from './navbar-menu-theme';
@@ -163,7 +163,7 @@ export function Navbar() {
             <DialogFooter>
               <Button
                 className="gap-x-2"
-                onPress={() => {
+                onClick={() => {
                   clearUser(); // reset `user` store
                   navigate(loginRoute.path); // back to login
                 }}
