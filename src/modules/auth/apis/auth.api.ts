@@ -1,10 +1,21 @@
+import { z } from '@app/lib/vi-zod';
 import { http } from '@shared/services/http.service';
-import { z } from 'zod';
+
+/**
+ * Use zod-i18n by refine
+ * .refine(() => false, {
+ *   params: {
+ *    i18n: {
+ *     key: 'vld_invalidType',
+ *    values: { field: 'Username' },
+ *  },
+ * }
+ */
 
 // #region API SCHEMAS
 export const authLoginRequestSchema = z.object({
-  username: z.string().min(3, 'username must contain at least 3 characters'),
-  password: z.string().min(6, 'password must contain at least 6 characters'),
+  username: z.string(),
+  password: z.string().min(6),
   expiresInMins: z.number().optional(),
 });
 export const authLoginResponseSchema = z.object({

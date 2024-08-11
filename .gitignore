@@ -1,3 +1,6 @@
+# temp folder
+temp-module
+
 # testing
 /test-results/
 /playwright-test-results/
