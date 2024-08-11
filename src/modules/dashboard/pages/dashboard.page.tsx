@@ -18,7 +18,8 @@ export const loader: LoaderFunction = () => {
 
   // redirect NOT authed user to login
   if (!authed) {
-    // toast.error(t('er_401'));
+    // save message to show in login page (because cannot use hook i18n in loader)
+    sessionStorage.setItem('toastMessage', 'er_401');
     return redirect(authPath.login);
   }
 

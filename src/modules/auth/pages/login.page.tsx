@@ -12,10 +12,12 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Link } from '@shared/components/ui/link';
+import type { ErrorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { HTTPError } from 'ky';
+import { useEffect } from 'react';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -66,6 +68,16 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
+
+  useEffect(() => {
+    const toastMessage: ErrorLocale = sessionStorage.getItem(
+      'toastMessage',
+    ) as ErrorLocale;
+    if (toastMessage) {
+      toast.error(t(toastMessage));
+      sessionStorage.removeItem('toastMessage');
+    }
+  }, [t]);
 
   return (
     <div className="min-h-screen w-full flex">
