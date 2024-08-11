@@ -5,7 +5,7 @@ import {
   useNavigate,
   type NavigateOptions,
 } from 'react-router-dom';
-import AdminPanelLayout from './admin-panel/admin-panel-layout';
+import AdminPanelLayout from './layout/admin-panel-layout';
 
 declare module 'react-aria-components' {
   interface RouterConfig {

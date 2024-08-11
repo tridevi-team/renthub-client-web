@@ -2,8 +2,8 @@ import { PanelsTopLeft } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 import { cn } from '@app/lib/utils';
-import { Menu } from '@shared/components/admin-panel/menu';
-import { SidebarToggle } from '@shared/components/admin-panel/sidebar-toggle';
+import { Menu } from '@shared/components/layout/menu';
+import { SidebarToggle } from '@shared/components/layout/sidebar-toggle';
 import { Button } from '@shared/components/ui/button';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
@@ -17,7 +17,7 @@ export function Sidebar() {
     <aside
       className={cn(
         'fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300',
-        sidebar?.isOpen === false ? 'w-[90px]' : 'w-72',
+        sidebar?.isOpen === false ? 'w-[90px]' : 'w-60',
       )}
     >
       <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />

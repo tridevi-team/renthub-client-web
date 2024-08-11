@@ -1,6 +1,6 @@
 import { getMenuList } from '@app/config/sidebar.config';
 import { cn } from '@app/lib/utils';
-import { CollapseMenuButton } from '@shared/components/admin-panel/collapse-menu-button';
+import { CollapseMenuButton } from '@shared/components/layout/collapse-menu-button';
 import { Button } from '@shared/components/ui/button';
 import { ScrollArea } from '@shared/components/ui/scroll-area';
 import {

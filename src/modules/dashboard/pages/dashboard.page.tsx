@@ -1,17 +1,8 @@
 import { authPath } from '@auth/routes';
-import { dashboardRoute } from '@modules/dashboard/routes';
-import ContentArea from '@shared/components/admin-panel/content-area';
-import { ContentLayout } from '@shared/components/admin-panel/content-layout';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-} from '@shared/components/ui/breadcrumbs';
+import { ContentLayout } from '@shared/components/layout/content-layout';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { Link } from 'react-aria-components';
-import { redirect, type LoaderFunction } from 'react-router-dom';
+import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
 
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
@@ -28,19 +19,12 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
+  const pathname = useLocation().pathname;
+  console.log('pathname:', pathname);
 
   return (
-    <ContentLayout title="Users">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href={dashboardRoute.path}>{t('dashboard_title')}</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <ContentArea>Nội dung trang web</ContentArea>
+    <ContentLayout title="Dashboard" pathname={pathname}>
+      Nội dung trang web
     </ContentLayout>
   );
 }

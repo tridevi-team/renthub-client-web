@@ -1,4 +1,4 @@
-import { Menu } from '@shared/components/admin-panel/menu';
+import { Menu } from '@shared/components/layout/menu';
 import { Button } from '@shared/components/ui/button';
 import {
   Sheet,
