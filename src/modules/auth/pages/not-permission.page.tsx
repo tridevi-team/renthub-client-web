@@ -1,4 +1,4 @@
-import notFound from '@assets/images/NotFound.png';
+import forbidden from '@assets/images/Forbidden.png';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { authPath } from '@modules/auth/routes';
 import { dashboardPath } from '@modules/dashboard/routes';
@@ -15,11 +15,11 @@ export function Element() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center opacity-80 bg-[radial-gradient(hsl(var(--primary))_0.5px_,transparent_0.5px),radial-gradient(hsl(var(--primary))_0.5px_,hsl(var(--background))_0.5px)] bg-[0_0_,10px_10px] bg-[length:20px_20px]">
       <img
-        src={notFound}
-        alt="404 not found"
+        src={forbidden}
+        alt="403 not permission"
         loading="lazy"
         className="w-96"
-        aria-label="404 not found"
+        aria-label="404 not permission"
       />
       <Button variant="outline" className="justify-center h-10 mt-5">
         <Link href={userStore.user ? dashboardPath.root : authPath.login}>
