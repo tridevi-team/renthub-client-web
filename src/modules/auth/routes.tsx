@@ -4,11 +4,19 @@ import type { RouteObject } from 'react-router-dom';
 export const authId = {
   root: undefined,
   login: 'auth:login',
+  register: 'auth:register',
+  forgotPassword: 'auth:forgotPassword',
+  resetPassword: 'auth:resetPassword',
+  verifyEmail: 'auth:verifyEmail',
 } as const;
 
 export const authPath = {
   root: undefined,
   login: '/login',
+  register: '/register',
+  forgotPassword: '/forgot-password',
+  resetPassword: '/reset-password',
+  verifyEmail: '/verify-email',
 } as const;
 
 export const loginRoute = {
@@ -21,6 +29,21 @@ export const loginRoute = {
       action: login.action,
       loader: login.loader,
       element: <login.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} as const satisfies RouteObject;
+
+export const registerRoute = {
+  id: authId.register,
+  path: authPath.register,
+  lazy: async () => {
+    const register = await import('./pages/register.page');
+
+    return {
+      action: register.action,
+      loader: register.loader,
+      element: <register.Element />,
       errorElement: <RouteErrorBoundary />,
     };
   },

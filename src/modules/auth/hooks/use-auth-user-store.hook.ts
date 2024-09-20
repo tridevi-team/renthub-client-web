@@ -1,4 +1,4 @@
-import { authLoginResponseSchema } from '@auth/apis/auth.api';
+import { authLoginResponseSchema } from '@modules/auth/schemas/login.schema';
 import { z } from 'zod';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';

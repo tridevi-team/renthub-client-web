@@ -1,13 +1,13 @@
 import { cn } from '@app/lib/utils';
 import loginBg from '@assets/images/login_bg.jpg';
-import {
-  authLoginRequestSchema,
-  authRepositories,
-  type AuthLoginRequestSchema,
-} from '@auth/apis/auth.api';
+import { authRepositories } from '@auth/apis/auth.api';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
+import {
+  type AuthLoginRequestSchema,
+  authLoginRequestSchema,
+} from '@modules/auth/schemas/login.schema';
 import { dashboardPath } from '@modules/dashboard/routes';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
