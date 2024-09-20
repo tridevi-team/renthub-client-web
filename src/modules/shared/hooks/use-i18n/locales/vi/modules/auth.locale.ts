@@ -11,8 +11,9 @@ export const authLocale = {
   // #endregion BUTTON
 
   // #region COMMON
-  auth_welcome: 'Chào mừng! Đăng nhập để tiếp tục',
+  auth_welcome: 'Quản lý Nhà trọ dễ hơn bao giờ hết! Đăng nhập để tiếp tục',
   auth_noAccount: 'Chưa có tài khoản?',
   auth_registerHere: 'Đăng ký ngay',
+  auth_forgotPassword: 'Quên mật khẩu?',
   // #endregion COMMON
 } as const;

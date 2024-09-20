@@ -1,3 +1,4 @@
+import { dashboardPath } from '@modules/dashboard/routes';
 import { Menu } from '@shared/components/layout/menu';
 import { Button } from '@shared/components/ui/button';
 import {
@@ -6,7 +7,8 @@ import {
   SheetHeader,
   SheetTrigger,
 } from '@shared/components/ui/sheet';
-import { MenuIcon, PanelsTopLeft } from 'lucide-react';
+import { BRAND_NAME } from '@shared/constants/general.constant';
+import { House, MenuIcon } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 export function SheetMenu() {
@@ -24,9 +26,12 @@ export function SheetMenu() {
             variant="link"
             asChild
           >
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <PanelsTopLeft className="w-6 h-6 mr-1" />
-              <h1 className="font-bold text-lg">Brand</h1>
+            <Link
+              href={dashboardPath.index}
+              className="flex items-center gap-2"
+            >
+              <House className="w-6 h-6 mr-1" />
+              <h1 className="font-bold text-lg">{BRAND_NAME}</h1>
             </Link>
           </Button>
         </SheetHeader>

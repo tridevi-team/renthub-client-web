@@ -1,4 +1,5 @@
-import reactjs from '@assets/images/reactjs.svg';
+import { cn } from '@app/lib/utils';
+import loginBg from '@assets/images/login_bg.jpg';
 import {
   authLoginRequestSchema,
   authRepositories,
@@ -12,11 +13,13 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Link } from '@shared/components/ui/link';
+import { BRAND_NAME } from '@shared/constants/general.constant';
 import type { ErrorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { HTTPError } from 'ky';
+import { House } from 'lucide-react';
 import { useEffect } from 'react';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
@@ -81,19 +84,42 @@ export function Element() {
 
   return (
     <div className="min-h-screen w-full flex">
+      {/* image */}
+      <section className="hidden md:block w-1/2 shadow-2xl">
+        <span className="relative h-screen w-full md:flex md:items-center md:justify-center">
+          <img
+            src={loginBg}
+            alt="BG-Side of Login Page"
+            loading="lazy"
+            className="h-full object-cover"
+            aria-label="Login Page Background"
+          />
+        </span>
+      </section>
+
       {/* form */}
       <section className="min-h-screen w-full flex flex-col justify-center px-10 xl:px-20 md:w-1/2">
-        <h1 className="text-center text-3xl text-primary">
+        <div className="flex items-center gap-2 justify-center mb-2 text-blue-600">
+          <House className="w-8 h-8 mr-1" />
+          <h1
+            className={cn(
+              'font-bold text-3xl whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300',
+            )}
+          >
+            {BRAND_NAME}
+          </h1>
+        </div>
+        <p className="text-center text-base text-secondary-foreground">
           {t('auth_welcome')}
-        </h1>
+        </p>
 
         <LoginForm />
 
         <p className="py-12 text-center">
-          {t('auth_noAccount')}{' '}
+          <span className="text-base">{t('auth_noAccount')} </span>
           <Link
             aria-label={t('auth_registerHere')}
-            className="hover:underline"
+            className="hover:underline text-base"
             href="/does-not-exists"
             variant="link"
           >
@@ -101,24 +127,11 @@ export function Element() {
           </Link>
         </p>
       </section>
-
-      {/* image */}
-      <section className="hidden md:block w-1/2 shadow-2xl">
-        <span className="relative h-screen w-full md:flex md:items-center md:justify-center">
-          <img
-            src={reactjs}
-            alt="cool react logo with rainbow shadow"
-            loading="lazy"
-            className="h-full object-cover"
-            aria-label="cool react logo"
-          />
-        </span>
-      </section>
     </div>
   );
 }
 
-function LoginForm() {
+const LoginForm = () => {
   const [t] = useI18n();
   const fetcher = useFetcher();
   const { control, formState } = useForm<AuthLoginRequestSchema>({
@@ -131,7 +144,10 @@ function LoginForm() {
   });
 
   return (
-    <fetcher.Form className="flex flex-col pt-3 md:pt-8" method="POST">
+    <fetcher.Form
+      className="flex flex-col pt-3 md:pt-8 px-12 md:px-20"
+      method="POST"
+    >
       {/* username */}
       <Controller
         control={control}
@@ -142,7 +158,6 @@ function LoginForm() {
         }) => (
           <TextField
             className="group/username pt-4"
-            // Let React Hook Form handle validation instead of the browser.
             validationBehavior="aria"
             name={name}
             value={value}
@@ -151,7 +166,7 @@ function LoginForm() {
             isInvalid={invalid}
             isRequired
           >
-            <Label>{t('auth_username')}</Label>
+            <Label className="field-required">{t('auth_username')}</Label>
             <Input placeholder={t('ph_username')} ref={ref} />
             <FieldError className="text-destructive">
               {error?.message}
@@ -170,7 +185,6 @@ function LoginForm() {
         }) => (
           <TextField
             className="group/password pt-4"
-            // Let React Hook Form handle validation instead of the browser.
             validationBehavior="aria"
             name={name}
             value={value}
@@ -179,8 +193,15 @@ function LoginForm() {
             isInvalid={invalid}
             isRequired
           >
-            <Label>{t('auth_password')}</Label>
+            <Label className="field-required">{t('auth_password')}</Label>
             <Input type="password" placeholder={t('ph_password')} ref={ref} />
+            <Link
+              href="/forgot-password"
+              variant="link"
+              className="float-end mt-2 -mr-3"
+            >
+              {t('auth_forgotPassword')}
+            </Link>
             <FieldError className="text-destructive">
               {error?.message}
             </FieldError>
@@ -201,7 +222,7 @@ function LoginForm() {
 
       <Button
         type="submit"
-        className="mt-8"
+        className="mt-2"
         disabled={fetcher.state === 'submitting' || !formState.isValid}
       >
         {t(
@@ -210,4 +231,4 @@ function LoginForm() {
       </Button>
     </fetcher.Form>
   );
-}
+};

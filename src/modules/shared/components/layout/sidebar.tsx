@@ -1,10 +1,12 @@
-import { PanelsTopLeft } from 'lucide-react';
+import { House } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 import { cn } from '@app/lib/utils';
+import { dashboardPath } from '@modules/dashboard/routes';
 import { Menu } from '@shared/components/layout/menu';
 import { SidebarToggle } from '@shared/components/layout/sidebar-toggle';
 import { Button } from '@shared/components/ui/button';
+import { BRAND_NAME } from '@shared/constants/general.constant';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
 
@@ -30,8 +32,8 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <PanelsTopLeft className="w-6 h-6 mr-1" />
+          <Link href={dashboardPath.index} className="flex items-center gap-2">
+            <House className="w-6 h-6 mr-1" />
             <h1
               className={cn(
                 'font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300',
@@ -40,7 +42,7 @@ export function Sidebar() {
                   : 'translate-x-0 opacity-100',
               )}
             >
-              Brand
+              {BRAND_NAME}
             </h1>
           </Link>
         </Button>

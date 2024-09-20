@@ -87,4 +87,10 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
   }
+
+  .field-required::before {
+    content: "*";
+    color: red;
+    margin-right: 4px;
+  }
 }
