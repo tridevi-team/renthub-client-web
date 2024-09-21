@@ -1,4 +1,4 @@
-name: telegram message
+name: Send Telegram Message on Commit
 on: [push]
 jobs:
 
