@@ -4,6 +4,7 @@ import { authRepositories } from '@auth/apis/auth.api';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
+import { authPath } from '@modules/auth/routes';
 import {
   type AuthLoginRequestSchema,
   authLoginRequestSchema,
@@ -120,7 +121,7 @@ export function Element() {
           <Link
             aria-label={t('auth_registerHere')}
             className="hover:underline text-base"
-            href="/does-not-exists"
+            href={authPath.register}
             variant="link"
           >
             {t('auth_registerHere')}

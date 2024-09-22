@@ -12,82 +12,11 @@ import { z } from '@app/lib/vi-zod';
  */
 
 export const authLoginRequestSchema = z.object({
-  username: z
-    .string()
-    .refine((v) => v.length > 0, {
-      params: {
-        i18n: {
-          key: 'vld_required',
-          values: { field: 'Tên đăng nhập' },
-        },
-      },
-    })
-    .refine((v) => !/\s/.test(v), {
-      params: {
-        i18n: {
-          key: 'vld_required',
-          values: { field: 'Tên đăng nhập' },
-        },
-      },
-    })
-    .refine((v) => v.length <= 255, {
-      params: {
-        i18n: {
-          key: 'vld_maxLength',
-          values: { field: 'Tên đăng nhập', max: 255 },
-        },
-      },
-    })
-    .refine(
-      (v) => {
-        if (v.includes('@')) {
-          return z.string().email().safeParse(v).success;
-        }
-        return z.string().length(10).safeParse(v).success;
-      },
-      {
-        params: {
-          i18n: {
-            key: 'vld_invalidType',
-            values: { field: 'Tên đăng nhập' },
-          },
-        },
-      },
-    ),
+  username: z.string().email().trim(),
   password: z
     .string()
-    .refine((v) => v.length > 0, {
-      params: {
-        i18n: {
-          key: 'vld_required',
-          values: { field: 'Mật khẩu' },
-        },
-      },
-    })
-    .refine((v) => v.length <= 255, {
-      params: {
-        i18n: {
-          key: 'vld_maxLength',
-          values: { field: 'Mật khẩu', max: 255 },
-        },
-      },
-    })
-    .refine((v) => !/\s/.test(v), {
-      params: {
-        i18n: {
-          key: 'vld_required',
-          values: { field: 'Mật khẩu' },
-        },
-      },
-    })
-    .refine((v) => v.length >= 6, {
-      params: {
-        i18n: {
-          key: 'vld_minLength',
-          values: { field: 'Mật khẩu', min: 6 },
-        },
-      },
-    }),
+    .transform((v) => v.replace(/\s/g, ''))
+    .pipe(z.string().min(6).max(255)),
 });
 
 export const authLoginResponseSchema = z.object({
