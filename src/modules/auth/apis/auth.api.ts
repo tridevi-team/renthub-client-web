@@ -3,6 +3,7 @@ import {
   type AuthLoginResponseSchema,
   authLoginResponseSchema,
 } from '@modules/auth/schemas/login.schema';
+import type { AuthRegisterRequestSchema } from '@modules/auth/schemas/register.schema';
 import { http } from '@shared/services/http.service';
 
 export const authKeys = {
@@ -35,6 +36,13 @@ export const authRepositories = {
           ],
         },
       })
+      .json<AuthLoginResponseSchema>();
+
+    return authLoginResponseSchema.parse(resp);
+  },
+  register: async ({ json }: { json: AuthRegisterRequestSchema }) => {
+    const resp = await http.instance
+      .post('auth/signup', { json })
       .json<AuthLoginResponseSchema>();
 
     return authLoginResponseSchema.parse(resp);
