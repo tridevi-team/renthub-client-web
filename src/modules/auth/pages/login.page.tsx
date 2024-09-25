@@ -167,7 +167,7 @@ const LoginForm = () => {
             isInvalid={invalid}
             isRequired
           >
-            <Label className="field-required">{t('auth_username')}</Label>
+            <Label className="field-required">{t('auth_email')}</Label>
             <Input placeholder={t('ph_username')} ref={ref} />
             <FieldError className="text-destructive">
               {error?.message}

@@ -81,12 +81,12 @@
     }
   },
   "validations": {
-    "email": "email",
-    "url": "url",
-    "uuid": "uuid",
-    "cuid": "cuid",
-    "regex": "biểu thức chính quy",
-    "datetime": "ngày giờ"
+    "email": "Email",
+    "url": "Url",
+    "uuid": "Uuid",
+    "cuid": "Cuid",
+    "regex": "Regex",
+    "datetime": "Ngày giờ"
   },
   "types": {
     "function": "hàm",

@@ -21,7 +21,7 @@ export function RouteErrorBoundary() {
 
         <Button
           type="button"
-          onPress={() => {
+          onClick={() => {
             window.location.assign(window.location.href);
           }}
         >

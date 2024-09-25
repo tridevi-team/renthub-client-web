@@ -12,11 +12,8 @@ import { z } from '@app/lib/vi-zod';
  */
 
 export const authLoginRequestSchema = z.object({
-  username: z.string().email().trim(),
-  password: z
-    .string()
-    .transform((v) => v.replace(/\s/g, ''))
-    .pipe(z.string().min(6).max(255)),
+  username: z.string().email().trim().min(1),
+  password: z.string().trim().min(1),
 });
 
 export const authLoginResponseSchema = z.object({
