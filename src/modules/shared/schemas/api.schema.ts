@@ -1,6 +1,12 @@
+import {
+  type ErrorLocale,
+  errorLocale,
+} from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { z } from 'zod';
 // #region COMMON SCHEMAS
 export const errorResponseSchema = z.object({
+  success: z.literal(false),
+  code: z.enum(Object.keys(errorLocale) as [ErrorLocale, ...ErrorLocale[]]),
   message: z.string(),
 });
 
