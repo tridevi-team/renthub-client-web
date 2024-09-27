@@ -29,7 +29,7 @@ const ComboboxCollection = Collection;
 const ComboboxInput = ({ className, ...props }: InputProps) => (
   <Group
     className={twMerge(
-      'group flex h-10 items-center  justify-between overflow-hidden rounded-md border border-input bg-background text-sm ring-offset-background data-[focus-within]:outline-none data-[focus-within]:ring-2 data-[focus-within]:ring-ring data-[focus-within]:ring-offset-2 group-data-[disabled]:cursor-not-allowed group-data-[disabled]:opacity-50',
+      'group flex h-10 items-center  justify-between overflow-hidden rounded-md border border-input bg-background text-sm ring-offset-background data-[focus-within]:outline-none data-[focus-within]:ring-1 data-[focus-within]:ring-ring data-[focus-within]:ring-offset-0 group-data-[disabled]:cursor-not-allowed group-data-[disabled]:opacity-50',
     )}
   >
     <Input

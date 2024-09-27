@@ -1,5 +1,5 @@
-import { labelVariants } from '@shared/components/ui/label';
 import { Icon } from '@iconify/react';
+import { labelVariants } from '@shared/components/ui/label';
 import {
   Radio,
   RadioGroup,
@@ -51,7 +51,7 @@ const _Radio = ({
       {(values) => (
         <>
           {showRadio && (
-            <span className="flex aspect-square h-4 w-4 items-center justify-center rounded-full border border-primary text-primary ring-offset-background group-data-[disabled]:opacity-50 group-data-[focus-visible]:ring-2 group-data-[focus-visible]:ring-ring group-data-[focus-visible]:ring-offset-2">
+            <span className="flex aspect-square h-4 w-4 items-center justify-center rounded-full border border-primary text-primary ring-offset-background group-data-[disabled]:opacity-50 group-data-[focus-visible]:ring-1 group-data-[focus-visible]:ring-ring group-data-[focus-visible]:ring-offset-0">
               {values.isSelected && (
                 <Icon
                   icon="lucide:circle"
