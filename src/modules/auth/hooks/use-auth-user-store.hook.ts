@@ -1,4 +1,4 @@
-import { authLoginResponseSchema } from '@modules/auth/schemas/login.schema';
+import { appUserStoreSchema } from '@modules/auth/schemas/auth.schema';
 import { z } from 'zod';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
@@ -9,10 +9,10 @@ export type UserStoreLocalStorage = z.infer<typeof userStoreLocalStorageSchema>;
 
 export const userStoreName = 'app-user' as const;
 const userStoreStateSchema = z.object({
-  user: authLoginResponseSchema.nullable(),
+  user: appUserStoreSchema.nullable(),
 });
 const userStoreActionSchema = z.object({
-  setUser: z.function().args(authLoginResponseSchema).returns(z.void()),
+  setUser: z.function().args(appUserStoreSchema).returns(z.void()),
   clearUser: z.function().args(z.void()).returns(z.void()),
 });
 export const userStoreSchema = userStoreStateSchema.merge(

@@ -1,4 +1,5 @@
 import { cn } from '@app/lib/utils';
+import { useEmailStore } from '@app/stores';
 import loginBg from '@assets/images/login_bg.jpg';
 import { authRepositories } from '@auth/apis/auth.api';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
@@ -34,16 +35,30 @@ export const action: ActionFunction = async ({ request }) => {
     const parsed = authLoginRequestSchema.safeParse(payload);
     if (!parsed.success) return json(parsed.error, { status: 400 });
 
+    const email = parsed.data.username;
+
     try {
       const loginResponse = await authRepositories.login({ json: parsed.data });
 
+      const user = loginResponse.data;
+      console.log('user:', user);
+
       unstable_batchedUpdates(() => {
-        useAuthUserStore.getState().setUser(loginResponse); // set user data to store
+        useAuthUserStore.getState().setUser(loginResponse.data);
       });
+
       return redirect(dashboardPath.root);
     } catch (error) {
       if (error instanceof HTTPError) {
         const response = (await error.response.json()) as ErrorResponseSchema;
+        if (response.code === 'VERIFY_ACCOUNT_FIRST') {
+          useEmailStore.getState().setData({
+            email,
+            status: 'code-sent',
+          });
+          await authRepositories.resendVerifyCode({ json: { email } });
+          return redirect(authPath.verifyAccount);
+        }
         return json(response);
       }
     }
@@ -169,6 +184,7 @@ const LoginForm = () => {
         }) => (
           <TextField
             className="group/password pt-4"
+            type="password"
             validationBehavior="aria"
             name={name}
             value={value}
@@ -178,7 +194,7 @@ const LoginForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_password')}</Label>
-            <Input type="password" placeholder={t('ph_password')} ref={ref} />
+            <Input placeholder={t('ph_password')} ref={ref} />
             <Link
               href="/forgot-password"
               variant="link"
