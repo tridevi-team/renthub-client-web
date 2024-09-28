@@ -1,9 +1,19 @@
 import {
+  authLoginResponseSchema,
   type AuthLoginRequestSchema,
   type AuthLoginResponseSchema,
-  authLoginResponseSchema,
 } from '@modules/auth/schemas/login.schema';
-import type { AuthRegisterRequestSchema } from '@modules/auth/schemas/register.schema';
+import {
+  authRegisterResponseSchema,
+  authResendCodeResponseSchema,
+  authVerifyEmailResponseSchema,
+  type AuthRegisterRequestSchema,
+  type AuthRegisterResponseSchema,
+  type AuthResendCodeRequestSchema,
+  type AuthResendCodeResponseSchema,
+  type AuthVerifyEmailRequestSchema,
+  type AuthVerifyEmailResponseSchema,
+} from '@modules/auth/schemas/register.schema';
 import { http } from '@shared/services/http.service';
 
 export const authKeys = {
@@ -28,7 +38,6 @@ export const authRepositories = {
                 const data = (await response.json()) as AuthLoginResponseSchema;
 
                 if ('token' in data) {
-                  // set 'Authorization' headers
                   request.headers.set('Authorization', `Bearer ${data.token}`);
                 }
               }
@@ -43,8 +52,22 @@ export const authRepositories = {
   register: async ({ json }: { json: AuthRegisterRequestSchema }) => {
     const resp = await http.instance
       .post('auth/signup', { json })
-      .json<AuthLoginResponseSchema>();
+      .json<AuthRegisterResponseSchema>();
 
-    return authLoginResponseSchema.parse(resp);
+    return authRegisterResponseSchema.parse(resp);
+  },
+  veryfyAccount: async ({ json }: { json: AuthVerifyEmailRequestSchema }) => {
+    const resp = await http.instance
+      .put('auth/verify-account', { json })
+      .json<AuthVerifyEmailResponseSchema>();
+
+    return authVerifyEmailResponseSchema.parse(resp);
+  },
+  resendVerifyCode: async ({ json }: { json: AuthResendCodeRequestSchema }) => {
+    const resp = await http.instance
+      .put('auth/resend-code', { json })
+      .json<AuthResendCodeResponseSchema>();
+
+    return authResendCodeResponseSchema.parse(resp);
   },
 } as const;

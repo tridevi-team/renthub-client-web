@@ -7,7 +7,7 @@ export const authId = {
   register: 'auth:register',
   forgotPassword: 'auth:forgotPassword',
   resetPassword: 'auth:resetPassword',
-  verifyEmail: 'auth:verifyEmail',
+  verifyAccount: 'auth:verifyAccount',
 } as const;
 
 export const authPath = {
@@ -16,7 +16,7 @@ export const authPath = {
   register: '/register',
   forgotPassword: '/forgot-password',
   resetPassword: '/reset-password',
-  verifyEmail: '/verify-email',
+  verifyAccount: '/verify-account',
 } as const;
 
 export const loginRoute = {
@@ -44,6 +44,21 @@ export const registerRoute = {
       action: register.action,
       loader: register.loader,
       element: <register.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} as const satisfies RouteObject;
+
+export const verifyAccountRoute = {
+  id: authId.verifyAccount,
+  path: authPath.verifyAccount,
+  lazy: async () => {
+    const verifyAccount = await import('./pages/verify-account.page');
+
+    return {
+      action: verifyAccount.action,
+      loader: verifyAccount.loader,
+      element: <verifyAccount.Element />,
       errorElement: <RouteErrorBoundary />,
     };
   },
