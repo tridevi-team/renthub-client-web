@@ -7,5 +7,6 @@ export const placeholderLocale = {
   ph_gender: 'Giới tính',
   ph_phoneNumber: 'Nhập số điện thoại',
   ph_confirmPassword: 'Nhập lại mật khẩu',
+  ph_code: 'Nhập mã xác thực 4 chữ số',
   // #endregion AUTH
 } as const;

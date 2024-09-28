@@ -7,6 +7,7 @@ export const authLocale = {
   auth_phoneNumber: 'Số điện thoại',
   auth_gender: 'Giới tính',
   auth_confirmPassword: 'Xác nhận mật khẩu',
+  auth_code: 'Mã xác thực',
   // #endregion FORM
 
   // #region BUTTON
@@ -15,6 +16,8 @@ export const authLocale = {
   auth_logout: 'Đăng xuất',
   auth_registerLoading: 'Đang đăng ký...',
   auth_register: 'Đăng ký',
+  auth_resendCode: 'Gửi lại mã',
+
   // #endregion BUTTON
 
   // #region COMMON
@@ -25,5 +28,10 @@ export const authLocale = {
   auth_forgotPassword: 'Quên mật khẩu?',
   auth_alreadyHaveAccount: 'Đã có tài khoản?',
   auth_loginHere: 'Đăng nhập ngay',
+  auth_verifyEmail_title: 'Xác thực Email',
+  auth_verifyEmailLoading: 'Đang xác thực...',
+  auth_verifyEmail: 'Xác thực',
+  auth_codeSend_1: 'Một mã xác thực gồm 4 chữ số đã được gửi tới ',
+  auth_codeSend_2: ', vui lòng kiểm tra hộp thư của bạn',
   // #endregion COMMON
 } as const;
