@@ -79,7 +79,6 @@ export function UserNav() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onClick={() => {
-            console.log('Sign out');
             clearUser(); // reset `user` store
             navigate(authPath.login); // back to login
           }}

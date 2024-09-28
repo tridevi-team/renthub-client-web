@@ -1,6 +1,5 @@
 import {
   BarChart2,
-  Clock,
   DollarSign,
   Home,
   Settings,
@@ -53,12 +52,12 @@ export function getMenuList(pathname: string): Group[] {
           submenus: [
             {
               href: '/accounts/list',
-              label: 'Quản lý tài khoản',
+              label: 'Quản lý Tài khoản',
               active: pathname === '/accounts/list',
             },
             {
               href: '/accounts/roles',
-              label: 'Quản lý vai trò',
+              label: 'Quản lý Vai trò',
               active: pathname === '/accounts/roles',
             },
           ],
@@ -164,13 +163,6 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: 'Khác',
       menus: [
-        {
-          href: '/activity-log',
-          label: 'Lịch sử hoạt động',
-          active: pathname === '/activity-log',
-          icon: Clock,
-          submenus: [],
-        },
         {
           href: '/settings',
           label: 'Cài đặt',
