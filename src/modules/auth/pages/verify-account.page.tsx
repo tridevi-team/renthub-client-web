@@ -115,7 +115,11 @@ export function Element() {
 
         <p className="py-4 text-center">
           <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
-          <Link className="hover:underline text-base" variant="link">
+          <Link
+            className="hover:underline text-base"
+            variant="link"
+            href={authPath.login}
+          >
             {t('auth_loginHere')}
           </Link>
         </p>
@@ -201,7 +205,7 @@ const VerifyEmailForm = () => {
 
 const ResendCodeButton = () => {
   const [t] = useI18n();
-  const [timeLeft, setTimeLeft] = useState<number>(1);
+  const [timeLeft, setTimeLeft] = useState<number>(100);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -218,7 +222,7 @@ const ResendCodeButton = () => {
 
   const handleResendCode = async () => {
     setIsDisabled(true);
-    setTimeLeft(100);
+    setTimeLeft(180);
     const email = useEmailStore.getState().data?.email;
     if (!email) {
       return redirect(authPath.login);

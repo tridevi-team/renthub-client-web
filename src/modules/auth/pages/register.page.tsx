@@ -110,7 +110,11 @@ export function Element() {
 
         <p className="py-4 text-center">
           <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
-          <Link className="hover:underline text-base" variant="link">
+          <Link
+            className="hover:underline text-base"
+            variant="link"
+            href={authPath.login}
+          >
             {t('auth_loginHere')}
           </Link>
         </p>
