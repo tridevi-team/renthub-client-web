@@ -1,8 +1,11 @@
+import { LoginWrapper } from '@modules/auth/components/login-wrapper';
+import { RegisterWrapper } from '@modules/auth/components/register-wrapper';
 import { RouteErrorBoundary } from '@shared/components/route-error-boundary';
 import type { RouteObject } from 'react-router-dom';
 
 export const authId = {
   root: undefined,
+  rootRegister: 'auth',
   login: 'auth:login',
   register: 'auth:register',
   forgotPassword: 'auth:forgotPassword',
@@ -63,6 +66,50 @@ export const verifyAccountRoute = {
     };
   },
 } as const satisfies RouteObject;
+
+export const forgotPasswordRoute = {
+  id: authId.forgotPassword,
+  path: authPath.forgotPassword,
+  lazy: async () => {
+    const forgotPassword = await import('./pages/forgot-password.page');
+
+    return {
+      action: forgotPassword.action,
+      loader: forgotPassword.loader,
+      element: <forgotPassword.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} as const satisfies RouteObject;
+
+export const resetPasswordRoute = {
+  id: authId.resetPassword,
+  path: authPath.resetPassword,
+  lazy: async () => {
+    const resetPassword = await import('./pages/reset-password.page');
+
+    return {
+      action: resetPassword.action,
+      loader: resetPassword.loader,
+      element: <resetPassword.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} as const satisfies RouteObject;
+
+export const authLoginRoute = {
+  id: authId.root,
+  path: authPath.root,
+  element: <LoginWrapper />,
+  children: [forgotPasswordRoute, loginRoute, resetPasswordRoute],
+} satisfies RouteObject;
+
+export const authRegisterRoute = {
+  id: authId.rootRegister,
+  path: authPath.root,
+  element: <RegisterWrapper />,
+  children: [registerRoute, verifyAccountRoute],
+} satisfies RouteObject;
 
 /**
  * should be last route
