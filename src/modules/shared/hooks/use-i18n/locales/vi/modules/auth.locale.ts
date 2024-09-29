@@ -17,7 +17,7 @@ export const authLocale = {
   auth_registerLoading: 'Đang đăng ký...',
   auth_register: 'Đăng ký',
   auth_resendCode: 'Gửi lại mã',
-
+  auth_resetPassword: 'Đổi mật khẩu',
   // #endregion BUTTON
 
   // #region COMMON
@@ -33,5 +33,9 @@ export const authLocale = {
   auth_verifyEmail: 'Xác thực',
   auth_codeSend_1: 'Một mã xác thực gồm 4 chữ số đã được gửi tới ',
   auth_codeSend_2: ', vui lòng kiểm tra hộp thư của bạn',
+  auth_rememberedPassword: 'Nhớ mật khẩu?',
+  auth_forgotPassword_guide:
+    'Nhập email đã sử dụng để đăng ký tài khoản, một mã xác thực sẽ được gửi tới email của bạn',
+  auth_resetPassword_guide: 'Nhập mã xác thực và mật khẩu mới để đổi mật khẩu',
   // #endregion COMMON
 } as const;

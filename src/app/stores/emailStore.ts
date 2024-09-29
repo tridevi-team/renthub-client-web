@@ -4,6 +4,7 @@ import { z } from 'zod';
 const emailSchema = z
   .object({
     email: z.string().email(),
+    target: z.enum(['verify-account', 'forgot-password']),
     status: z.enum(['code-sent', 'code-verified']),
   })
   .nullable();

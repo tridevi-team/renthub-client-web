@@ -1,13 +1,12 @@
 import { useEmailStore } from '@app/stores';
 import { authRepositories } from '@auth/apis/auth.api';
-import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
 import { authPath } from '@modules/auth/routes';
 import {
-  type AuthLoginRequestSchema,
-  authLoginRequestSchema,
-} from '@modules/auth/schemas/login.schema';
+  type AuthForgotPasswordRequestSchema,
+  authForgotPasswordRequestSchema,
+} from '@modules/auth/schemas/auth.schema';
 import { dashboardPath } from '@modules/dashboard/routes';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
@@ -18,7 +17,6 @@ import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { HTTPError } from 'ky';
 import { FieldError, TextField } from 'react-aria-components';
-import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
 import type { ActionFunction, LoaderFunction } from 'react-router-dom';
 import { json, redirect, useFetcher } from 'react-router-dom';
@@ -28,34 +26,24 @@ export const action: ActionFunction = async ({ request }) => {
   if (request.method === 'POST') {
     const payload = Object.fromEntries(await request.formData());
 
-    const parsed = authLoginRequestSchema.safeParse(payload);
+    const parsed = authForgotPasswordRequestSchema.safeParse(payload);
     if (!parsed.success) return json(parsed.error, { status: 400 });
 
-    const email = parsed.data.username;
+    const email = parsed.data.email;
 
     try {
-      const loginResponse = await authRepositories.login({ json: parsed.data });
+      await authRepositories.forgotPassword({ json: parsed.data });
 
-      const user = loginResponse.data;
-      console.log('user:', user);
-
-      unstable_batchedUpdates(() => {
-        useAuthUserStore.getState().setUser(loginResponse.data);
+      useEmailStore.getState().setData({
+        email,
+        target: 'forgot-password',
+        status: 'code-sent',
       });
 
-      return redirect(dashboardPath.root);
+      return redirect(authPath.resetPassword);
     } catch (error) {
       if (error instanceof HTTPError) {
         const response = (await error.response.json()) as ErrorResponseSchema;
-        if (response.code === 'VERIFY_ACCOUNT_FIRST') {
-          useEmailStore.getState().setData({
-            email,
-            target: 'verify-account',
-            status: 'code-sent',
-          });
-          await authRepositories.resendVerifyCode({ json: { email } });
-          return redirect(authPath.verifyAccount);
-        }
         return json(response);
       }
     }
@@ -79,37 +67,36 @@ export function Element() {
   const [t] = useI18n();
 
   return (
-    <div>
-      <p className="text-center text-base text-secondary-foreground">
-        {t('auth_welcome')}
+    <>
+      <p className="text-center text-base text-secondary-foreground px-20">
+        {t('auth_forgotPassword_guide')}
       </p>
 
-      <LoginForm />
+      <ForgotPasswordForm />
 
       <p className="py-12 text-center">
-        <span className="text-base">{t('auth_noAccount')} </span>
+        <span className="text-base">{t('auth_rememberedPassword')} </span>
         <Link
-          variant="link"
-          href={authPath.register}
+          aria-label={t('auth_loginHere')}
           className="hover:underline text-base"
-          aria-label={t('auth_registerHere')}
+          href={authPath.login}
+          variant="link"
         >
-          {t('auth_registerHere')}
+          {t('auth_loginHere')}
         </Link>
       </p>
-    </div>
+    </>
   );
 }
 
-const LoginForm = () => {
+const ForgotPasswordForm = () => {
   const [t] = useI18n();
   const fetcher = useFetcher();
-  const { control, formState } = useForm<AuthLoginRequestSchema>({
+  const { control, formState } = useForm<AuthForgotPasswordRequestSchema>({
     mode: 'onChange',
-    resolver: zodResolver(authLoginRequestSchema),
+    resolver: zodResolver(authForgotPasswordRequestSchema),
     defaultValues: {
-      username: '',
-      password: '',
+      email: '',
     },
   });
 
@@ -118,16 +105,16 @@ const LoginForm = () => {
       className="flex flex-col pt-3 md:pt-8 px-12 md:px-20"
       method="POST"
     >
-      {/* username */}
+      {/* email */}
       <Controller
         control={control}
-        name="username"
+        name="email"
         render={({
           field: { name, value, onChange, onBlur, ref },
           fieldState: { invalid, error },
         }) => (
           <TextField
-            className="group/username pt-4"
+            className="group/email pt-4"
             validationBehavior="aria"
             name={name}
             value={value}
@@ -137,42 +124,7 @@ const LoginForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_email')}</Label>
-            <Input placeholder={t('ph_username')} ref={ref} />
-            <FieldError className="text-destructive">
-              {error?.message}
-            </FieldError>
-          </TextField>
-        )}
-      />
-
-      {/* password */}
-      <Controller
-        control={control}
-        name="password"
-        render={({
-          field: { name, value, onChange, onBlur, ref },
-          fieldState: { invalid, error },
-        }) => (
-          <TextField
-            className="group/password pt-4"
-            type="password"
-            validationBehavior="aria"
-            name={name}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            isInvalid={invalid}
-            isRequired
-          >
-            <Label className="field-required">{t('auth_password')}</Label>
-            <Input placeholder={t('ph_password')} ref={ref} />
-            <Link
-              href={authPath.forgotPassword}
-              variant="link"
-              className="float-end mt-2 -mr-3"
-            >
-              {t('auth_forgotPassword')}
-            </Link>
+            <Input placeholder={t('ph_email')} ref={ref} />
             <FieldError className="text-destructive">
               {error?.message}
             </FieldError>
@@ -194,11 +146,10 @@ const LoginForm = () => {
       <Button
         type="submit"
         className="mt-2"
+        loading={fetcher.state === 'submitting'}
         disabled={fetcher.state === 'submitting' || !formState.isValid}
       >
-        {t(
-          fetcher.state === 'submitting' ? 'auth_loginLoading' : 'auth_login',
-        )}{' '}
+        {t('auth_forgotPassword')}
       </Button>
     </fetcher.Form>
   );

@@ -1,7 +1,4 @@
-import { cn } from '@app/lib/utils';
 import { useEmailStore } from '@app/stores';
-import logoImg from '@assets/images/logo.png';
-import registerBg from '@assets/images/register_bg.png';
 import { authRepositories } from '@auth/apis/auth.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
@@ -23,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/components/ui/select';
-import { BRAND_NAME, GENDER_OPTIONS } from '@shared/constants/general.constant';
+import { GENDER_OPTIONS } from '@shared/constants/general.constant';
 import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
@@ -50,6 +47,7 @@ export const action: ActionFunction = async ({ request }) => {
       unstable_batchedUpdates(() => {
         useEmailStore.getState().setData({
           email: parsed.data.email,
+          target: 'verify-account',
           status: 'code-sent',
         });
       });
@@ -83,42 +81,23 @@ export function Element() {
   const [t] = useI18n();
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative">
-      <img
-        src={registerBg}
-        alt="BG-Side of Register Page"
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover"
-        aria-label="Register Page Background"
-      />
-      <div className="relative z-10 bg-white shadow-2xl rounded-lg p-10 max-w-3xl w-full md:w-[600px]">
-        {/* title register */}
-        <div className="flex items-center gap-2 justify-center mb-2 md:-mt-24">
-          <img
-            src={logoImg}
-            alt={BRAND_NAME}
-            className={cn('w-28 h-28', 'rounded-full')}
-            loading="lazy"
-            aria-label={BRAND_NAME}
-          />
-        </div>
-        <h2 className="text-3xl font-bold text-center mb-4">
-          {t('auth_register_title')}
-        </h2>
+    <div>
+      <h2 className="text-3xl font-bold text-center mb-4">
+        {t('auth_register_title')}
+      </h2>
 
-        <RegisterForm />
+      <RegisterForm />
 
-        <p className="py-4 text-center">
-          <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
-          <Link
-            className="hover:underline text-base"
-            variant="link"
-            href={authPath.login}
-          >
-            {t('auth_loginHere')}
-          </Link>
-        </p>
-      </div>
+      <p className="py-4 text-center">
+        <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
+        <Link
+          className="hover:underline text-base"
+          variant="link"
+          href={authPath.login}
+        >
+          {t('auth_loginHere')}
+        </Link>
+      </p>
     </div>
   );
 }

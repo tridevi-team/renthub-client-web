@@ -1,4 +1,11 @@
 import {
+  authForgotPasswordResponseSchema,
+  authResetPasswordResponseSchema,
+  type AuthForgotPasswordRequestSchema,
+  type AuthForgotPasswordResponseSchema,
+  type AuthResetPasswordResponseSchema,
+} from '@modules/auth/schemas/auth.schema';
+import {
   authLoginResponseSchema,
   type AuthLoginRequestSchema,
   type AuthLoginResponseSchema,
@@ -69,5 +76,23 @@ export const authRepositories = {
       .json<AuthResendCodeResponseSchema>();
 
     return authResendCodeResponseSchema.parse(resp);
+  },
+  forgotPassword: async ({
+    json,
+  }: { json: AuthForgotPasswordRequestSchema }) => {
+    const resp = await http.instance
+      .post('auth/forgot-password', { json })
+      .json<AuthForgotPasswordResponseSchema>();
+
+    return authForgotPasswordResponseSchema.parse(resp);
+  },
+  resetPassword: async ({
+    json,
+  }: { json: AuthForgotPasswordRequestSchema }) => {
+    const resp = await http.instance
+      .put('auth/reset-password', { json })
+      .json<AuthResetPasswordResponseSchema>();
+
+    return authResetPasswordResponseSchema.parse(resp);
   },
 } as const;
