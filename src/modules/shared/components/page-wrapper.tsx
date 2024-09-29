@@ -1,3 +1,4 @@
+import AdminPanelLayout from '@shared/components/layout/admin-panel-layout';
 import { RouterProvider as RACRouterProvider } from 'react-aria-components';
 import {
   Outlet,
@@ -5,7 +6,6 @@ import {
   useNavigate,
   type NavigateOptions,
 } from 'react-router-dom';
-import AdminPanelLayout from './layout/admin-panel-layout';
 
 declare module 'react-aria-components' {
   interface RouterConfig {
