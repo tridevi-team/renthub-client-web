@@ -27,6 +27,18 @@ export const dataTableConfig = {
     { label: 'Trong', value: 'in' as const },
     { label: 'Không trong', value: 'nin' as const },
   ],
+  logicalOperators: [
+    {
+      label: 'Và',
+      value: 'and' as const,
+      description: 'Tất cả các điều kiện phải được thỏa mãn',
+    },
+    {
+      label: 'Hoặc',
+      value: 'or' as const,
+      description: 'Một trong các điều kiện phải được thỏa mãn',
+    },
+  ],
   sortDirections: [
     { label: 'Tăng dần', value: 'asc' as const },
     { label: 'Giảm dần', value: 'desc' as const },
