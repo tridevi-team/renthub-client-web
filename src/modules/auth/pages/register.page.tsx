@@ -201,20 +201,16 @@ const RegisterForm = () => {
                 </SelectTrigger>
                 <SelectPopover>
                   <SelectContent>
-                    <For each={GENDER_OPTIONS} fallback={<p>No items found</p>}>
+                    <For
+                      each={GENDER_OPTIONS}
+                      fallback={<p>{t('common_noItem')}</p>}
+                    >
                       {(option) => (
                         <SelectItem key={option.value} id={option.value}>
                           {option.label}
                         </SelectItem>
                       )}
                     </For>
-                    {/* {GENDER_OPTIONS.map((option) => {
-                      return (
-                        <SelectItem key={option.value} id={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      );
-                    })} */}
                   </SelectContent>
                 </SelectPopover>
               </Select>
