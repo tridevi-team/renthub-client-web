@@ -17,36 +17,36 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
   const [t] = useI18n();
 
   const getBreadcrumbs = (path: string) => {
-    const parts = path.split('/').filter(Boolean);
+    const segments = path === '/' ? [''] : path.split('/').filter(Boolean);
     const breadcrumbs = [];
+    let currentConfig = breadcrumbConfig;
     let currentPath = '';
 
-    if (parts.length === 0) {
-      breadcrumbs.push({
-        path: currentPath,
-        label: t(breadcrumbConfig['/'].label),
-        isLast: true,
+    for (const segment of segments) {
+      const matchedSegment = Object.keys(currentConfig).find((key) => {
+        if (key.startsWith('/:')) {
+          return true;
+        }
+        return key === `/${segment}` || key === '';
       });
+
+      if (!matchedSegment) {
+        break;
+      }
+
+      currentPath += matchedSegment.replace(/\/:(\w+)/g, `/${segment}`);
+      const { label, children } = currentConfig[matchedSegment];
+      breadcrumbs.push({
+        path: currentPath || '/',
+        label: t(label),
+        isLast: false,
+      });
+
+      currentConfig = children || {};
     }
 
-    for (let i = 0; i < parts.length; i++) {
-      currentPath += `/${parts[i]}`;
-      let configKey = currentPath;
-
-      // Check if the current part is likely a dynamic segment (e.g., an ID)
-      if (/^\d+$/.test(parts[i])) {
-        configKey = currentPath.replace(/\/\d+/, '/:id');
-      }
-
-      const config = breadcrumbConfig[configKey];
-
-      if (config) {
-        breadcrumbs.push({
-          path: currentPath,
-          label: t(config.label),
-          isLast: i === parts.length - 1,
-        });
-      }
+    if (breadcrumbs.length > 0) {
+      breadcrumbs[breadcrumbs.length - 1].isLast = true;
     }
 
     return breadcrumbs;
