@@ -30,7 +30,7 @@ export const http = new Http({
   hooks: {
     beforeRequest: [
       async (request) => {
-        const token = useAuthUserStore.getState().user?.data.token;
+        const token = useAuthUserStore.getState().user?.token;
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`);
         }
