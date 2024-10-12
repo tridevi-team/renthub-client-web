@@ -67,7 +67,7 @@ export function Menu({ isOpen }: MenuProps) {
                               className={cn(
                                 'w-full justify-start h-10 mb-1',
                                 active
-                                  ? 'bg-black text-white hover:bg-black hover:text-white dark:bg-white dark:text-black dark:hover:bg-white dark:hover:text-black'
+                                  ? 'bg-primary text-white hover:bg-primary hover:text-white'
                                   : '',
                               )}
                               asChild
@@ -104,7 +104,7 @@ export function Menu({ isOpen }: MenuProps) {
                       <CollapseMenuButton
                         icon={Icon}
                         label={label}
-                        active={active}
+                        active={false}
                         submenus={submenus}
                         isOpen={isOpen}
                       />
