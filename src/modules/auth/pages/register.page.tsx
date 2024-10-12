@@ -8,6 +8,7 @@ import {
   authRegisterRequestSchema,
 } from '@modules/auth/schemas/register.schema';
 import { dashboardPath } from '@modules/dashboard/routes';
+import { For } from '@shared/components/for';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
@@ -200,13 +201,20 @@ const RegisterForm = () => {
                 </SelectTrigger>
                 <SelectPopover>
                   <SelectContent>
-                    {GENDER_OPTIONS.map((option) => {
+                    <For each={GENDER_OPTIONS} fallback={<p>No items found</p>}>
+                      {(option) => (
+                        <SelectItem key={option.value} id={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      )}
+                    </For>
+                    {/* {GENDER_OPTIONS.map((option) => {
                       return (
                         <SelectItem key={option.value} id={option.value}>
                           {option.label}
                         </SelectItem>
                       );
-                    })}
+                    })} */}
                   </SelectContent>
                 </SelectPopover>
               </Select>
