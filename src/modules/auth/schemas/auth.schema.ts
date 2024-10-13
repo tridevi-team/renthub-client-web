@@ -10,13 +10,20 @@ export const appUserStoreSchema = z
     status: z.number(),
     verify: z.number(),
     token: z.string(),
-    houses: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        address: z.string(),
-      }),
-    ),
+    houses: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          address: z.object({
+            city: z.string(),
+            district: z.string(),
+            ward: z.string(),
+            street: z.string(),
+          }),
+        }),
+      )
+      .nullable(),
   })
   .nullable();
 
