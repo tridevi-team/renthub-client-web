@@ -8,14 +8,10 @@ export const dataTableConfig = {
     { label: 'Không là', value: 'ne' as const },
     { label: 'Bắt đầu với', value: 'sw' as const },
     { label: 'Kết thúc với', value: 'ew' as const },
-    { label: 'Trống', value: 'isnull' as const },
-    { label: 'Không trống', value: 'isnotnull' as const },
   ],
   selectableOperators: [
     { label: 'Là', value: 'in' as const },
     { label: 'Không là', value: 'nin' as const },
-    { label: 'Trống', value: 'isNull' as const },
-    { label: 'Không trống', value: 'isNotNull' as const },
   ],
   numberOperators: [
     { label: 'Bằng', value: 'eq' as const },
@@ -24,8 +20,6 @@ export const dataTableConfig = {
     { label: 'Lớn hơn hoặc bằng', value: 'gte' as const },
     { label: 'Nhỏ hơn', value: 'lt' as const },
     { label: 'Nhỏ hơn hoặc bằng', value: 'lte' as const },
-    { label: 'Trong', value: 'in' as const },
-    { label: 'Không trong', value: 'nin' as const },
   ],
   logicalOperators: [
     {
