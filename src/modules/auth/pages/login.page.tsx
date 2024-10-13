@@ -37,10 +37,9 @@ export const action: ActionFunction = async ({ request }) => {
       const loginResponse = await authRepositories.login({ json: parsed.data });
 
       const user = loginResponse.data;
-      console.log('user:', user);
 
       unstable_batchedUpdates(() => {
-        useAuthUserStore.getState().setUser(loginResponse.data);
+        useAuthUserStore.getState().setUser(user);
       });
 
       return redirect(dashboardPath.root);
