@@ -9,19 +9,20 @@ export interface Option {
   withCount?: boolean;
 }
 
-export interface DataTableFilterField<TData> {
-  label: string;
-  value: keyof TData;
-  placeholder?: string;
-  options?: Option[];
+export interface FilterOption {
+  field: string;
+  operator?: string;
+  value: string | number | string[] | number[];
 }
 
-export interface DataTableFilterOption<TData> {
-  id: string;
-  label: string;
-  value: keyof TData;
-  options: Option[];
-  filterValues?: string[];
-  filterOperator?: string;
-  isMulti?: boolean;
+export interface SortOption {
+  field: string;
+  direction: 'asc' | 'desc';
+}
+
+export interface QueryOptions {
+  filters?: FilterOption[];
+  sorting?: SortOption[];
+  pageSize?: number;
+  page?: number;
 }

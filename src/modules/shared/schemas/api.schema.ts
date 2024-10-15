@@ -48,15 +48,6 @@ export const resourceListRequestSchema = z.object({
   pageSize: z.number().int().positive().optional(),
   sort: z.array(sortSchema).optional(),
   filters: z.array(filterSchema).optional(),
-  search: z.string().optional(),
-  logicalOperator: z
-    .enum(
-      dataTableConfig.logicalOperators.map((op) => op.value) as [
-        string,
-        ...string[],
-      ],
-    )
-    .optional(),
 });
 // #endregion COMMON SCHEMAS
 

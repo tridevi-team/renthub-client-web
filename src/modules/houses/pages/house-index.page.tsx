@@ -1,8 +1,15 @@
 import { authPath } from '@auth/routes';
+import { houseRepositories } from '@modules/houses/apis/house.api';
+import { HouseTable } from '@modules/houses/components/house-table';
+import type { HouseSchema } from '@modules/houses/schema/house.schema';
+import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { Checkbox } from '@shared/components/ui/checkbox';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
+import type { ColumnDef } from '@tanstack/react-table';
+import React, { useEffect } from 'react';
 import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -19,11 +26,74 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
+  const [houseData, setHouseData] = React.useState<HouseSchema[]>([]);
   const pathname = useLocation().pathname;
+
+  useEffect(() => {
+    const promise = async () => {
+      const housePromise = await houseRepositories.index({ searchParams: {} });
+      setHouseData(housePromise.data);
+    };
+
+    promise();
+  }, []);
+
+  const columns: ColumnDef<HouseSchema>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'name',
+      header: 'Tên nhà trọ',
+    },
+    {
+      accessorKey: 'address',
+      header: 'Địa chỉ',
+      cell: ({ row }) => {
+        const { city, ward, street, district } = row.original.address;
+        return `${street}, ${ward}, ${district}, ${city}`;
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }) => {
+        return row.original.status === 0 ? 'active' : 'inactive';
+      },
+    },
+  ];
+
+  if (!houseData.length) {
+    return (
+      <DataTableSkeleton
+        columnCount={5}
+        searchableColumnCount={1}
+        filterableColumnCount={2}
+        cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+        shrinkZero
+      />
+    );
+  }
 
   return (
     <ContentLayout title={t('house_index_title')} pathname={pathname}>
-      Nội dung trang web
+      <HouseTable columns={columns} data={houseData} />
     </ContentLayout>
   );
 }
