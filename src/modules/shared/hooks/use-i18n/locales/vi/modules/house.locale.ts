@@ -6,6 +6,9 @@ export const houseLocale = {
   // #endregion TITLE + META
 
   // #region FORM + TABLE
+  house_name: 'Tên nhà trọ',
+  house_address: 'Địa chỉ',
+  house_created_at: 'Ngày tạo',
   // #endregion FORM + TABLE
 
   // #region BUTTON
