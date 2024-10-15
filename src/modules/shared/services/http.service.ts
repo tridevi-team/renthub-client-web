@@ -1,6 +1,7 @@
+import type { QueryOptions } from '@app/types';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { env } from '@shared/constants/env.constant';
-import ky, { type Options } from 'ky';
+import ky, { type Options, type SearchParamsOption } from 'ky';
 
 class Http {
   instance: typeof ky;
@@ -22,6 +23,34 @@ class Http {
   resetConfig(newConfig: Options): void {
     this.instance = ky.create(newConfig);
   }
+
+  /**
+   * Make Query Search
+   */
+
+  _makeQuery(options: QueryOptions): SearchParamsOption {
+    const { filters = [], sorting = [], pageSize, page } = options;
+    const searchParams: [string, string | number | boolean][] = [];
+
+    // Handle filters
+    for (const filter of filters) {
+      searchParams.push(['filters[]', JSON.stringify(filter)]);
+    }
+
+    for (const sort of sorting) {
+      searchParams.push(['sorting[]', JSON.stringify(sort)]);
+    }
+
+    // Handle pagination
+    if (pageSize !== undefined) {
+      searchParams.push(['pageSize', pageSize.toString()]);
+    }
+    if (page !== undefined) {
+      searchParams.push(['page', page.toString()]);
+    }
+
+    return searchParams;
+  }
 }
 
 // Set config defaults when creating the instance
@@ -36,12 +65,12 @@ export const http = new Http({
         }
       },
     ],
-    afterResponse: [
-      async (_request, _options, response) => {
-        if (response.status === 401) {
-          useAuthUserStore.getState().clearUser();
-        }
-      },
-    ],
+    // afterResponse: [
+    //   async (_request, _options, response) => {
+    //     if (response.status === 401) {
+    //       useAuthUserStore.getState().clearUser();
+    //     }
+    //   },
+    // ],
   },
 });
