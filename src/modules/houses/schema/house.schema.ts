@@ -25,10 +25,15 @@ export const houseIndexResponseSchema = z.object({
   success: z.boolean(),
   code: z.string(),
   message: z.string(),
-  total: z.number().optional(),
-  page: z.number().optional(),
-  pageSize: z.number().optional(),
-  data: z.array(house),
+  data: z
+    .object({
+      page: z.number(),
+      pageSize: z.number(),
+      pageCount: z.number(),
+      total: z.number(),
+      results: z.array(house),
+    })
+    .nullable(),
 });
 
 export type HouseSchema = z.infer<typeof house>;

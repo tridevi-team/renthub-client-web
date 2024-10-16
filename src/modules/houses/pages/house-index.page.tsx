@@ -8,9 +8,14 @@ import { Checkbox } from '@shared/components/ui/checkbox';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
+import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import React, { useEffect } from 'react';
-import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
+import {
+  redirect,
+  useLocation,
+  useSearchParams,
+  type LoaderFunction,
+} from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const loader: LoaderFunction = () => {
@@ -26,17 +31,16 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const [houseData, setHouseData] = React.useState<HouseSchema[]>([]);
   const pathname = useLocation().pathname;
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const promise = async () => {
-      const housePromise = await houseRepositories.index({ searchParams: {} });
-      setHouseData(housePromise.data);
-    };
-
-    promise();
-  }, []);
+  const { data: houseData, isLoading } = useQuery<HouseSchema[]>({
+    queryKey: ['houses-index'],
+    queryFn: async () => {
+      const response = await houseRepositories.index({ searchParams: {} });
+      return response.data?.results || [];
+    },
+  });
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -79,21 +83,19 @@ export function Element() {
     },
   ];
 
-  if (!houseData.length) {
-    return (
-      <DataTableSkeleton
-        columnCount={5}
-        searchableColumnCount={1}
-        filterableColumnCount={2}
-        cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
-        shrinkZero
-      />
-    );
-  }
-
   return (
     <ContentLayout title={t('house_index_title')} pathname={pathname}>
-      <HouseTable columns={columns} data={houseData} />
+      {isLoading ? (
+        <DataTableSkeleton
+          columnCount={5}
+          searchableColumnCount={1}
+          filterableColumnCount={2}
+          cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+          shrinkZero
+        />
+      ) : (
+        <HouseTable columns={columns} data={houseData || []} />
+      )}
     </ContentLayout>
   );
 }
