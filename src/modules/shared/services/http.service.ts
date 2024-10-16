@@ -1,3 +1,4 @@
+import { navigate } from '@app/providers/router/navigation';
 import type { QueryOptions } from '@app/types';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { env } from '@shared/constants/env.constant';
@@ -65,12 +66,13 @@ export const http = new Http({
         }
       },
     ],
-    // afterResponse: [
-    //   async (_request, _options, response) => {
-    //     if (response.status === 401) {
-    //       useAuthUserStore.getState().clearUser();
-    //     }
-    //   },
-    // ],
+    afterResponse: [
+      async (_request, _options, response) => {
+        if (response.status === 401) {
+          useAuthUserStore.getState().clearUser();
+          navigate('/login');
+        }
+      },
+    ],
   },
 });
