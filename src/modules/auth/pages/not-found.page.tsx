@@ -1,15 +1,15 @@
 import notFound from '@assets/images/NotFound.png';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
-import { authPath } from '@modules/auth/routes';
-import { dashboardPath } from '@modules/dashboard/routes';
 import { Button } from '@shared/components/ui/button';
 import { useColorMode } from '@shared/hooks/use-color-mode.hook';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Link } from 'react-aria-components';
+import { useNavigate } from 'react-router-dom';
 
 export function Element() {
   const userStore = useAuthUserStore();
   const [t] = useI18n();
+  const navigate = useNavigate();
   useColorMode({});
 
   return (
@@ -22,9 +22,9 @@ export function Element() {
         aria-label="404 not found"
       />
       <Button variant="outline" className="justify-center h-10 mt-5">
-        <Link href={userStore.user ? dashboardPath.root : authPath.login}>
+        <Link onPress={() => navigate(-1)}>
           {t('common_backTo', {
-            target: userStore.user ? t('dashboard_title') : t('auth_login'),
+            target: userStore.user ? t('common_previousPage') : t('auth_login'),
           })}
         </Link>
       </Button>
