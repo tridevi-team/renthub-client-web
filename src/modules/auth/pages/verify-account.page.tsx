@@ -78,10 +78,10 @@ export function Element() {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold text-center mb-4">
+      <h2 className="mb-4 text-center font-bold text-3xl">
         {t('auth_verifyEmail_title')}
       </h2>
-      <p className="text-center text-base text-secondary-foreground px-5">
+      <p className="px-5 text-center text-base text-secondary-foreground">
         {t('auth_codeSend_1')}
         <b>{useEmailStore.getState().data?.email}</b>
         {t('auth_codeSend_2')}
@@ -94,7 +94,7 @@ export function Element() {
       <p className="py-4 text-center">
         <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
         <Link
-          className="hover:underline text-base"
+          className="text-base hover:underline"
           variant="link"
           href={authPath.login}
         >
@@ -158,7 +158,7 @@ const VerifyEmailForm = () => {
         <div
           role="alert"
           aria-label="Fetcher error alert"
-          className="mt-2 bg-destructive text-destructive-foreground p-2 rounded-md flex items-center gap-x-2 shadow-md w-full"
+          className="mt-2 flex w-full items-center gap-x-2 rounded-md bg-destructive p-2 text-destructive-foreground shadow-md"
         >
           <Icon icon="lucide:alert-circle" />
           <p>{t(`${(fetcher.data as ErrorResponseSchema).code}`)}</p>

@@ -76,7 +76,7 @@ export function DataTableAdvancedToolbar<TData>({
       )}
       {...props}
     >
-      <div className="flex flex-1 justify-between items-center space-x-2">
+      <div className="flex flex-1 items-center justify-between space-x-2">
         {children}
         <div className="ml-auto flex items-center gap-2">
           {(options.length > 0 && selectedOptions.length > 0) ||

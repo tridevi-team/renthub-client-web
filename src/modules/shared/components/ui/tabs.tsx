@@ -34,7 +34,7 @@ const Tab = React.forwardRef<
     ref={ref}
     className={(values) =>
       twMerge(
-        'inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus:outline-none data-[disabled]:pointer-events-none data-[selected]:bg-background data-[selected]:text-foreground data-[disabled]:opacity-50 data-[selected]:shadow-sm data-[focus-visible]:outline-none data-[focused]:outline-none data-[focus-visible]:ring-1 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-0',
+        'inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium text-sm ring-offset-background transition-all focus:outline-none data-[disabled]:pointer-events-none data-[selected]:bg-background data-[selected]:text-foreground data-[disabled]:opacity-50 data-[selected]:shadow-sm data-[focus-visible]:outline-none data-[focused]:outline-none data-[focus-visible]:ring-1 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-0',
         typeof className === 'function' ? className(values) : className,
       )
     }

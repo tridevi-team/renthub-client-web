@@ -48,7 +48,7 @@ export const ResendCodeButton = () => {
   };
 
   return (
-    <div className="text-center mt-4">
+    <div className="mt-4 text-center">
       <Button
         type="button"
         onClick={handleResendCode}

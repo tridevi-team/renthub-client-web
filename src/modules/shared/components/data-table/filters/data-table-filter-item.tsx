@@ -143,9 +143,9 @@ export function DataTableFilterItem<TData>({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-60 space-y-1.5 p-2" align="start">
-        <div className="flex items-center space-x-1 pl-1 pr-0.5">
+        <div className="flex items-center space-x-1 pr-0.5 pl-1">
           <div className="flex flex-1 items-center space-x-1">
-            <div className="text-xs capitalize text-muted-foreground">
+            <div className="text-muted-foreground text-xs capitalize">
               {selectedOption.label}
             </div>
             <Select

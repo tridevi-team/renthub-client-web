@@ -16,7 +16,7 @@ export function ContentLayout({
   return (
     <div>
       <Navbar title={title} />
-      <div className="pt-8 pb-8 px-4 sm:px-8 2xl:px-10">
+      <div className="px-4 py-4 sm:px-8 2xl:px-10">
         <div className="flex justify-end">
           <Breadcrumbs pathname={pathname} />
         </div>

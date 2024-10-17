@@ -30,10 +30,10 @@ export function SheetMenu() {
           <MenuIcon size={20} />
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
+      <SheetContent className="flex h-full flex-col px-3 sm:w-72" side="left">
         <SheetHeader>
           <Button
-            className="flex justify-center items-center pb-2 pt-1"
+            className="flex items-center justify-center pt-1 pb-2"
             variant="link"
             asChild
           >
@@ -41,7 +41,7 @@ export function SheetMenu() {
               href={dashboardPath.index}
               className="flex items-center gap-2"
             >
-              <House className="w-6 h-6 mr-1" />
+              <House className="mr-1 h-6 w-6" />
               <h1 className="font-bold text-lg">{BRAND_NAME}</h1>
             </Link>
           </Button>
@@ -53,7 +53,7 @@ export function SheetMenu() {
               <Button
                 onClick={() => {}}
                 variant="outline"
-                className="w-full justify-center h-10 mt-5"
+                className="mt-5 h-10 w-full justify-center"
               >
                 <span className={cn(!isOpen ? '' : 'mr-4')}>
                   <LogOut size={18} />
@@ -61,7 +61,7 @@ export function SheetMenu() {
                 <p
                   className={cn(
                     'whitespace-nowrap',
-                    !isOpen ? 'opacity-0 hidden' : 'opacity-100',
+                    !isOpen ? 'hidden opacity-0' : 'opacity-100',
                   )}
                 >
                   {t('menu_signOut')}

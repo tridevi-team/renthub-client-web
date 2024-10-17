@@ -25,27 +25,27 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300',
+        '-translate-x-full fixed top-0 left-0 z-20 h-screen transition-[width] duration-300 ease-in-out lg:translate-x-0',
         sidebar?.isOpen === false ? 'w-[90px]' : 'w-72',
       )}
     >
       <SidebarToggle isOpen={sidebar?.isOpen} setIsOpen={sidebar?.setIsOpen} />
-      <div className="relative h-full flex flex-col px-3 py-4 overflow-y-auto shadow-md dark:shadow-zinc-800">
+      <div className="relative flex h-full flex-col overflow-y-auto px-3 py-4 shadow-md dark:shadow-zinc-800">
         <Button
           className={cn(
-            'transition-transform ease-in-out duration-300 mb-1',
+            'mb-1 transition-transform duration-300 ease-in-out',
             sidebar?.isOpen === false ? 'translate-x-1' : 'translate-x-0',
           )}
           variant="link"
           asChild
         >
           <Link href={dashboardPath.index} className="flex items-center gap-2">
-            <House className="w-6 h-6 mr-1" />
+            <House className="mr-1 h-6 w-6" />
             <h1
               className={cn(
-                'font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300',
+                'whitespace-nowrap font-bold text-lg transition-[transform,opacity,display] duration-300 ease-in-out',
                 sidebar?.isOpen === false
-                  ? '-translate-x-96 opacity-0 hidden'
+                  ? '-translate-x-96 hidden opacity-0'
                   : 'translate-x-0 opacity-100',
               )}
             >
@@ -60,7 +60,7 @@ export function Sidebar() {
               <Button
                 onClick={() => {}}
                 variant="outline"
-                className="w-full justify-center h-10 mt-5"
+                className="mt-5 h-10 w-full justify-center"
               >
                 <span className={cn(sidebar?.isOpen === false ? '' : 'mr-4')}>
                   <LogOut size={18} />
@@ -69,7 +69,7 @@ export function Sidebar() {
                   className={cn(
                     'whitespace-nowrap',
                     sidebar?.isOpen === false
-                      ? 'opacity-0 hidden'
+                      ? 'hidden opacity-0'
                       : 'opacity-100',
                   )}
                 >

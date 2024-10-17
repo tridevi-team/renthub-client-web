@@ -69,10 +69,10 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
+            <p className="font-medium text-sm leading-none">
               {user?.fullName || ''}
             </p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-muted-foreground text-xs leading-none">
               {user?.email || ''}
             </p>
           </div>
@@ -81,13 +81,13 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
             <Link href="/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
+              <User className="mr-3 h-4 w-4 text-muted-foreground" />
               {t('menu_account')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
             <Link className="flex items-center" onPress={() => {}}>
-              <Lock className="w-4 h-4 mr-3 text-muted-foreground" />
+              <Lock className="mr-3 h-4 w-4 text-muted-foreground" />
               {t('menu_changePassword')}
             </Link>
           </DropdownMenuItem>
@@ -100,7 +100,7 @@ export function UserNav() {
             navigate(authPath.login); // back to login
           }}
         >
-          <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
+          <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
           {t('menu_signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>

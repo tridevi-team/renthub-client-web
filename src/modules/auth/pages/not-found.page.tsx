@@ -13,7 +13,7 @@ export function Element() {
   useColorMode({});
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center opacity-80 bg-[radial-gradient(hsl(var(--primary))_0.5px_,transparent_0.5px),radial-gradient(hsl(var(--primary))_0.5px_,hsl(var(--background))_0.5px)] bg-[0_0_,10px_10px] bg-[length:20px_20px]">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[0_0_,10px_10px] bg-[length:20px_20px] bg-[radial-gradient(hsl(var(--primary))_0.5px_,transparent_0.5px),radial-gradient(hsl(var(--primary))_0.5px_,hsl(var(--background))_0.5px)] opacity-80">
       <img
         src={notFound}
         alt="404 not found"
@@ -21,7 +21,7 @@ export function Element() {
         className="w-96"
         aria-label="404 not found"
       />
-      <Button variant="outline" className="justify-center h-10 mt-5">
+      <Button variant="outline" className="mt-5 h-10 justify-center">
         <Link onPress={() => navigate(-1)}>
           {t('common_backTo', {
             target: userStore.user ? t('common_previousPage') : t('auth_login'),
