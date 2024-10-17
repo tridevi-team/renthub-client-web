@@ -25,4 +25,10 @@ export const commonLocale = {
   common_appReady: 'Hệ thống đã sẵn sàng để sử dụng offline.',
   common_newContentAvailable: 'Có nội dung mới cần cập nhật.',
   common_reload: 'Tải lại',
+
+  common_previousPage: 'trang trước',
+
+  common_confirmDelete: 'Xóa bản ghi',
+  common_confirmDeleteMessage:
+    'Bạn có chắc chắn muốn xóa những bản ghi đã chọn này không? Hành động này không thể hoàn tác.',
 } as const;

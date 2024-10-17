@@ -215,13 +215,13 @@ export const processSearchParams = (
 } => {
   const filters = params.getAll('filter').map((filter) => {
     const [field, operator, value] = filter.split(':');
-    return { field: `${fieldPrefix}${field}`, operator, value };
+    return { field: `${fieldPrefix}.${field}`, operator, value };
   });
 
   const sort = params.get('sort')?.split('.') || [];
   const sorting = sort[0]
-    ? [{ field: `${fieldPrefix}${sort[0]}`, direction: sort[1] }]
-    : [{ field: `${fieldPrefix}id`, direction: 'desc' }];
+    ? [{ field: `${fieldPrefix}.${sort[0]}`, direction: sort[1] }]
+    : [{ field: `${fieldPrefix}.id`, direction: 'desc' }];
 
   const page = Number.parseInt(params.get('page') || '1', 10);
   const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
