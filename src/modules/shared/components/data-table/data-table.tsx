@@ -1,13 +1,8 @@
-import {
-  flexRender,
-  type ColumnDef,
-  type Table as TanstackTable,
-} from '@tanstack/react-table';
-
 import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
 import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
+import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import {
   Table,
@@ -18,6 +13,12 @@ import {
   TableRow,
 } from '@shared/components/ui/table';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useMediaQuery } from '@shared/hooks/use-media-query.hook';
+import {
+  flexRender,
+  type ColumnDef,
+  type Table as TanstackTable,
+} from '@tanstack/react-table';
 
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
@@ -53,6 +54,14 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const rowsPerPage = table.getState().pagination.pageSize;
   const [t] = useI18n();
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
+  const isMediumScreen = useMediaQuery('(min-width: 768px)');
+
+  const getScrollAreaHeight = () => {
+    if (isLargeScreen) return 'h-[450px]';
+    if (isMediumScreen) return 'h-[400px]';
+    return 'h-[300px]';
+  };
 
   return (
     <div className="space-y-4">
@@ -63,7 +72,9 @@ export function DataTable<TData, TValue>({
           additionalButtons={additionalActionButtons}
         />
       </DataTableAdvancedToolbar>
-      <div className="rounded-md border">
+      <ScrollArea
+        className={`relative ${getScrollAreaHeight()} w-full rounded-md border`}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -115,7 +126,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
+      </ScrollArea>
       <DataTablePagination table={table} />
     </div>
   );
