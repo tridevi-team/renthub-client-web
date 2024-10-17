@@ -1,5 +1,5 @@
 import type { DataTableFilterField, DataTableFilterOption } from '@app/types';
-import { CaretSortIcon, PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon } from '@radix-ui/react-icons';
 import type { Table } from '@tanstack/react-table';
 import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { DataTableViewOptions } from '@shared/components/data-table/data-table-v
 import { DataTableFilterCombobox } from '@shared/components/data-table/filters/data-table-filter-combobox';
 import { Button } from '@shared/components/ui/button';
 
+import { Filter } from 'lucide-react';
 import { DataTableFilterItem } from './data-table-filter-item';
 import { DataTableMultiFilter } from './data-table-multi-filter';
 
@@ -82,10 +83,7 @@ export function DataTableAdvancedToolbar<TData>({
             size="sm"
             onClick={() => setOpenFilterBuilder(!openFilterBuilder)}
           >
-            <CaretSortIcon
-              className="mr-2 size-4 shrink-0"
-              aria-hidden="true"
-            />
+            <Filter className="mr-2 h-4 w-4" />
             Filter
           </Button>
         ) : (

@@ -1,10 +1,5 @@
 import type { DataTableFilterOption } from '@app/types';
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  PlusIcon,
-  TextIcon,
-} from '@radix-ui/react-icons';
+import { ChevronDownIcon, PlusIcon, TextIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
 
 import { Button } from '@shared/components/ui/button';
@@ -22,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@shared/components/ui/popover';
+import { Filter } from 'lucide-react';
 
 interface DataTableFilterComboboxProps<TData> {
   options: DataTableFilterOption<TData>[];
@@ -54,12 +50,9 @@ export function DataTableFilterCombobox<TData>({
             variant="outline"
             size="sm"
             role="combobox"
-            className="capitalize"
+            className="ml-auto hidden h-8 lg:flex"
           >
-            <CaretSortIcon
-              className="mr-2 size-4 shrink-0"
-              aria-hidden="true"
-            />
+            <Filter className="mr-2 h-4 w-4" />
             Filter
           </Button>
         )}
