@@ -21,4 +21,8 @@ export const commonLocale = {
   common_goToPreviousPage: 'Trang trước',
   common_goToNextPage: 'Trang sau',
   common_goToLastPage: 'Tới trang cuối',
+
+  common_appReady: 'Hệ thống đã sẵn sàng để sử dụng offline.',
+  common_newContentAvailable: 'Có nội dung mới cần cập nhật.',
+  common_reload: 'Tải lại',
 } as const;
