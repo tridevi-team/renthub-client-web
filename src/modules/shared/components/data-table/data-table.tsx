@@ -6,6 +6,7 @@ import {
 
 import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
+import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import {
@@ -22,6 +23,12 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   filterOptions?: DataTableFilterField<TData>[];
   loading?: boolean;
+  actions?: {
+    onDelete?: (selectedItems: TData[]) => Promise<void>;
+    onCreate?: () => void;
+    onDownload?: () => void;
+  };
+  additionalActionButtons?: React.ReactNode;
 }
 
 const TableRowSkeleton = ({ columns }: { columns: number }) => (
@@ -40,12 +47,20 @@ export function DataTable<TData, TValue>({
   columns,
   filterOptions = [],
   loading = false,
+  actions,
+  additionalActionButtons,
 }: DataTableProps<TData, TValue>) {
   const rowsPerPage = table.getState().pagination.pageSize;
 
   return (
     <div className="space-y-4">
-      <DataTableAdvancedToolbar table={table} filterFields={filterOptions} />
+      <DataTableAdvancedToolbar table={table} filterFields={filterOptions}>
+        <TableToolbarActions
+          table={table}
+          actions={actions}
+          additionalButtons={additionalActionButtons}
+        />
+      </DataTableAdvancedToolbar>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

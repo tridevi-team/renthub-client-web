@@ -69,37 +69,39 @@ export function DataTableAdvancedToolbar<TData>({
   return (
     <div
       className={cn(
-        'flex w-full flex-col space-y-2.5 overflow-auto p-1',
+        'flex w-full flex-col space-y-2.5 overflow-auto py-1',
         className,
       )}
       {...props}
     >
-      <div className="ml-auto flex items-center gap-2">
+      <div className="flex flex-1 justify-between items-center space-x-2">
         {children}
-        {(options.length > 0 && selectedOptions.length > 0) ||
-        openFilterBuilder ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setOpenFilterBuilder(!openFilterBuilder)}
-          >
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-        ) : (
-          <DataTableFilterCombobox
-            options={options.filter(
-              (option) =>
-                !selectedOptions.some(
-                  (selectedOption) => selectedOption.value === option.value,
-                ),
-            )}
-            selectedOptions={selectedOptions}
-            setSelectedOptions={setSelectedOptions}
-            onSelect={onFilterComboboxItemSelect}
-          />
-        )}
-        <DataTableViewOptions table={table} />
+        <div className="ml-auto flex items-center gap-2">
+          {(options.length > 0 && selectedOptions.length > 0) ||
+          openFilterBuilder ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOpenFilterBuilder(!openFilterBuilder)}
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filter
+            </Button>
+          ) : (
+            <DataTableFilterCombobox
+              options={options.filter(
+                (option) =>
+                  !selectedOptions.some(
+                    (selectedOption) => selectedOption.value === option.value,
+                  ),
+              )}
+              selectedOptions={selectedOptions}
+              setSelectedOptions={setSelectedOptions}
+              onSelect={onFilterComboboxItemSelect}
+            />
+          )}
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
       <div
         className={cn(
