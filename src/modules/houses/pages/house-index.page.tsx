@@ -1,6 +1,8 @@
+import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
+import { housePath } from '@modules/houses/routes';
 import type {
   HouseDataSchema,
   HouseSchema,
@@ -15,12 +17,13 @@ import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
   useLocation,
+  useNavigate,
   useSearchParams,
   type LoaderFunction,
 } from 'react-router-dom';
@@ -40,6 +43,7 @@ export const loader: LoaderFunction = () => {
 export function Element() {
   const [t] = useI18n();
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location.pathname;
   const [searchParams, _] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -54,11 +58,38 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params);
+    const searchParams = processSearchParams(params, 'houses');
 
     const response = await houseRepositories.index({ searchParams });
     return response.data || null;
   }, []);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      console.log('ids:', ids);
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 5 seconds
+    },
+    onSuccess: () => {
+      toast.success(t('ms_deleteHouseSuccess'));
+      table.toggleAllRowsSelected(false);
+      queryClient.invalidateQueries({ queryKey: ['houses-index'] });
+    },
+    onError: () => {
+      toast.error(t('ms_error'));
+    },
+  });
+
+  const onDelete = useCallback(
+    async (selectedItems: HouseSchema[]) => {
+      const ids = selectedItems.map((item) => item.id);
+      await deleteMutation.mutateAsync(ids);
+    },
+    [deleteMutation],
+  );
+
+  const onCreate = useCallback(() => {
+    navigate(housePath.create);
+  }, [navigate]);
 
   const {
     data: houseData,
@@ -149,7 +180,6 @@ export function Element() {
     pageCount: houseData?.pageCount || 0,
     filterFields,
     initialState: {
-      sorting: [{ id: 'id', desc: true }],
       // columnPinning: { right: ['actions'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
@@ -167,6 +197,10 @@ export function Element() {
         />
       ) : (
         <DataTable
+          actions={{
+            onDelete,
+            onCreate,
+          }}
           table={table}
           columns={columns}
           filterOptions={filterFields}
