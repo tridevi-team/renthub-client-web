@@ -25,7 +25,7 @@ export function checkUserHasHouse() {
 
   if (!parsed.success) return false;
   if (!parsed.data.state.user) return false;
-  if (!parsed.data.state.user.houses.length) return false;
+  if (!parsed.data.state.user.houses?.length) return false;
 
   return true;
 }
