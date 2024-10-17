@@ -33,6 +33,7 @@ import {
 } from '@shared/components/ui/popover';
 import { Separator } from '@shared/components/ui/separator';
 import { useDebounce } from '@shared/hooks/use-debounce';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 interface DataTableMultiFilterProps<TData> {
   table: Table<TData>;
@@ -51,6 +52,7 @@ export function DataTableMultiFilter<TData>({
   setSelectedOptions,
   defaultOpen,
 }: DataTableMultiFilterProps<TData>) {
+  const [t] = useI18n();
   const [open, setOpen] = React.useState(defaultOpen);
 
   return (
@@ -92,7 +94,7 @@ export function DataTableMultiFilter<TData>({
               );
             }}
           >
-            Delete filter
+            {t('common_clearFilter')}
           </Button>
         </div>
       </PopoverContent>
@@ -119,7 +121,8 @@ export function MultiFilterRow<TData>({
   options,
   setSelectedOptions,
 }: MultiFilterRowProps<TData>) {
-  const searchParams = useSearchParams();
+  const [t] = useI18n();
+  const [searchParams, _] = useSearchParams();
   const [value, setValue] = React.useState('');
   const debounceValue = useDebounce(value, 500);
 
@@ -187,7 +190,6 @@ export function MultiFilterRow<TData>({
 
   return (
     <div className="flex items-center space-x-2">
-      {i === 0 ? <div>Where</div> : <div>Và</div>}
       <Select
         value={String(selectedOption?.value)}
         onValueChange={(value) => {
@@ -254,7 +256,7 @@ export function MultiFilterRow<TData>({
         )
       ) : (
         <Input
-          placeholder="Type here..."
+          placeholder={t('common_typeHere')}
           className="h-8"
           value={value}
           onChange={(event) => setValue(event.target.value)}
@@ -276,7 +278,7 @@ export function MultiFilterRow<TData>({
             }}
           >
             <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-            Remove
+            {t('bt_delete')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -295,7 +297,7 @@ export function MultiFilterRow<TData>({
             }}
           >
             <CopyIcon className="mr-2 size-4" aria-hidden="true" />
-            Duplicate
+            {t('bt_duplicate')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -16,6 +16,7 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from '@shared/components/ui/drawer';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useMediaQuery } from '@shared/hooks/use-media-query';
 import { Trash } from 'lucide-react';
 
@@ -37,16 +38,20 @@ export function ConfirmationDialog({
   description,
   onConfirm,
   showTrigger = true,
-  triggerText = 'Delete',
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  triggerText,
+  confirmText,
+  cancelText,
   icon = <Trash className="mr-2 size-4" aria-hidden="true" />,
   length,
   ...props
 }: ConfirmationDialogProps) {
+  const [t] = useI18n();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showDeleteTaskDialog, setShowDeleteTaskDialog] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 640px)');
+  const defaultDeleteText = t('bt_delete');
+  const defaultConfirmText = t('bt_confirm');
+  const defaultCancelText = t('bt_cancel');
 
   const handleConfirm = async () => {
     setIsLoading(true);
@@ -67,7 +72,7 @@ export function ConfirmationDialog({
       onClick={() => setShowDeleteTaskDialog(true)}
     >
       {icon}
-      {triggerText} {length !== undefined && `(${length})`}
+      {triggerText || defaultDeleteText} {length !== undefined && `(${length})`}
     </Button>
   );
 
@@ -79,7 +84,7 @@ export function ConfirmationDialog({
       </DialogHeader>
       <DialogFooter className="gap-2 sm:space-x-0">
         <DialogClose asChild>
-          <Button variant="outline">{cancelText}</Button>
+          <Button variant="outline">{cancelText || defaultCancelText}</Button>
         </DialogClose>
         <Button
           variant="destructive"
@@ -87,7 +92,7 @@ export function ConfirmationDialog({
           disabled={isLoading}
           loading={isLoading}
         >
-          {confirmText}
+          {confirmText || defaultConfirmText}
         </Button>
       </DialogFooter>
     </>

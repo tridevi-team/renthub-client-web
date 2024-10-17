@@ -9,6 +9,7 @@ import { DataTableViewOptions } from '@shared/components/data-table/data-table-v
 import { DataTableFilterCombobox } from '@shared/components/data-table/filters/data-table-filter-combobox';
 import { Button } from '@shared/components/ui/button';
 
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Filter } from 'lucide-react';
 import { DataTableFilterItem } from './data-table-filter-item';
 import { DataTableMultiFilter } from './data-table-multi-filter';
@@ -27,6 +28,7 @@ export function DataTableAdvancedToolbar<TData>({
   ...props
 }: DataTableAdvancedToolbarProps<TData>) {
   const [searchParams, _] = useSearchParams();
+  const [t] = useI18n();
 
   const options = React.useMemo<DataTableFilterOption<TData>[]>(() => {
     return filterFields.map((field) => {
@@ -85,7 +87,7 @@ export function DataTableAdvancedToolbar<TData>({
               onClick={() => setOpenFilterBuilder(!openFilterBuilder)}
             >
               <Filter className="mr-2 h-4 w-4" />
-              Filter
+              {t('bt_filter')}
             </Button>
           ) : (
             <DataTableFilterCombobox
@@ -145,7 +147,7 @@ export function DataTableAdvancedToolbar<TData>({
               onClick={() => setOpenCombobox(true)}
             >
               <PlusIcon className="mr-2 size-4 opacity-50" aria-hidden="true" />
-              Add filter
+              {t('common_addFilter')}
             </Button>
           </DataTableFilterCombobox>
         ) : null}

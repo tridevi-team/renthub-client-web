@@ -33,7 +33,7 @@ export function TableToolbarActions<T>({
       {onCreate && (
         <Button variant="outline" size="sm" onClick={onCreate}>
           <PlusCircle className="mr-2 size-4" aria-hidden="true" />
-          Create
+          {t('bt_create')}
         </Button>
       )}
       {onDelete && selectedItems.length > 0 && (
@@ -47,7 +47,7 @@ export function TableToolbarActions<T>({
       {onDownload && (
         <Button variant="outline" size="sm" onClick={onDownload}>
           <DownloadIcon className="mr-2 size-4" aria-hidden="true" />
-          Export
+          {t('bt_download')}
         </Button>
       )}
       {additionalButtons}

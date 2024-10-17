@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@shared/components/ui/popover';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Filter } from 'lucide-react';
 
 interface DataTableFilterComboboxProps<TData> {
@@ -36,6 +37,7 @@ export function DataTableFilterCombobox<TData>({
   onSelect,
   children,
 }: DataTableFilterComboboxProps<TData>) {
+  const [t] = useI18n();
   const [value, setValue] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [selectedOption, setSelectedOption] = React.useState<
@@ -53,15 +55,15 @@ export function DataTableFilterCombobox<TData>({
             className="ml-auto hidden h-8 lg:flex"
           >
             <Filter className="mr-2 h-4 w-4" />
-            Filter
+            {t('common_filter')}
           </Button>
         )}
       </PopoverTrigger>
       <PopoverContent className="w-[12.5rem] p-0" align="end">
         <Command>
-          <CommandInput placeholder="Filter by..." />
+          <CommandInput placeholder={t('common_filterBy')} />
           <CommandList>
-            <CommandEmpty>No item found.</CommandEmpty>
+            <CommandEmpty>{t('common_noResultFound')}</CommandEmpty>
             <CommandGroup>
               {options
                 .filter(
@@ -116,7 +118,7 @@ export function DataTableFilterCombobox<TData>({
                 }}
               >
                 <PlusIcon className="mr-2 size-4" aria-hidden="true" />
-                Advanced filter
+                {t('common_addFilter')}
               </CommandItem>
             </CommandGroup>
           </CommandList>

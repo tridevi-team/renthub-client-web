@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 interface Action<TData> {
   label: string;
@@ -26,6 +27,7 @@ export function DataTableRowActions<TData>({
   row,
   actions,
 }: DataTableRowActionsProps<TData>) {
+  const [t] = useI18n();
   const handleActionClick = (action: Action<TData>) => {
     action.onClick(row);
   };
@@ -39,7 +41,7 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('common_action')}</DropdownMenuLabel>
         {actions.map((action, index) => (
           <DropdownMenuItem
             key={`${action.label}-${index}`}

@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@shared/components/data-table/select';
 import { Button } from '@shared/components/ui/button';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { Table } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 interface DataTablePaginationProps<TData> {
@@ -21,15 +22,23 @@ export function DataTablePagination<TData>({
   table,
   pageSizeOptions = [5, 10, 25, 50, 100],
 }: DataTablePaginationProps<TData>) {
+  const [t] = useI18n();
+
   return (
     <div className="flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8">
       <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+        {t('common_rowSelected', {
+          selectedRowCount: table
+            .getFilteredSelectedRowModel()
+            .rows.length.toString(),
+          rowCount: table.getFilteredRowModel().rows.length.toString(),
+        })}
       </div>
       <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
         <div className="flex items-center space-x-2">
-          <p className="whitespace-nowrap text-sm font-medium">Rows per page</p>
+          <p className="whitespace-nowrap text-sm font-medium">
+            {t('common_rowPerPage')}
+          </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -49,7 +58,10 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
+          {t('common_pageOf', {
+            pageIndex: (table.getState().pagination.pageIndex + 1).toString(),
+            pageCount: table.getPageCount().toString(),
+          })}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">

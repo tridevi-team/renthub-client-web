@@ -12,6 +12,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@shared/components/ui/command';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 interface DataTableAdvancedFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -30,6 +31,8 @@ export function DataTableAdvancedFacetedFilter<TData, TValue>({
   selectedValues,
   setSelectedOptions,
 }: DataTableAdvancedFacetedFilterProps<TData, TValue>) {
+  const [t] = useI18n();
+
   return (
     <Command className="p-1">
       <div className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm [&_[cmdk-input-wrapper]]:border-0 [&_[cmdk-input-wrapper]]:px-0">
@@ -40,7 +43,7 @@ export function DataTableAdvancedFacetedFilter<TData, TValue>({
         />
       </div>
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandEmpty>{t('common_noResultFound')}</CommandEmpty>
         <CommandGroup className="px-0">
           {options.map((option) => {
             const isSelected = selectedValues.has(option.value);
@@ -117,7 +120,7 @@ export function DataTableAdvancedFacetedFilter<TData, TValue>({
                 }}
                 className="justify-center text-center"
               >
-                Clear filters
+                {t('common_clearFilter')}
               </CommandItem>
             </CommandGroup>
           </>

@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@shared/components/ui/table';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
@@ -51,6 +52,7 @@ export function DataTable<TData, TValue>({
   additionalActionButtons,
 }: DataTableProps<TData, TValue>) {
   const rowsPerPage = table.getState().pagination.pageSize;
+  const [t] = useI18n();
 
   return (
     <div className="space-y-4">
@@ -107,7 +109,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t('common_noResultFound')}
                 </TableCell>
               </TableRow>
             )}

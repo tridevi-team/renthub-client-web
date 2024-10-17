@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@shared/components/ui/dropdown-menu';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,6 +28,7 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const [t] = useI18n();
   if (!column.getCanSort() && !column.getCanHide()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -68,7 +70,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="mr-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Asc
+                {t('common_asc')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 aria-label="Sort descending"
@@ -78,7 +80,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="mr-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Desc
+                {t('common_desc')}
               </DropdownMenuItem>
             </>
           )}
@@ -94,7 +96,7 @@ export function DataTableColumnHeader<TData, TValue>({
                 className="mr-2 size-3.5 text-muted-foreground/70"
                 aria-hidden="true"
               />
-              Hide
+              {t('common_hide')}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

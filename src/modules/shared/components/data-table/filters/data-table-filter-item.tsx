@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/components/data-table/select';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { DataTableAdvancedFacetedFilter } from './data-table-advanced-faceted-filter';
 interface DataTableFilterItemProps<TData> {
   table: Table<TData>;
@@ -42,7 +43,7 @@ export function DataTableFilterItem<TData>({
   defaultOpen,
 }: DataTableFilterItemProps<TData>) {
   const [searchParams] = useSearchParams();
-
+  const [t] = useI18n();
   const column = table.getColumn(
     selectedOption.value ? String(selectedOption.value) : '',
   );
@@ -205,7 +206,7 @@ export function DataTableFilterItem<TData>({
           )
         ) : (
           <Input
-            placeholder="Type here..."
+            placeholder={t('common_typeHere')}
             className="h-8"
             value={value}
             onChange={(event) => setValue(event.target.value)}

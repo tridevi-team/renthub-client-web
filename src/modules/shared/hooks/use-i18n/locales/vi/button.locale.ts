@@ -1,0 +1,17 @@
+export const buttonLocale = {
+  bt_create: 'Tạo mới',
+  bt_delete: 'Xóa',
+  bt_edit: 'Chỉnh sửa',
+  bt_save: 'Lưu',
+  bt_cancel: 'Hủy',
+  bt_confirm: 'Xác nhận',
+  bt_close: 'Đóng',
+  bt_back: 'Quay lại',
+  bt_reset: 'Đặt lại',
+  bt_search: 'Tìm kiếm',
+  bt_filter: 'Lọc',
+  bt_export: 'Xuất',
+  bt_import: 'Nhập',
+  bt_download: 'Tải xuống',
+  bt_duplicate: 'Tạo bản sao',
+} as const;
