@@ -1,6 +1,5 @@
 import { deepReadObject } from '@rifandani/nxact-yutiriti';
 import React from 'react';
-import { createSearchParams, type URLSearchParamsInit } from 'react-router-dom';
 import { extendTailwindMerge } from 'tailwind-merge';
 
 // declare a type that works with generic components
@@ -53,16 +52,16 @@ export function clamp({
 export const isBrowser = () => typeof window !== 'undefined';
 
 /**
- * Format phone number based on mockup, currently only covered minimum 11 characters and max 15 characters include +62
- * e.g +62-812-7363-6365
+ * Format phone number based on mockup, currently only covered minimum 10 characters and max 11 characters include +84
+ * e.g +84-912-345-678
  *
- * @param phoneNumber - input should include "+62"
+ * @param phoneNumber - input should include "+84"
  */
-export function indonesianPhoneNumberFormat(phoneNumber: string) {
-  // e.g: +62
+export function vietnamesePhoneNumberFormat(phoneNumber: string) {
+  // e.g: +84
   const code = phoneNumber.slice(0, 3);
   const numbers = phoneNumber.slice(3);
-  // e.g 812, 852
+  // e.g 912, 123
   const ndc = numbers.slice(0, 3);
   // e.g the rest of the numbers
   const uniqNumber = numbers.slice(3);
@@ -70,8 +69,7 @@ export function indonesianPhoneNumberFormat(phoneNumber: string) {
 
   if (uniqNumber.length <= 6) regexp = /(\d{3})(\d{1,})/;
   else if (uniqNumber.length === 7) regexp = /(\d{3})(\d{4})/;
-  else if (uniqNumber.length === 8) regexp = /(\d{4})(\d{4})/;
-  else regexp = /(\d{4})(\d{5,})/;
+  else regexp = /(\d{3})(\d{4,})/;
 
   const matches = uniqNumber.replace(regexp, '$1-$2');
 
@@ -196,31 +194,37 @@ export const tw = extendTailwindMerge<'alert'>({
 });
 
 /**
- * instead of using `createSearchParams`, this function will convert an object into a URLSearchParams and joins array of string value with a comma
+ * Processes URL search parameters to extract filters, sorting, pagination page, and page size.
  *
- * @example
- *
- * const searchParams = createSearchParamsWithComa({
- *   sort: 'asc',
- *   filters: [
- *     "model",
- *     "category",
- *   ]
- * });
- *
- * // returns => sort=asc&filters=model,category
- * // instead of => sort=asc&filters=model&filters=category
+ * @param params - The URLSearchParams object containing the search parameters.
+ * @param fieldPrefix - An optional prefix to add to the field names in the filters and sorting.
+ * @returns An object containing the following properties:
+ * - `filters`: An array of filter objects, each containing `field`, `operator`, and `value`.
+ * - `sorting`: An array of sorting objects, each containing `field` and `direction`.
+ * - `page`: The current page number.
+ * - `pageSize`: The number of items per page.
  */
-export function createSearchParamsWithComma(init?: URLSearchParamsInit) {
-  const searchParams = init ? createSearchParams(init) : new URLSearchParams();
+export const processSearchParams = (
+  params: URLSearchParams,
+  fieldPrefix = '',
+): {
+  filters: Array<{ field: string; operator: string; value: string }>;
+  sorting: Array<{ field: string; direction: string }>;
+  page: number;
+  pageSize: number;
+} => {
+  const filters = params.getAll('filter').map((filter) => {
+    const [field, operator, value] = filter.split(':');
+    return { field: `${fieldPrefix}${field}`, operator, value };
+  });
 
-  // replace array of string values with a comma separated value
-  for (const [key, value] of Object.entries(init ?? {})) {
-    if (Array.isArray(value)) {
-      searchParams.delete(key);
-      searchParams.set(key, value.join(','));
-    }
-  }
+  const sort = params.get('sort')?.split('.') || [];
+  const sorting = sort[0]
+    ? [{ field: `${fieldPrefix}${sort[0]}`, direction: sort[1] }]
+    : [{ field: `${fieldPrefix}id`, direction: 'desc' }];
 
-  return searchParams;
-}
+  const page = Number.parseInt(params.get('page') || '1', 10);
+  const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
+
+  return { filters, sorting, page, pageSize };
+};
