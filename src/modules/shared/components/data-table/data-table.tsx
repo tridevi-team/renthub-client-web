@@ -7,6 +7,7 @@ import {
 import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
+import { Skeleton } from '@shared/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -20,13 +21,28 @@ interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
   columns: ColumnDef<TData, TValue>[];
   filterOptions?: DataTableFilterField<TData>[];
+  loading?: boolean;
 }
+
+const TableRowSkeleton = ({ columns }: { columns: number }) => (
+  <TableRow>
+    {Array.from({ length: columns }).map((_, index) => (
+      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+      <TableCell key={index}>
+        <Skeleton className="h-6 w-full" />
+      </TableCell>
+    ))}
+  </TableRow>
+);
 
 export function DataTable<TData, TValue>({
   table,
   columns,
   filterOptions = [],
+  loading = false,
 }: DataTableProps<TData, TValue>) {
+  const rowsPerPage = table.getState().pagination.pageSize;
+
   return (
     <div className="space-y-4">
       <DataTableAdvancedToolbar table={table} filterFields={filterOptions} />
@@ -49,7 +65,12 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              Array.from({ length: rowsPerPage }).map((_, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                <TableRowSkeleton key={index} columns={columns.length} />
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

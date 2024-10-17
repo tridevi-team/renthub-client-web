@@ -6,6 +6,7 @@ import type {
   HouseSchema,
 } from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
+import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Checkbox } from '@shared/components/ui/checkbox';
@@ -13,9 +14,10 @@ import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
+import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
   useLocation,
@@ -40,6 +42,7 @@ export function Element() {
   const location = useLocation();
   const pathname = location.pathname;
   const [searchParams, _] = useSearchParams();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -51,31 +54,28 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const filters = params.getAll('filter').map((filter) => {
-      const [field, operator, value] = filter.split(':');
-      return { field, operator, value };
-    });
-    const sort = params.get('sort')?.split(':') || [];
-    const page = Number.parseInt(params.get('page') || '1', 10);
-    const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
+    const searchParams = processSearchParams(params);
 
-    const response = await houseRepositories.index({
-      searchParams: {
-        filters,
-        sorting: sort[0]
-          ? [{ field: sort[0], direction: sort[1] }]
-          : [{ field: 'id', direction: 'desc' }],
-        page,
-        pageSize,
-      },
-    });
+    const response = await houseRepositories.index({ searchParams });
     return response.data || null;
   }, []);
 
-  const { data: houseData, isLoading } = useQuery<HouseDataSchema>({
+  const {
+    data: houseData,
+    isLoading,
+    isFetching,
+  } = useQuery<HouseDataSchema>({
     queryKey: ['houses-index', queryParams],
     queryFn: async () => fetchData(searchParams),
+    refetchOnReconnect: true,
   });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!isLoading && isInitialLoading) {
+      setIsInitialLoading(false);
+    }
+  }, [isLoading]);
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -99,11 +99,15 @@ export function Element() {
     },
     {
       accessorKey: 'name',
-      header: 'Tên nhà trọ',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tên nhà trọ" />
+      ),
     },
     {
       accessorKey: 'address',
-      header: 'Địa chỉ',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Địa chỉ" />
+      ),
       cell: ({ row }) => {
         const { city, ward, street, district } = row.original.address;
         return `${street}, ${ward}, ${district}, ${city}`;
@@ -112,7 +116,9 @@ export function Element() {
     },
     {
       accessorKey: 'status',
-      header: 'Trạng thái',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trạng thái" />
+      ),
       cell: ({ row }) => {
         return row.original.status === 0 ? 'active' : 'inactive';
       },
@@ -151,7 +157,7 @@ export function Element() {
 
   return (
     <ContentLayout title={t('house_index_title')} pathname={pathname}>
-      {isLoading ? (
+      {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
           searchableColumnCount={1}
@@ -164,6 +170,7 @@ export function Element() {
           table={table}
           columns={columns}
           filterOptions={filterFields}
+          loading={isFetching}
         />
       )}
     </ContentLayout>
