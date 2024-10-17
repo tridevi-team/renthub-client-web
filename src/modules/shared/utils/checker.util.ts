@@ -17,3 +17,23 @@ export function checkAuthUser() {
 
   return true;
 }
+
+export function checkUserHasHouse() {
+  const appUser = localStorage.getItem(userStoreName) ?? '{}';
+  const parsedAppUser = JSON.parse(appUser) as UserStoreLocalStorage;
+  const parsed = userStoreLocalStorageSchema.safeParse(parsedAppUser);
+
+  if (!parsed.success) return false;
+  if (!parsed.data.state.user) return false;
+  if (!parsed.data.state.user.houses?.length) return false;
+
+  return true;
+}
+
+export function checkPermissionPage() {
+  const appUser = localStorage.getItem(userStoreName) ?? '{}';
+  const parsedAppUser = JSON.parse(appUser) as UserStoreLocalStorage;
+  const parsed = userStoreLocalStorageSchema.safeParse(parsedAppUser);
+  console.log('parsed:', parsed);
+  return null;
+}

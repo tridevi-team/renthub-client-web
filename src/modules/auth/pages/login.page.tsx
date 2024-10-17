@@ -1,5 +1,4 @@
-import { cn } from '@app/lib/utils';
-import loginBg from '@assets/images/login_bg.jpg';
+import { useEmailStore } from '@app/stores';
 import { authRepositories } from '@auth/apis/auth.api';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,14 +13,10 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Link } from '@shared/components/ui/link';
-import { BRAND_NAME } from '@shared/constants/general.constant';
-import type { ErrorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { HTTPError } from 'ky';
-import { House } from 'lucide-react';
-import { useEffect } from 'react';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -33,22 +28,33 @@ export const action: ActionFunction = async ({ request }) => {
   if (request.method === 'POST') {
     const payload = Object.fromEntries(await request.formData());
 
-    // if `payload` is not correct, return error object
     const parsed = authLoginRequestSchema.safeParse(payload);
     if (!parsed.success) return json(parsed.error, { status: 400 });
 
+    const email = parsed.data.username;
+
     try {
-      // will throw if `login` returns 4xx/5xx error, therefore `errorElement` will be rendered
       const loginResponse = await authRepositories.login({ json: parsed.data });
 
-      // see https://docs.pmnd.rs/zustand/recipes/recipes#calling-actions-outside-a-react-event-handler
+      const user = loginResponse.data;
+
       unstable_batchedUpdates(() => {
-        useAuthUserStore.getState().setUser(loginResponse); // set user data to store
+        useAuthUserStore.getState().setUser(user);
       });
+
       return redirect(dashboardPath.root);
     } catch (error) {
       if (error instanceof HTTPError) {
         const response = (await error.response.json()) as ErrorResponseSchema;
+        if (response.code === 'VERIFY_ACCOUNT_FIRST') {
+          useEmailStore.getState().setData({
+            email,
+            target: 'verify-account',
+            status: 'code-sent',
+          });
+          await authRepositories.resendVerifyCode({ json: { email } });
+          return redirect(authPath.verifyAccount);
+        }
         return json(response);
       }
     }
@@ -61,9 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
 
-  // redirect auth user to home
   if (authed) {
-    // toast.info('Already Logged In');
     return redirect(dashboardPath.root);
   }
 
@@ -73,61 +77,25 @@ export const loader: LoaderFunction = () => {
 export function Element() {
   const [t] = useI18n();
 
-  useEffect(() => {
-    const toastMessage: ErrorLocale = sessionStorage.getItem(
-      'toastMessage',
-    ) as ErrorLocale;
-    if (toastMessage) {
-      toast.error(t(toastMessage));
-      sessionStorage.removeItem('toastMessage');
-    }
-  }, [t]);
-
   return (
-    <div className="min-h-screen w-full flex">
-      {/* image */}
-      <section className="hidden md:block w-1/2 shadow-2xl">
-        <span className="relative h-screen w-full md:flex md:items-center md:justify-center">
-          <img
-            src={loginBg}
-            alt="BG-Side of Login Page"
-            loading="lazy"
-            className="h-full object-cover"
-            aria-label="Login Page Background"
-          />
-        </span>
-      </section>
+    <div>
+      <p className="text-center text-base text-secondary-foreground">
+        {t('auth_welcome')}
+      </p>
 
-      {/* form */}
-      <section className="min-h-screen w-full flex flex-col justify-center px-10 xl:px-20 md:w-1/2">
-        <div className="flex items-center gap-2 justify-center mb-2 text-blue-600">
-          <House className="w-8 h-8 mr-1" />
-          <h1
-            className={cn(
-              'font-bold text-3xl whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300',
-            )}
-          >
-            {BRAND_NAME}
-          </h1>
-        </div>
-        <p className="text-center text-base text-secondary-foreground">
-          {t('auth_welcome')}
-        </p>
+      <LoginForm />
 
-        <LoginForm />
-
-        <p className="py-12 text-center">
-          <span className="text-base">{t('auth_noAccount')} </span>
-          <Link
-            aria-label={t('auth_registerHere')}
-            className="hover:underline text-base"
-            href={authPath.register}
-            variant="link"
-          >
-            {t('auth_registerHere')}
-          </Link>
-        </p>
-      </section>
+      <p className="py-12 text-center">
+        <span className="text-base">{t('auth_noAccount')} </span>
+        <Link
+          variant="link"
+          href={authPath.register}
+          className="hover:underline text-base"
+          aria-label={t('auth_registerHere')}
+        >
+          {t('auth_registerHere')}
+        </Link>
+      </p>
     </div>
   );
 }
@@ -186,6 +154,7 @@ const LoginForm = () => {
         }) => (
           <TextField
             className="group/password pt-4"
+            type="password"
             validationBehavior="aria"
             name={name}
             value={value}
@@ -195,9 +164,9 @@ const LoginForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_password')}</Label>
-            <Input type="password" placeholder={t('ph_password')} ref={ref} />
+            <Input placeholder={t('ph_password')} ref={ref} />
             <Link
-              href="/forgot-password"
+              href={authPath.forgotPassword}
               variant="link"
               className="float-end mt-2 -mr-3"
             >
@@ -217,7 +186,7 @@ const LoginForm = () => {
           className="mt-2 bg-destructive text-destructive-foreground p-2 rounded-md flex items-center gap-x-2 shadow-md w-full"
         >
           <Icon icon="lucide:alert-circle" />
-          <p>{(fetcher.data as ErrorResponseSchema).message}</p>
+          <p>{t(`${(fetcher.data as ErrorResponseSchema).code}`)}</p>
         </div>
       )}
 

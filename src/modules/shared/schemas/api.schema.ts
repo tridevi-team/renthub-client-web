@@ -1,9 +1,42 @@
+import { dataTableConfig } from '@app/config/data-table.config';
 import {
   type ErrorLocale,
   errorLocale,
 } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { z } from 'zod';
+
+const {
+  comparisonOperators,
+  selectableOperators,
+  numberOperators,
+  sortDirections,
+} = dataTableConfig;
+
 // #region COMMON SCHEMAS
+const operatorSchema = z.union([
+  z.enum(comparisonOperators.map((op) => op.value) as [string, ...string[]]),
+  z.enum(selectableOperators.map((op) => op.value) as [string, ...string[]]),
+  z.enum(numberOperators.map((op) => op.value) as [string, ...string[]]),
+]);
+
+const filterSchema = z.object({
+  field: z.string(),
+  operator: operatorSchema,
+  value: z.union([
+    z.string(),
+    z.number(),
+    z.array(z.string()),
+    z.array(z.number()),
+  ]),
+});
+
+const sortSchema = z.object({
+  field: z.string(),
+  direction: z.enum(
+    sortDirections.map((op) => op.value) as [string, ...string[]],
+  ),
+});
+
 export const errorResponseSchema = z.object({
   success: z.literal(false),
   code: z.enum(Object.keys(errorLocale) as [ErrorLocale, ...ErrorLocale[]]),
@@ -11,28 +44,10 @@ export const errorResponseSchema = z.object({
 });
 
 export const resourceListRequestSchema = z.object({
-  limit: z
-    .number()
-    .min(1)
-    .max(100)
-    .optional()
-    .describe('limit per page. limit=0 to clear'),
-  skip: z
-    .number()
-    .min(0)
-    .max(100)
-    .optional()
-    .describe('skip the first n items.'),
-  select: z
-    .string()
-    .optional()
-    .describe('select fields. could be comma separated'),
-  delay: z.number().optional().describe('artificial delay in ms.'),
-});
-export const resourceListResponseSchema = z.object({
-  total: z.number(),
-  skip: z.number(),
-  limit: z.number(),
+  page: z.number().int().positive().optional(),
+  pageSize: z.number().int().positive().optional(),
+  sort: z.array(sortSchema).optional(),
+  filters: z.array(filterSchema).optional(),
 });
 // #endregion COMMON SCHEMAS
 
@@ -40,8 +55,5 @@ export const resourceListResponseSchema = z.object({
 export type ErrorResponseSchema = z.infer<typeof errorResponseSchema>;
 export type ResourceListRequestSchema = z.infer<
   typeof resourceListRequestSchema
->;
-export type ResourceListResponseSchema = z.infer<
-  typeof resourceListResponseSchema
 >;
 // #endregion SCHEMA TYPES

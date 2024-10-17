@@ -32,9 +32,9 @@
         "not_inclusive": "Mảng phải chứa nhiều hơn {{minimum}} phần tử"
       },
       "string": {
-        "exact": "Chuỗi phải chứa đúng {{minimum}} ký tự",
-        "inclusive": "Chuỗi phải chứa ít nhất {{minimum}} ký tự",
-        "not_inclusive": "Chuỗi phải chứa hơn {{minimum}} ký tự"
+        "exact": "Chuỗ phải dài đúng {{minimum}} ký tự",
+        "inclusive": "Chuỗi cần dài ít nhất {{minimum}} ký tự",
+        "not_inclusive": "Chuỗi phải dài hơn {{minimum}} ký tự"
       },
       "number": {
         "exact": "Số phải đúng bằng {{minimum}}",
@@ -59,9 +59,9 @@
         "not_inclusive": "Mảng phải chứa ít hơn {{maximum}} phần tử"
       },
       "string": {
-        "exact": "Chuỗi phải chứa đúng {{maximum}} ký tự",
-        "inclusive": "Chuỗi phải chứa nhiều nhất {{maximum}} ký tự",
-        "not_inclusive": "Chuỗi phải chứa ít hơn {{maximum}} ký tự"
+        "exact": "Chuỗi phải dài đúng {{maximum}} ký tự",
+        "inclusive": "Chuỗi không được dài hơn {{maximum}} ký tự",
+        "not_inclusive": "Chuỗi phải dài hơn {{maximum}} ký tự"
       },
       "number": {
         "exact": "Số phải đúng bằng {{maximum}}",

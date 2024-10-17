@@ -1,4 +1,6 @@
+import { cn } from '@app/lib/utils';
 import { dashboardPath } from '@modules/dashboard/routes';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { Menu } from '@shared/components/layout/menu';
 import { Button } from '@shared/components/ui/button';
 import {
@@ -7,11 +9,20 @@ import {
   SheetHeader,
   SheetTrigger,
 } from '@shared/components/ui/sheet';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@shared/components/ui/tooltip';
 import { BRAND_NAME } from '@shared/constants/general.constant';
-import { House, MenuIcon } from 'lucide-react';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { House, LogOut, MenuIcon } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 export function SheetMenu() {
+  const isOpen = true;
+  const [t] = useI18n();
+
   return (
     <Sheet>
       <SheetTrigger className="lg:hidden" asChild>
@@ -36,6 +47,32 @@ export function SheetMenu() {
           </Button>
         </SheetHeader>
         <Menu isOpen />
+        <TooltipProvider disableHoverableContent>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => {}}
+                variant="outline"
+                className="w-full justify-center h-10 mt-5"
+              >
+                <span className={cn(!isOpen ? '' : 'mr-4')}>
+                  <LogOut size={18} />
+                </span>
+                <p
+                  className={cn(
+                    'whitespace-nowrap',
+                    !isOpen ? 'opacity-0 hidden' : 'opacity-100',
+                  )}
+                >
+                  {t('menu_signOut')}
+                </p>
+              </Button>
+            </TooltipTrigger>
+            {!isOpen && (
+              <TooltipContent side="right">{t('menu_signOut')}</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </SheetContent>
     </Sheet>
   );

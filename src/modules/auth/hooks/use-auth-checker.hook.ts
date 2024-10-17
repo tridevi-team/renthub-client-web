@@ -26,7 +26,7 @@ export function useAuthChecker() {
       .with([false, true], () => {})
       .with([false, P.any], () => {
         navigate(authPath.login, { replace: true });
-        toast.error(t('er_401'));
+        toast.error(t('LOGIN_REQUIRED'));
       })
       .with([true, true], () => {
         navigate(dashboardPath.root);

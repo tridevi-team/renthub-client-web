@@ -45,7 +45,7 @@ const SelectTrigger = ({ className, children, ...props }: ButtonProps) => (
   <Button
     className={(values) =>
       twMerge(
-        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2',
+        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[focused]:outline-none data-[focused]:ring-1 data-[focused]:ring-ring ',
         typeof className === 'function' ? className(values) : className,
       )
     }

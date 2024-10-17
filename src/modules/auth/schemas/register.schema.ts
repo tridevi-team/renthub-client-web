@@ -58,9 +58,60 @@ export const authRegisterResponseSchema = z.object({
   message: z.string(),
 });
 
+export const authVerifyEmailRequestSchema = z.object({
+  email: z.string().email().min(1),
+  verifyCode: z
+    .string()
+    .trim()
+    .refine((verifyCode) => /^[0-9]{4}$/.test(verifyCode), {
+      params: {
+        i18n: {
+          key: 'vld_codeLength',
+        },
+      },
+    })
+    .refine((verifyCode) => /^[0-9]+$/.test(verifyCode), {
+      params: {
+        i18n: {
+          key: 'vld_codeRequired',
+        },
+      },
+    }),
+});
+
+export const authVerifyEmailResponseSchema = z.object({
+  success: z.literal(true),
+  code: z.string(),
+  message: z.string(),
+});
+
+export const authResendCodeRequestSchema = z.object({
+  email: z.string().email().min(1),
+});
+
+export const authResendCodeResponseSchema = z.object({
+  success: z.literal(true),
+  code: z.string(),
+  message: z.string(),
+});
+
 export type AuthRegisterRequestSchema = z.infer<
   typeof authRegisterRequestSchema
 >;
 export type AuthRegisterResponseSchema = z.infer<
   typeof authRegisterResponseSchema
+>;
+
+export type AuthVerifyEmailRequestSchema = z.infer<
+  typeof authVerifyEmailRequestSchema
+>;
+export type AuthVerifyEmailResponseSchema = z.infer<
+  typeof authVerifyEmailResponseSchema
+>;
+
+export type AuthResendCodeRequestSchema = z.infer<
+  typeof authResendCodeRequestSchema
+>;
+export type AuthResendCodeResponseSchema = z.infer<
+  typeof authResendCodeResponseSchema
 >;

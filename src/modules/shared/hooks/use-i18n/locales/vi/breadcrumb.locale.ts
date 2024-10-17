@@ -4,4 +4,8 @@ export const breadcrumbLocale = {
   br_users: 'Người dùng',
   br_users_create: 'Tạo người dùng',
   br_users_edit: 'Chỉnh sửa người dùng',
+
+  br_houses: 'Quản lý Nhà trọ',
+  br_houses_create: 'Thêm mới nhà trọ',
+  br_houses_edit: 'Chỉnh sửa nhà trọ',
 } as const;

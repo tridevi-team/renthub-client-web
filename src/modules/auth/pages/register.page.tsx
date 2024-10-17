@@ -1,14 +1,14 @@
-import { cn } from '@app/lib/utils';
-import logoImg from '@assets/images/logo.png';
-import registerBg from '@assets/images/register_bg.png';
+import { useEmailStore } from '@app/stores';
 import { authRepositories } from '@auth/apis/auth.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
+import { authPath } from '@modules/auth/routes';
 import {
   type AuthRegisterRequestSchema,
   authRegisterRequestSchema,
 } from '@modules/auth/schemas/register.schema';
 import { dashboardPath } from '@modules/dashboard/routes';
+import { For } from '@shared/components/for';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
@@ -21,14 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/components/ui/select';
-import { BRAND_NAME, GENDER_OPTIONS } from '@shared/constants/general.constant';
-import type { ErrorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
+import { GENDER_OPTIONS } from '@shared/constants/general.constant';
+import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { HTTPError } from 'ky';
-import { useEffect } from 'react';
 import { FieldError, TextField } from 'react-aria-components';
+import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
 import type { ActionFunction, LoaderFunction } from 'react-router-dom';
 import { json, redirect, useFetcher } from 'react-router-dom';
@@ -38,15 +38,22 @@ export const action: ActionFunction = async ({ request }) => {
   if (request.method === 'POST') {
     const payload = Object.fromEntries(await request.formData());
 
-    // if `payload` is not correct, return error object
     const parsed = authRegisterRequestSchema.safeParse(payload);
     if (!parsed.success) return json(parsed.error, { status: 400 });
 
     try {
-      // will throw if `register` returns 4xx/5xx error, therefore `errorElement` will be rendered
-      const registerResponse = await authRepositories.register({
+      await authRepositories.register({
         json: parsed.data,
       });
+      unstable_batchedUpdates(() => {
+        useEmailStore.getState().setData({
+          email: parsed.data.email,
+          target: 'verify-account',
+          status: 'code-sent',
+        });
+      });
+      toast.info(messageLocale.ms_registerSuccess);
+      return redirect(authPath.verifyAccount);
     } catch (error) {
       if (error instanceof HTTPError) {
         const response = (await error.response.json()) as ErrorResponseSchema;
@@ -74,49 +81,24 @@ export const loader: LoaderFunction = () => {
 export function Element() {
   const [t] = useI18n();
 
-  useEffect(() => {
-    const toastMessage: ErrorLocale = sessionStorage.getItem(
-      'toastMessage',
-    ) as ErrorLocale;
-    if (toastMessage) {
-      toast.error(t(toastMessage));
-      sessionStorage.removeItem('toastMessage');
-    }
-  }, [t]);
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative">
-      <img
-        src={registerBg}
-        alt="BG-Side of Register Page"
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover"
-        aria-label="Register Page Background"
-      />
-      <div className="relative z-10 bg-white shadow-2xl rounded-lg p-10 max-w-3xl w-full md:w-[600px]">
-        {/* title register */}
-        <div className="flex items-center gap-2 justify-center mb-2 md:-mt-24">
-          <img
-            src={logoImg}
-            alt={BRAND_NAME}
-            className={cn('w-28 h-28', 'rounded-full')}
-            loading="lazy"
-            aria-label={BRAND_NAME}
-          />
-        </div>
-        <h2 className="text-3xl font-bold text-center mb-4">
-          {t('auth_register_title')}
-        </h2>
+    <div>
+      <h2 className="text-3xl font-bold text-center mb-4">
+        {t('auth_register_title')}
+      </h2>
 
-        <RegisterForm />
+      <RegisterForm />
 
-        <p className="py-4 text-center">
-          <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
-          <Link className="hover:underline text-base" variant="link">
-            {t('auth_loginHere')}
-          </Link>
-        </p>
-      </div>
+      <p className="py-4 text-center">
+        <span className="text-base">{t('auth_alreadyHaveAccount')} </span>
+        <Link
+          className="hover:underline text-base"
+          variant="link"
+          href={authPath.login}
+        >
+          {t('auth_loginHere')}
+        </Link>
+      </p>
     </div>
   );
 }
@@ -214,24 +196,27 @@ const RegisterForm = () => {
                 isRequired
                 placeholder={t('ph_gender')}
               >
-                <FieldError className="text-destructive">
-                  {error?.message}
-                </FieldError>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectPopover>
                   <SelectContent>
-                    {GENDER_OPTIONS.map((option) => {
-                      return (
+                    <For
+                      each={GENDER_OPTIONS}
+                      fallback={<p>{t('common_noItem')}</p>}
+                    >
+                      {(option) => (
                         <SelectItem key={option.value} id={option.value}>
                           {option.label}
                         </SelectItem>
-                      );
-                    })}
+                      )}
+                    </For>
                   </SelectContent>
                 </SelectPopover>
               </Select>
+              <FieldError className="text-destructive">
+                {error?.message}
+              </FieldError>
             </div>
           )}
         />
@@ -273,6 +258,7 @@ const RegisterForm = () => {
           }) => (
             <TextField
               className="group/password pt-4"
+              type="password"
               validationBehavior="aria"
               name={name}
               value={value}
@@ -282,7 +268,7 @@ const RegisterForm = () => {
               isRequired
             >
               <Label className="field-required">{t('auth_password')}</Label>
-              <Input type="password" placeholder={t('ph_password')} ref={ref} />
+              <Input placeholder={t('ph_password')} ref={ref} />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>
@@ -302,6 +288,7 @@ const RegisterForm = () => {
               className="group/confirmPassword pt-4"
               validationBehavior="aria"
               name={name}
+              type="password"
               value={value}
               onChange={onChange}
               onBlur={onBlur}
@@ -311,11 +298,7 @@ const RegisterForm = () => {
               <Label className="field-required">
                 {t('auth_confirmPassword')}
               </Label>
-              <Input
-                type="password"
-                placeholder={t('ph_confirmPassword')}
-                ref={ref}
-              />
+              <Input placeholder={t('ph_confirmPassword')} ref={ref} />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>

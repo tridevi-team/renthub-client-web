@@ -1,38 +1,30 @@
-import { labelVariants } from '@shared/components/ui/label';
-import { Icon } from '@iconify/react';
-import {
-  Checkbox,
-  CheckboxGroup,
-  type CheckboxProps,
-} from 'react-aria-components';
-import { twMerge } from 'tailwind-merge';
+'use client';
 
-const _CheckboxGroup = CheckboxGroup;
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { CheckIcon } from '@radix-ui/react-icons';
+import * as React from 'react';
 
-const _Checkbox = ({ className, children, ...props }: CheckboxProps) => (
-  <Checkbox
-    className={(values) =>
-      twMerge(
-        'group flex items-center gap-x-2 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 ',
-        labelVariants(),
-        typeof className === 'function' ? className(values) : className,
-      )
-    }
+import { cn } from '@app/lib/utils';
+
+const Checkbox = React.forwardRef<
+  React.ElementRef<typeof CheckboxPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <CheckboxPrimitive.Root
+    ref={ref}
+    className={cn(
+      'peer size-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+      className,
+    )}
     {...props}
   >
-    {(values) => (
-      <>
-        <div className="h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background group-data-[indeterminate]:bg-primary group-data-[selected]:bg-primary  group-data-[indeterminate]:text-primary-foreground group-data-[selected]:text-primary-foreground group-data-[focus-visible]:outline-none group-data-[focus-visible]:ring-2 group-data-[focus-visible]:ring-ring group-data-[focus-visible]:ring-offset-2">
-          {values.isIndeterminate ? (
-            <Icon icon="lucide:minus" className="h-[0.875rem] w-[0.875rem]" />
-          ) : values.isSelected ? (
-            <Icon icon="lucide:check" className="h-4 w-[0.875rem]" />
-          ) : null}
-        </div>
-        {typeof children === 'function' ? children(values) : children}
-      </>
-    )}
-  </Checkbox>
-);
+    <CheckboxPrimitive.Indicator
+      className={cn('flex items-center justify-center text-current')}
+    >
+      <CheckIcon className="size-4" />
+    </CheckboxPrimitive.Indicator>
+  </CheckboxPrimitive.Root>
+));
+Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
-export { _Checkbox as Checkbox, _CheckboxGroup as CheckboxGroup };
+export { Checkbox };

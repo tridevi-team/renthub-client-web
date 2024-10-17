@@ -1,139 +1,72 @@
+'use client';
+
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
+import type * as React from 'react';
+import { DayPicker } from 'react-day-picker';
+
+import { cn } from '@app/lib/utils';
 import { buttonVariants } from '@shared/components/ui/button';
-import { Icon } from '@iconify/react';
-import { getLocalTimeZone, today } from '@internationalized/date';
-import * as React from 'react';
-import {
-  Button,
-  Calendar,
-  CalendarCell,
-  CalendarGrid,
-  CalendarGridBody,
-  CalendarGridHeader,
-  CalendarHeaderCell,
-  Heading,
-  RangeCalendar,
-  RangeCalendarStateContext,
-  type CalendarCellProps,
-  type CalendarGridBodyProps,
-  type CalendarGridHeaderProps,
-  type CalendarGridProps,
-  type CalendarHeaderCellProps,
-} from 'react-aria-components';
-import { twMerge } from 'tailwind-merge';
 
-const _Calendar = Calendar;
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-const _RangeCalendar = RangeCalendar;
-
-const _CalendarHeading = ({
-  ...props
-}: React.HTMLAttributes<HTMLHeadElement>) => (
-  <header className="relative flex items-center justify-center pt-1" {...props}>
-    <Heading className="text-sm font-medium" />
-    <div className="flex items-center">
-      <Button
-        slot="next"
-        className={twMerge(
-          buttonVariants({ variant: 'outline' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 data-[hovered]:opacity-100',
-          'absolute right-1 text-popover-foreground',
-        )}
-      >
-        <Icon icon="lucide:chevron-right" className="h-4 w-4" />
-      </Button>
-      <Button
-        slot="previous"
-        className={twMerge(
-          buttonVariants({ variant: 'outline' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 data-[hovered]:opacity-100',
-          'absolute left-1 text-popover-foreground',
-        )}
-      >
-        <Icon icon="lucide:chevron-left" className="h-4 w-4" />
-      </Button>
-    </div>
-  </header>
-);
-
-const _CalendarGrid = ({ className, ...props }: CalendarGridProps) => (
-  <CalendarGrid
-    className={twMerge('mt-4 w-full border-collapse space-y-1', className)}
-    {...props}
-  />
-);
-
-const _CalendarGridHeader = ({
+function Calendar({
   className,
+  classNames,
+  showOutsideDays = true,
   ...props
-}: CalendarGridHeaderProps) => (
-  <CalendarGridHeader
-    className={twMerge('[&>tr]:flex', className)}
-    {...props}
-  />
-);
-
-const _CalendarHeaderCell = ({
-  className,
-  ...props
-}: CalendarHeaderCellProps) => (
-  <CalendarHeaderCell
-    className={twMerge(
-      'w-9 rounded-md text-[0.8rem] font-normal text-muted-foreground',
-      className,
-    )}
-    {...props}
-  />
-);
-
-const _CalendarGridBody = ({ className, ...props }: CalendarGridBodyProps) => (
-  <CalendarGridBody
-    className={twMerge(
-      '[&>tr>td]:p-0 [&>tr]:mt-2 [&>tr]:flex [&>tr]:w-full',
-      '[&>tr>td:first-child>div]:rounded-l-md [&>tr>td:last-child>div]:rounded-r-md',
-      className,
-    )}
-    {...props}
-  />
-);
-
-const _CalendarCell = ({ className, date, ...props }: CalendarCellProps) => {
-  const isRange = Boolean(React.useContext(RangeCalendarStateContext));
+}: CalendarProps) {
   return (
-    <CalendarCell
-      className={(values) =>
-        twMerge(
-          'inline-flex h-9 w-9 items-center justify-center whitespace-nowrap rounded-md  p-0 text-sm font-normal ring-offset-background transition-colors data-[disabled]:pointer-events-none data-[hovered]:bg-accent data-[hovered]:text-accent-foreground data-[disabled]:opacity-50 data-[selected]:opacity-100',
-          date.compare(today(getLocalTimeZone())) === 0 &&
-            'bg-accent text-accent-foreground',
-          values.isDisabled && 'text-muted-foreground opacity-50',
-          values.isFocusVisible &&
-            values.isFocused &&
-            'outline-none ring-2 ring-ring ring-offset-2',
-          values.isSelected &&
-            isRange &&
-            'rounded-none bg-accent text-accent-foreground',
-          ((values.isSelected && !isRange) ||
-            values.isSelectionStart ||
-            values.isSelectionEnd) &&
-            'rounded-md bg-primary text-primary-foreground data-[focused]:bg-primary data-[hovered]:bg-primary data-[focused]:text-primary-foreground data-[hovered]:text-primary-foreground',
-          values.isOutsideMonth &&
-            'text-muted-foreground opacity-50 data-[selected]:bg-accent/50 data-[selected]:text-muted-foreground data-[selected]:opacity-30',
-          typeof className === 'function' ? className(values) : className,
-        )
-      }
-      date={date}
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      className={cn('p-3', className)}
+      classNames={{
+        months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+        month: 'space-y-4',
+        caption: 'flex justify-center pt-1 relative items-center',
+        caption_label: 'text-sm font-medium',
+        nav: 'space-x-1 flex items-center',
+        nav_button: cn(
+          buttonVariants({ variant: 'outline' }),
+          'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+        ),
+        nav_button_previous: 'absolute left-1',
+        nav_button_next: 'absolute right-1',
+        table: 'w-full border-collapse space-y-1',
+        head_row: 'flex',
+        head_cell:
+          'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]',
+        row: 'flex w-full mt-2',
+        cell: cn(
+          'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md',
+          props.mode === 'range'
+            ? '[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
+            : '[&:has([aria-selected])]:rounded-md',
+        ),
+        day: cn(
+          buttonVariants({ variant: 'ghost' }),
+          'size-8 p-0 font-normal aria-selected:opacity-100',
+        ),
+        day_range_start: 'day-range-start',
+        day_range_end: 'day-range-end',
+        day_selected:
+          'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+        day_today: 'bg-accent text-accent-foreground',
+        day_outside:
+          'day-outside text-muted-foreground opacity-50  aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
+        day_disabled: 'text-muted-foreground opacity-50',
+        day_range_middle:
+          'aria-selected:bg-accent aria-selected:text-accent-foreground',
+        day_hidden: 'invisible',
+        ...classNames,
+      }}
+      components={{
+        IconLeft: () => <ChevronLeftIcon className="size-4" />,
+        IconRight: () => <ChevronRightIcon className="size-4" />,
+      }}
       {...props}
     />
   );
-};
+}
+Calendar.displayName = 'Calendar';
 
-export {
-  _Calendar as Calendar,
-  _CalendarCell as CalendarCell,
-  _CalendarGrid as CalendarGrid,
-  _CalendarGridBody as CalendarGridBody,
-  _CalendarGridHeader as CalendarGridHeader,
-  _CalendarHeaderCell as CalendarHeaderCell,
-  _CalendarHeading as CalendarHeading,
-  _RangeCalendar as RangeCalendar,
-};
+export { Calendar };

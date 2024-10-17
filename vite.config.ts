@@ -1,6 +1,6 @@
 import type { RollupReplaceOptions } from '@rollup/plugin-replace';
 import replace from '@rollup/plugin-replace';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import autoprefixer from 'autoprefixer';
 import process from 'node:process';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -92,7 +92,7 @@ export default defineConfig({
   },
   plugins: [
     tsconfigPaths({ loose: true }),
-    react(),
+    react({ plugins: [['@swc/plugin-styled-components', {}]] }),
     visualizer({
       filename: 'html/visualizer-stats.html',
     }) as unknown as PluginOption,

@@ -1,4 +1,4 @@
-import { House } from 'lucide-react';
+import { House, LogOut } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 import { cn } from '@app/lib/utils';
@@ -6,13 +6,20 @@ import { dashboardPath } from '@modules/dashboard/routes';
 import { Menu } from '@shared/components/layout/menu';
 import { SidebarToggle } from '@shared/components/layout/sidebar-toggle';
 import { Button } from '@shared/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@shared/components/ui/tooltip';
 import { BRAND_NAME } from '@shared/constants/general.constant';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
-
+  const [t] = useI18n();
   if (!sidebar) return null;
 
   return (
@@ -47,6 +54,34 @@ export function Sidebar() {
           </Link>
         </Button>
         <Menu isOpen={sidebar?.isOpen} />
+        <TooltipProvider disableHoverableContent>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => {}}
+                variant="outline"
+                className="w-full justify-center h-10 mt-5"
+              >
+                <span className={cn(sidebar?.isOpen === false ? '' : 'mr-4')}>
+                  <LogOut size={18} />
+                </span>
+                <p
+                  className={cn(
+                    'whitespace-nowrap',
+                    sidebar?.isOpen === false
+                      ? 'opacity-0 hidden'
+                      : 'opacity-100',
+                  )}
+                >
+                  {t('menu_signOut')}
+                </p>
+              </Button>
+            </TooltipTrigger>
+            {sidebar?.isOpen === false && (
+              <TooltipContent side="right">{t('menu_signOut')}</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </aside>
   );

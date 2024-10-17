@@ -1,4 +1,4 @@
-import { LayoutGrid, LogOut, User } from 'lucide-react';
+import { Lock, LogOut, User } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
@@ -24,11 +24,24 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@shared/components/ui/tooltip';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useNavigate } from 'react-router-dom';
 
 export function UserNav() {
+  const [t] = useI18n();
   const navigate = useNavigate();
-  const { clearUser } = useAuthUserStore();
+  const { clearUser, user } = useAuthUserStore();
+
+  const genAvatarFallback = () => {
+    if (user?.fullName) {
+      const names = user.fullName.split(' ');
+      if (names.length > 1) {
+        return `${names[0][0]}${names[names.length - 1][0]}`;
+      }
+      return names[0][0];
+    }
+    return 'JD';
+  };
 
   return (
     <DropdownMenu>
@@ -42,36 +55,40 @@ export function UserNav() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">JD</AvatarFallback>
+                  <AvatarFallback className="bg-transparent">
+                    {genAvatarFallback()}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent side="bottom">Profile</TooltipContent>
+          <TooltipContent side="bottom">{t('menu_profile')}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
+            <p className="text-sm font-medium leading-none">
+              {user?.fullName || ''}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
-              johndoe@example.com
+              {user?.email || ''}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/dashboard" className="flex items-center">
-              <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
-              Dashboard
+            <Link href="/account" className="flex items-center">
+              <User className="w-4 h-4 mr-3 text-muted-foreground" />
+              {t('menu_account')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
-              Account
+            <Link className="flex items-center" onPress={() => {}}>
+              <Lock className="w-4 h-4 mr-3 text-muted-foreground" />
+              {t('menu_changePassword')}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -79,13 +96,12 @@ export function UserNav() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onClick={() => {
-            console.log('Sign out');
             clearUser(); // reset `user` store
             navigate(authPath.login); // back to login
           }}
         >
           <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
-          Sign out
+          {t('menu_signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -97,7 +97,7 @@ export function CollapseMenuButton({
         {submenus.map(({ href, label, active }, index) => (
           <Button
             key={`${href}-${+index}`}
-            variant={active ? 'secondary' : 'ghost'}
+            variant={active ? 'default' : 'ghost'}
             className="w-full justify-start h-10 mb-1"
             asChild
           >
