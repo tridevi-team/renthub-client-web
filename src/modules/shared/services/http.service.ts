@@ -35,7 +35,7 @@ class Http {
 
     // Handle filters
     for (const filter of filters) {
-      searchParams.push(['filters[]', JSON.stringify(filter)]);
+      searchParams.push(['filter[]', JSON.stringify(filter)]);
     }
 
     for (const sort of sorting) {
