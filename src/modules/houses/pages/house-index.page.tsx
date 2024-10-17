@@ -1,7 +1,7 @@
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
-import { HouseTable } from '@modules/houses/components/house-table';
 import type { HouseSchema } from '@modules/houses/schema/house.schema';
+import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Checkbox } from '@shared/components/ui/checkbox';
@@ -10,6 +10,7 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
+import { useMemo } from 'react';
 import {
   redirect,
   useLocation,
@@ -32,12 +33,33 @@ export const loader: LoaderFunction = () => {
 export function Element() {
   const [t] = useI18n();
   const pathname = useLocation().pathname;
-  const [searchParams] = useSearchParams();
+  const [searchParams, _] = useSearchParams();
+
+  const queryParams = useMemo(() => {
+    const params: Record<string, string | string[]> = {};
+    searchParams.forEach((value, key) => {
+      const allValues = searchParams.getAll(key);
+      params[key] = allValues.length > 1 ? allValues : value;
+    });
+    return params;
+  }, [searchParams]);
 
   const { data: houseData, isLoading } = useQuery<HouseSchema[]>({
-    queryKey: ['houses-index'],
+    queryKey: ['houses-index', queryParams],
     queryFn: async () => {
-      const response = await houseRepositories.index({ searchParams: {} });
+      const response = await houseRepositories.index({
+        searchParams: {
+          filters: [
+            {
+              field: 'houses.name',
+              operator: 'cont',
+              value: 'vis',
+            },
+          ],
+          page: 1,
+          pageSize: 10,
+        },
+      });
       return response.data?.results || [];
     },
   });
@@ -94,7 +116,21 @@ export function Element() {
           shrinkZero
         />
       ) : (
-        <HouseTable columns={columns} data={houseData || []} />
+        <DataTable
+          columns={columns}
+          data={houseData || []}
+          filterColumn="address"
+          filterOptions={[
+            {
+              column: 'status',
+              title: 'Status',
+              options: [
+                { label: 'For Sale', value: 'for_sale' },
+                { label: 'Sold', value: 'sold' },
+              ],
+            },
+          ]}
+        />
       )}
     </ContentLayout>
   );

@@ -7,10 +7,18 @@ import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  filterColumn: string;
+  filterOptions?: {
+    column: string;
+    title: string;
+    options: { label: string; value: string }[];
+  }[];
 }
 
 export function DataTableToolbar<TData>({
   table,
+  filterColumn,
+  filterOptions = [],
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -18,24 +26,25 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Search Details..."
+          placeholder={`Search ${filterColumn}...`}
           value={
-            (table.getColumn('fullName')?.getFilterValue() as string) ?? ''
+            (table.getColumn(filterColumn)?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table.getColumn('fullName')?.setFilterValue(event.target.value)
+            table.getColumn(filterColumn)?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn('status') && (
-          <DataTableFacetedFilter
-            column={table.getColumn('status')}
-            title="Status"
-            options={[
-              { label: 'Active', value: '0' },
-              { label: 'Inactive', value: '1' },
-            ]}
-          />
+        {filterOptions.map(
+          (option) =>
+            table.getColumn(option.column) && (
+              <DataTableFacetedFilter
+                key={option.column}
+                column={table.getColumn(option.column)}
+                title={option.title}
+                options={option.options}
+              />
+            ),
         )}
         {isFiltered && (
           <Button
