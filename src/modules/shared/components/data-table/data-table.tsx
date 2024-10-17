@@ -1,21 +1,12 @@
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+  type ColumnDef,
+  type Table as TanstackTable,
 } from '@tanstack/react-table';
-import { useState } from 'react';
 
+import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
-import { DataTableToolbar } from '@shared/components/data-table/data-table-toolbar';
+import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
 import {
   Table,
   TableBody,
@@ -26,56 +17,19 @@ import {
 } from '@shared/components/ui/table';
 
 interface DataTableProps<TData, TValue> {
+  table: TanstackTable<TData>;
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  filterColumn?: string;
-  filterOptions?: {
-    column: string;
-    title: string;
-    options: { label: string; value: string }[];
-  }[];
+  filterOptions?: DataTableFilterField<TData>[];
 }
 
 export function DataTable<TData, TValue>({
+  table,
   columns,
-  data,
-  filterColumn = 'fullName',
   filterOptions = [],
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
-
   return (
     <div className="space-y-4">
-      <DataTableToolbar
-        table={table}
-        filterColumn={filterColumn}
-        filterOptions={filterOptions}
-      />
+      <DataTableAdvancedToolbar table={table} filterFields={filterOptions} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

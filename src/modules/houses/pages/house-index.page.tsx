@@ -1,16 +1,21 @@
+import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
-import type { HouseSchema } from '@modules/houses/schema/house.schema';
+import type {
+  HouseDataSchema,
+  HouseSchema,
+} from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   redirect,
   useLocation,
@@ -32,7 +37,8 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const pathname = useLocation().pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
   const [searchParams, _] = useSearchParams();
 
   const queryParams = useMemo(() => {
@@ -44,24 +50,31 @@ export function Element() {
     return params;
   }, [searchParams]);
 
-  const { data: houseData, isLoading } = useQuery<HouseSchema[]>({
+  const fetchData = useCallback(async (params: URLSearchParams) => {
+    const filters = params.getAll('filter').map((filter) => {
+      const [field, operator, value] = filter.split(':');
+      return { field, operator, value };
+    });
+    const sort = params.get('sort')?.split(':') || [];
+    const page = Number.parseInt(params.get('page') || '1', 10);
+    const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
+
+    const response = await houseRepositories.index({
+      searchParams: {
+        filters,
+        sorting: sort[0]
+          ? [{ field: sort[0], direction: sort[1] }]
+          : [{ field: 'id', direction: 'desc' }],
+        page,
+        pageSize,
+      },
+    });
+    return response.data || null;
+  }, []);
+
+  const { data: houseData, isLoading } = useQuery<HouseDataSchema>({
     queryKey: ['houses-index', queryParams],
-    queryFn: async () => {
-      const response = await houseRepositories.index({
-        searchParams: {
-          filters: [
-            {
-              field: 'houses.name',
-              operator: 'cont',
-              value: 'vis',
-            },
-          ],
-          page: 1,
-          pageSize: 10,
-        },
-      });
-      return response.data?.results || [];
-    },
+    queryFn: async () => fetchData(searchParams),
   });
 
   const columns: ColumnDef<HouseSchema>[] = [
@@ -95,6 +108,7 @@ export function Element() {
         const { city, ward, street, district } = row.original.address;
         return `${street}, ${ward}, ${district}, ${city}`;
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'status',
@@ -102,8 +116,38 @@ export function Element() {
       cell: ({ row }) => {
         return row.original.status === 0 ? 'active' : 'inactive';
       },
+      enableSorting: true,
     },
   ];
+
+  const filterFields: DataTableFilterField<HouseSchema>[] = [
+    {
+      label: 'Tên nhà trọ',
+      value: 'name',
+      placeholder: 'Nhập tên nhà trọ',
+    },
+    {
+      label: 'Trạng thái',
+      value: 'status',
+      placeholder: 'Chọn trạng thái',
+      options: [
+        { label: 'active', value: '0' },
+        { label: 'inactive', value: '1' },
+      ],
+    },
+  ];
+
+  const { table } = useDataTable({
+    data: houseData?.results || [],
+    columns,
+    pageCount: houseData?.pageCount || 0,
+    filterFields,
+    initialState: {
+      sorting: [{ id: 'id', desc: true }],
+      // columnPinning: { right: ['actions'] },
+    },
+    getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
+  });
 
   return (
     <ContentLayout title={t('house_index_title')} pathname={pathname}>
@@ -117,19 +161,9 @@ export function Element() {
         />
       ) : (
         <DataTable
+          table={table}
           columns={columns}
-          data={houseData || []}
-          filterColumn="address"
-          filterOptions={[
-            {
-              column: 'status',
-              title: 'Status',
-              options: [
-                { label: 'For Sale', value: 'for_sale' },
-                { label: 'Sold', value: 'sold' },
-              ],
-            },
-          ]}
+          filterOptions={filterFields}
         />
       )}
     </ContentLayout>

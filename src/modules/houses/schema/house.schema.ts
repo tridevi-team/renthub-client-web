@@ -21,20 +21,23 @@ export const house = z.object({
   updatedAt: z.string(),
 });
 
+export const houseData = z
+  .object({
+    page: z.number(),
+    pageSize: z.number(),
+    pageCount: z.number(),
+    total: z.number(),
+    results: z.array(house),
+  })
+  .nullable();
+
 export const houseIndexResponseSchema = z.object({
   success: z.boolean(),
   code: z.string(),
   message: z.string(),
-  data: z
-    .object({
-      page: z.number(),
-      pageSize: z.number(),
-      pageCount: z.number(),
-      total: z.number(),
-      results: z.array(house),
-    })
-    .nullable(),
+  data: houseData,
 });
 
 export type HouseSchema = z.infer<typeof house>;
+export type HouseDataSchema = z.infer<typeof houseData>;
 export type HouseIndexResponseSchema = z.infer<typeof houseIndexResponseSchema>;
