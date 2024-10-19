@@ -44,8 +44,11 @@ export const authRepositories = {
               if (response.status === 200) {
                 const data = (await response.json()) as AuthLoginResponseSchema;
 
-                if ('token' in data) {
-                  request.headers.set('Authorization', `Bearer ${data.token}`);
+                if ('accessToken' in data) {
+                  request.headers.set(
+                    'Authorization',
+                    `Bearer ${data.accessToken}`,
+                  );
                 }
               }
             },

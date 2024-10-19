@@ -9,7 +9,7 @@ export const appUserStoreSchema = z
     type: z.string(),
     status: z.number(),
     verify: z.number(),
-    token: z.string(),
+    accessToken: z.string(),
     houses: z
       .array(
         z.object({

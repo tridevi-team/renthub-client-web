@@ -60,9 +60,9 @@ export const http = new Http({
   hooks: {
     beforeRequest: [
       async (request) => {
-        const token = useAuthUserStore.getState().user?.token;
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`);
+        const accessToken = useAuthUserStore.getState().user?.accessToken;
+        if (accessToken) {
+          request.headers.set('Authorization', `Bearer ${accessToken}`);
         }
       },
     ],
