@@ -118,7 +118,7 @@ export const notFoundRoute = {
   id: 'notFound',
   path: '*',
   lazy: async () => {
-    const notFound = await import('./pages/not-found.page');
+    const notFound = await import('../shared/pages/not-found.page');
 
     return { element: <notFound.Element /> };
   },
