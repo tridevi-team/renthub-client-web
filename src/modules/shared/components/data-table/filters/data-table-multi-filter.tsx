@@ -1,3 +1,4 @@
+import { dataTableConfig } from '@app/config/data-table.config';
 import type { DataTableFilterOption } from '@app/types';
 import {
   CopyIcon,
@@ -5,10 +6,6 @@ import {
   TextAlignCenterIcon,
   TrashIcon,
 } from '@radix-ui/react-icons';
-import type { Table } from '@tanstack/react-table';
-import * as React from 'react';
-import { useSearchParams } from 'react-router-dom';
-
 import { DataTableFacetedFilter } from '@shared/components/data-table/data-table-faceted-filter';
 import {
   Select,
@@ -34,6 +31,11 @@ import {
 import { Separator } from '@shared/components/ui/separator';
 import { useDebounce } from '@shared/hooks/use-debounce';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { Table } from '@tanstack/react-table';
+import * as React from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+const { selectableOperators, comparisonOperators, numberOperators } =
+  dataTableConfig;
 
 interface DataTableMultiFilterProps<TData> {
   table: Table<TData>;
@@ -122,71 +124,65 @@ export function MultiFilterRow<TData>({
   setSelectedOptions,
 }: MultiFilterRowProps<TData>) {
   const [t] = useI18n();
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [value, setValue] = React.useState('');
   const debounceValue = useDebounce(value, 500);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [selectedOption, setSelectedOption] = React.useState<
     DataTableFilterOption<TData> | undefined
   >(options[0]);
 
   const filterVarieties = selectedOption?.options.length
-    ? ['is', 'is not']
-    : ['contains', 'does not contain', 'is', 'is not'];
+    ? selectableOperators
+    : comparisonOperators;
 
   const [filterVariety, setFilterVariety] = React.useState(filterVarieties[0]);
 
-  // Update filter variety
   React.useEffect(() => {
     if (selectedOption?.options.length) {
-      setFilterVariety('is');
+      setFilterVariety(selectableOperators[0]);
     }
   }, [selectedOption?.options.length]);
 
-  // Create query string
-  const createQueryString = React.useCallback(
-    (params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(searchParams?.toString());
+  React.useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    const filters = newSearchParams.getAll('filter');
 
-      for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          newSearchParams.delete(key);
-        } else {
-          newSearchParams.set(key, String(value));
-        }
+    if (debounceValue.length > 0) {
+      const newFilter = `${String(selectedOption?.value)}:${filterVariety.value}:${debounceValue}`;
+
+      if (i < filters.length) {
+        filters[i] = newFilter;
+      } else {
+        filters.push(newFilter);
       }
 
-      return newSearchParams.toString();
-    },
-    [searchParams],
-  );
+      newSearchParams.delete('filter');
+      for (const filter of filters) {
+        newSearchParams.append('filter', filter);
+      }
+    } else {
+      filters.splice(i, 1);
+      newSearchParams.delete('filter');
+      for (const filter of filters) {
+        newSearchParams.append('filter', filter);
+      }
+    }
 
-  // Update query string
-  React.useEffect(() => {
-    // if (debounceValue.length > 0) {
-    //   router.push(
-    //     `${pathname}?${createQueryString({
-    //       [selectedOption?.value ?? '']: `${debounceValue}${
-    //         debounceValue.length > 0 ? `.${filterVariety}` : ''
-    //       }`,
-    //     })}`,
-    //     {
-    //       scroll: false,
-    //     },
-    //   );
-    // }
-    // if (debounceValue.length === 0) {
-    //   router.push(
-    //     `${pathname}?${createQueryString({
-    //       [selectedOption?.value ?? '']: null,
-    //     })}`,
-    //     {
-    //       scroll: false,
-    //     },
-    //   );
-    // }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debounceValue, filterVariety, selectedOption?.value]);
+    navigate(`${location.pathname}?${newSearchParams.toString()}`, {
+      replace: true,
+    });
+  }, [
+    debounceValue,
+    filterVariety,
+    selectedOption?.value,
+    navigate,
+    location.pathname,
+    searchParams,
+    i,
+  ]);
 
   return (
     <div className="flex items-center space-x-2">
@@ -227,17 +223,25 @@ export function MultiFilterRow<TData>({
         </SelectContent>
       </Select>
       <Select
-        value={filterVariety}
-        onValueChange={(value) => setFilterVariety(value)}
+        value={filterVariety.value}
+        onValueChange={(value) =>
+          setFilterVariety(
+            filterVarieties.find((c) => c.value === value) ??
+              filterVarieties[0],
+          )
+        }
       >
         <SelectTrigger className="h-8 w-full truncate px-2 py-0.5 hover:bg-muted/50">
-          <SelectValue placeholder={filterVarieties[0]} />
+          <SelectValue placeholder={filterVarieties[0].label} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {filterVarieties.map((variety) => (
-              <SelectItem key={variety} value={variety}>
-                {variety}
+            {filterVarieties.map((variety, index) => (
+              <SelectItem
+                key={`${variety.value}-${index}`}
+                value={variety.value}
+              >
+                {variety.label}
               </SelectItem>
             ))}
           </SelectGroup>
