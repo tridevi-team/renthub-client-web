@@ -13,6 +13,8 @@ export const errorLocale = {
 
   VALIDATION_ERROR: 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại',
   UNKNOWN_ERROR: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau',
+  OOPS: 'Oops! Đã xảy ra lỗi',
+  SOMETHING_WENT_WRONG: 'Có lỗi xảy ra khi tải dữ liệu',
 } as const;
 
 export type ErrorLocale = keyof typeof errorLocale;
