@@ -39,7 +39,7 @@ class Http {
     }
 
     for (const sort of sorting) {
-      searchParams.push(['sorting[]', JSON.stringify(sort)]);
+      searchParams.push(['sort[]', JSON.stringify(sort)]);
     }
 
     // Handle pagination
