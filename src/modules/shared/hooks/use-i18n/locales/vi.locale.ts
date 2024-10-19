@@ -1,4 +1,5 @@
 import { breadcrumbLocale } from '@shared/hooks/use-i18n/locales/vi/breadcrumb.locale';
+import { buttonLocale } from '@shared/hooks/use-i18n/locales/vi/button.locale';
 import { commonLocale } from '@shared/hooks/use-i18n/locales/vi/common.locale';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { menuLocale } from '@shared/hooks/use-i18n/locales/vi/menu.locale';
@@ -16,6 +17,7 @@ export type LocaleKeys =
   | keyof typeof placeholderLocale
   | keyof typeof dashboardLocale
   | keyof typeof menuLocale
+  | keyof typeof buttonLocale
   | keyof typeof breadcrumbLocale
   | keyof typeof houseLocale;
 
@@ -29,4 +31,5 @@ export const viLocale = {
   ...menuLocale,
   ...breadcrumbLocale,
   ...houseLocale,
+  ...buttonLocale,
 } as const;

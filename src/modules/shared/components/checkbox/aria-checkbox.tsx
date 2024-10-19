@@ -25,14 +25,14 @@ export function AriaCheckbox({ className, ...props }: CheckboxProps) {
           className={twMerge(
             'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 text-white transition duration-150 ease-in-out',
             isSelected
-              ? 'group-active:bg-primary-focus bg-primary'
+              ? 'bg-primary group-active:bg-primary-focus'
               : 'bg-white',
             isDisabled
               ? 'border-slate-300'
               : isFocusVisible || isSelected
-                ? 'group-active:border-primary-focus border-primary'
+                ? 'border-primary group-active:border-primary-focus'
                 : 'border-slate-500 group-active:border-slate-600',
-            isFocusVisible && 'ring-primary-focus ring',
+            isFocusVisible && 'ring ring-primary-focus',
             isInvalid && 'border-error',
           )}
         >

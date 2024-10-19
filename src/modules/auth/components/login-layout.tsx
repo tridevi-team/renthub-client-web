@@ -10,9 +10,9 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen w-full flex">
+    <div className="flex min-h-screen w-full">
       {/* image */}
-      <section className="hidden md:block w-1/2 shadow-2xl">
+      <section className="hidden w-1/2 shadow-2xl md:block">
         <span className="relative h-screen w-full md:flex md:items-center md:justify-center">
           <img
             src={loginBg}
@@ -25,12 +25,12 @@ export default function LoginLayout({
       </section>
 
       {/* form */}
-      <section className="min-h-screen w-full flex flex-col justify-center px-10 xl:px-20 md:w-1/2">
-        <div className="flex items-center gap-2 justify-center mb-2 text-blue-600">
-          <House className="w-8 h-8 mr-1" />
+      <section className="flex min-h-screen w-full flex-col justify-center px-10 md:w-1/2 xl:px-20">
+        <div className="mb-2 flex items-center justify-center gap-2 text-blue-600">
+          <House className="mr-1 h-8 w-8" />
           <h1
             className={cn(
-              'font-bold text-3xl whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300',
+              'whitespace-nowrap font-bold text-3xl transition-[transform,opacity,display] duration-300 ease-in-out',
             )}
           >
             {BRAND_NAME}

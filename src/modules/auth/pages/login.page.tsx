@@ -90,7 +90,7 @@ export function Element() {
         <Link
           variant="link"
           href={authPath.register}
-          className="hover:underline text-base"
+          className="text-base hover:underline"
           aria-label={t('auth_registerHere')}
         >
           {t('auth_registerHere')}
@@ -114,7 +114,7 @@ const LoginForm = () => {
 
   return (
     <fetcher.Form
-      className="flex flex-col pt-3 md:pt-8 px-12 md:px-20"
+      className="flex flex-col px-12 pt-3 md:px-20 md:pt-8"
       method="POST"
     >
       {/* username */}
@@ -168,7 +168,7 @@ const LoginForm = () => {
             <Link
               href={authPath.forgotPassword}
               variant="link"
-              className="float-end mt-2 -mr-3"
+              className="-mr-3 float-end mt-2"
             >
               {t('auth_forgotPassword')}
             </Link>
@@ -183,7 +183,7 @@ const LoginForm = () => {
         <div
           role="alert"
           aria-label="Fetcher error alert"
-          className="mt-2 bg-destructive text-destructive-foreground p-2 rounded-md flex items-center gap-x-2 shadow-md w-full"
+          className="mt-2 flex w-full items-center gap-x-2 rounded-md bg-destructive p-2 text-destructive-foreground shadow-md"
         >
           <Icon icon="lucide:alert-circle" />
           <p>{t(`${(fetcher.data as ErrorResponseSchema).code}`)}</p>

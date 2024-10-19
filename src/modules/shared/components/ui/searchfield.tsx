@@ -13,7 +13,7 @@ function SearchFieldInput({ className, ...props }: InputProps) {
     <Input
       className={(values) =>
         twMerge(
-          'min-w-0  flex-1 bg-background px-2 py-1.5 outline outline-0 [&::-webkit-search-cancel-button]:hidden',
+          'min-w-0 flex-1 bg-background px-2 py-1.5 outline outline-0 [&::-webkit-search-cancel-button]:hidden',
           typeof className === 'function' ? className(values) : className,
         )
       }

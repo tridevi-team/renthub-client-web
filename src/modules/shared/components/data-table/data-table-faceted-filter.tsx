@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from '@shared/components/ui/popover';
 import { Separator } from '@shared/components/ui/separator';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { Column } from '@tanstack/react-table';
 import { Check, PlusCircle } from 'lucide-react';
 import type * as React from 'react';
@@ -35,6 +36,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   title,
   options,
 }: DataTableFacetedFilter<TData, TValue>) {
+  const [t] = useI18n();
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 
@@ -133,7 +135,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     onSelect={() => column?.setFilterValue(undefined)}
                     className="justify-center text-center"
                   >
-                    Clear filters
+                    {t('common_clearFilter')}
                   </CommandItem>
                 </CommandGroup>
               </>

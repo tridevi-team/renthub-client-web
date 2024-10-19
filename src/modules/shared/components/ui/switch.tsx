@@ -5,7 +5,7 @@ const _Switch = ({ children, className, ...props }: SwitchProps) => (
   <Switch
     className={(values) =>
       twMerge(
-        'group inline-flex items-center gap-2 text-sm font-medium leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
+        'group inline-flex items-center gap-2 font-medium text-sm leading-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
         typeof className === 'function' ? className(values) : className,
       )
     }

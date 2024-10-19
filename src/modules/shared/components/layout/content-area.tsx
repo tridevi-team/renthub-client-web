@@ -7,10 +7,10 @@ export default function ContentArea({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="rounded-lg border-none mt-6">
-      <CardContent className="p-6">
+    <Card className="mt-4 rounded-lg border-none">
+      <CardContent className="px-6 py-4">
         <div className="flex min-h-[calc(0vh)]">
-          <div className="w-full h-full">{children}</div>
+          <div className="h-full w-full">{children}</div>
         </div>
       </CardContent>
     </Card>

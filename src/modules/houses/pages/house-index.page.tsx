@@ -1,19 +1,29 @@
+import { queryClient } from '@app/providers/query/client';
+import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
-import type { HouseSchema } from '@modules/houses/schema/house.schema';
+import { housePath } from '@modules/houses/routes';
+import type {
+  HouseDataSchema,
+  HouseSchema,
+} from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
+import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { useQuery } from '@tanstack/react-query';
+import { processSearchParams } from '@shared/utils/helper.util';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
   useLocation,
+  useNavigate,
   useSearchParams,
   type LoaderFunction,
 } from 'react-router-dom';
@@ -32,8 +42,11 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const pathname = useLocation().pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const pathname = location.pathname;
   const [searchParams, _] = useSearchParams();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -44,25 +57,56 @@ export function Element() {
     return params;
   }, [searchParams]);
 
-  const { data: houseData, isLoading } = useQuery<HouseSchema[]>({
-    queryKey: ['houses-index', queryParams],
-    queryFn: async () => {
-      const response = await houseRepositories.index({
-        searchParams: {
-          filters: [
-            {
-              field: 'houses.name',
-              operator: 'cont',
-              value: 'vis',
-            },
-          ],
-          page: 1,
-          pageSize: 10,
-        },
-      });
-      return response.data?.results || [];
+  const fetchData = useCallback(async (params: URLSearchParams) => {
+    const searchParams = processSearchParams(params, 'houses');
+
+    const response = await houseRepositories.index({ searchParams });
+    return response.data || null;
+  }, []);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      console.log('ids:', ids);
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 5 seconds
+    },
+    onSuccess: () => {
+      toast.success(t('ms_deleteHouseSuccess'));
+      table.toggleAllRowsSelected(false);
+      queryClient.invalidateQueries({ queryKey: ['houses-index'] });
+    },
+    onError: () => {
+      toast.error(t('ms_error'));
     },
   });
+
+  const onDelete = useCallback(
+    async (selectedItems: HouseSchema[]) => {
+      const ids = selectedItems.map((item) => item.id);
+      await deleteMutation.mutateAsync(ids);
+    },
+    [deleteMutation],
+  );
+
+  const onCreate = useCallback(() => {
+    navigate(housePath.create);
+  }, [navigate]);
+
+  const {
+    data: houseData,
+    isLoading,
+    isFetching,
+  } = useQuery<HouseDataSchema>({
+    queryKey: ['houses-index', queryParams],
+    queryFn: async () => fetchData(searchParams),
+    refetchOnReconnect: true,
+  });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (!isLoading && isInitialLoading) {
+      setIsInitialLoading(false);
+    }
+  }, [isLoading]);
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -86,28 +130,64 @@ export function Element() {
     },
     {
       accessorKey: 'name',
-      header: 'Tên nhà trọ',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Tên nhà trọ" />
+      ),
     },
     {
       accessorKey: 'address',
-      header: 'Địa chỉ',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Địa chỉ" />
+      ),
       cell: ({ row }) => {
         const { city, ward, street, district } = row.original.address;
         return `${street}, ${ward}, ${district}, ${city}`;
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'status',
-      header: 'Trạng thái',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trạng thái" />
+      ),
       cell: ({ row }) => {
         return row.original.status === 0 ? 'active' : 'inactive';
       },
+      enableSorting: true,
     },
   ];
 
+  const filterFields: DataTableFilterField<HouseSchema>[] = [
+    {
+      label: 'Tên nhà trọ',
+      value: 'name',
+      placeholder: 'Nhập tên nhà trọ',
+    },
+    {
+      label: 'Trạng thái',
+      value: 'status',
+      placeholder: 'Chọn trạng thái',
+      options: [
+        { label: 'active', value: '0' },
+        { label: 'inactive', value: '1' },
+      ],
+    },
+  ];
+
+  const { table } = useDataTable({
+    data: houseData?.results || [],
+    columns,
+    pageCount: houseData?.pageCount || 0,
+    filterFields,
+    initialState: {
+      // columnPinning: { right: ['actions'] },
+    },
+    getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
+  });
+
   return (
     <ContentLayout title={t('house_index_title')} pathname={pathname}>
-      {isLoading ? (
+      {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
           searchableColumnCount={1}
@@ -117,19 +197,14 @@ export function Element() {
         />
       ) : (
         <DataTable
+          actions={{
+            onDelete,
+            onCreate,
+          }}
+          table={table}
           columns={columns}
-          data={houseData || []}
-          filterColumn="address"
-          filterOptions={[
-            {
-              column: 'status',
-              title: 'Status',
-              options: [
-                { label: 'For Sale', value: 'for_sale' },
-                { label: 'Sold', value: 'sold' },
-              ],
-            },
-          ]}
+          filterOptions={filterFields}
+          loading={isFetching}
         />
       )}
     </ContentLayout>

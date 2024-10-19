@@ -69,7 +69,7 @@ const SelectHeader = ({
   ...props
 }: React.ComponentPropsWithoutRef<typeof Header>) => (
   <Header
-    className={twMerge(' py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+    className={twMerge(' py-1.5 pr-2 pl-8 font-semibold text-sm', className)}
     {...props}
   />
 );
@@ -78,7 +78,7 @@ const SelectItem = ({ className, children, ...props }: ListBoxItemProps) => (
   <ListBoxItem
     className={(values) =>
       twMerge(
-        'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
+        'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
         typeof className === 'function' ? className(values) : className,
       )
     }
@@ -109,8 +109,8 @@ const SelectPopover = ({ className, offset = 0, ...props }: PopoverProps) => (
     offset={offset}
     className={(values) =>
       twMerge(
-        'relative z-50 w-[--trigger-width] min-w-[8rem] overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[exiting]:zoom-out-95',
-        'data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 data-[placement=bottom]:translate-y-1 data-[placement=left]:-translate-x-1 data-[placement=right]:translate-x-1 data-[placement=top]:-translate-y-1',
+        'data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[exiting]:zoom-out-95 relative z-50 w-[--trigger-width] min-w-[8rem] overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md data-[entering]:animate-in data-[exiting]:animate-out',
+        'data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 data-[placement=left]:-translate-x-1 data-[placement=top]:-translate-y-1 data-[placement=right]:translate-x-1 data-[placement=bottom]:translate-y-1',
         typeof className === 'function' ? className(values) : className,
       )
     }

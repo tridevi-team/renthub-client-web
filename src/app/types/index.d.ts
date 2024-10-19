@@ -17,7 +17,7 @@ export interface FilterOption {
 
 export interface SortOption {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: string;
 }
 
 export interface QueryOptions {
@@ -25,4 +25,21 @@ export interface QueryOptions {
   sorting?: SortOption[];
   pageSize?: number;
   page?: number;
+}
+
+export interface DataTableFilterField<TData> {
+  label: string;
+  value: keyof TData;
+  placeholder?: string;
+  options?: Option[];
+}
+
+export interface DataTableFilterOption<TData> {
+  id: string;
+  label: string;
+  value: keyof TData;
+  options: Option[];
+  filterValues?: string[];
+  filterOperator?: string;
+  isMulti?: boolean;
 }

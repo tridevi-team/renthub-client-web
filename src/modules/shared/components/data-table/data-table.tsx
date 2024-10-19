@@ -1,21 +1,9 @@
-import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useState } from 'react';
-
+import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
-import { DataTableToolbar } from '@shared/components/data-table/data-table-toolbar';
+import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
+import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
+import { ScrollArea } from '@shared/components/ui/scroll-area';
+import { Skeleton } from '@shared/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -24,59 +12,69 @@ import {
   TableHeader,
   TableRow,
 } from '@shared/components/ui/table';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useMediaQuery } from '@shared/hooks/use-media-query.hook';
+import {
+  flexRender,
+  type ColumnDef,
+  type Table as TanstackTable,
+} from '@tanstack/react-table';
 
 interface DataTableProps<TData, TValue> {
+  table: TanstackTable<TData>;
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  filterColumn?: string;
-  filterOptions?: {
-    column: string;
-    title: string;
-    options: { label: string; value: string }[];
-  }[];
+  filterOptions?: DataTableFilterField<TData>[];
+  loading?: boolean;
+  actions?: {
+    onDelete?: (selectedItems: TData[]) => Promise<void>;
+    onCreate?: () => void;
+    onDownload?: () => void;
+  };
+  additionalActionButtons?: React.ReactNode;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  filterColumn = 'fullName',
-  filterOptions = [],
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
+const TableRowSkeleton = ({ columns }: { columns: number }) => (
+  <TableRow>
+    {Array.from({ length: columns }).map((_, index) => (
+      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+      <TableCell key={index}>
+        <Skeleton className="h-6 w-full" />
+      </TableCell>
+    ))}
+  </TableRow>
+);
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
+export function DataTable<TData, TValue>({
+  table,
+  columns,
+  filterOptions = [],
+  loading = false,
+  actions,
+  additionalActionButtons,
+}: DataTableProps<TData, TValue>) {
+  const rowsPerPage = table.getState().pagination.pageSize;
+  const [t] = useI18n();
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
+  const isMediumScreen = useMediaQuery('(min-width: 768px)');
+
+  const getScrollAreaHeight = () => {
+    if (isLargeScreen) return 'h-[450px]';
+    if (isMediumScreen) return 'h-[400px]';
+    return 'h-[300px]';
+  };
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar
-        table={table}
-        filterColumn={filterColumn}
-        filterOptions={filterOptions}
-      />
-      <div className="rounded-md border">
+      <DataTableAdvancedToolbar table={table} filterFields={filterOptions}>
+        <TableToolbarActions
+          table={table}
+          actions={actions}
+          additionalButtons={additionalActionButtons}
+        />
+      </DataTableAdvancedToolbar>
+      <ScrollArea
+        className={`relative ${getScrollAreaHeight()} w-full rounded-md border`}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -95,7 +93,12 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              Array.from({ length: rowsPerPage }).map((_, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                <TableRowSkeleton key={index} columns={columns.length} />
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -117,13 +120,13 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t('common_noResultFound')}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
+      </ScrollArea>
       <DataTablePagination table={table} />
     </div>
   );

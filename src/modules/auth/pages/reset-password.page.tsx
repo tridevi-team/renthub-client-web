@@ -72,7 +72,7 @@ export function Element() {
 
   return (
     <>
-      <p className="text-center text-base text-secondary-foreground px-20">
+      <p className="px-20 text-center text-base text-secondary-foreground">
         {t('auth_resetPassword_guide')}
       </p>
 
@@ -84,7 +84,7 @@ export function Element() {
         <span className="text-base">{t('auth_rememberedPassword')} </span>
         <Link
           aria-label={t('auth_loginHere')}
-          className="hover:underline text-base"
+          className="text-base hover:underline"
           href={authPath.login}
           variant="link"
         >
@@ -111,7 +111,7 @@ const ResetPasswordForm = () => {
 
   return (
     <fetcher.Form
-      className="flex flex-col pt-3 md:pt-8 px-12 md:px-20"
+      className="flex flex-col px-12 pt-3 md:px-20 md:pt-8"
       method="POST"
     >
       {/* code */}
@@ -205,7 +205,7 @@ const ResetPasswordForm = () => {
         <div
           role="alert"
           aria-label="Fetcher error alert"
-          className="mt-2 bg-destructive text-destructive-foreground p-2 rounded-md flex items-center gap-x-2 shadow-md w-full"
+          className="mt-2 flex w-full items-center gap-x-2 rounded-md bg-destructive p-2 text-destructive-foreground shadow-md"
         >
           <Icon icon="lucide:alert-circle" />
           <p>{t(`${(fetcher.data as ErrorResponseSchema).code}`)}</p>

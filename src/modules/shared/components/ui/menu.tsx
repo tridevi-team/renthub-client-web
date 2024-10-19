@@ -25,7 +25,7 @@ const MenuPopover = ({ className, offset = 4, ...props }: PopoverProps) => (
     offset={offset}
     className={(values) =>
       twMerge(
-        'z-50 rounded-md bg-popover text-popover-foreground shadow-md data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[exiting]:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2',
+        'data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[exiting]:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2 z-50 rounded-md bg-popover text-popover-foreground shadow-md data-[entering]:animate-in data-[exiting]:animate-out',
         typeof className === 'function' ? className(values) : className,
       )
     }
@@ -75,7 +75,7 @@ const MenuHeader = ({
 }: MenuHeaderProps) => (
   <Header
     className={twMerge(
-      'px-2 py-1.5 text-sm font-semibold',
+      'px-2 py-1.5 font-semibold text-sm',
       inset && 'pl-8',
       separator && '-mx-1 mb-1 border-b border-b-border px-3 pb-[0.625rem]',
       className,
@@ -110,7 +110,7 @@ const MenuCheckboxItem = ({ className, children, ...props }: MenuItemProps) => (
   <MenuItem
     className={(values) =>
       twMerge(
-        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
+        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
         typeof className === 'function' ? className(values) : className,
       )
     }
@@ -134,7 +134,7 @@ const MenuRadioItem = ({ className, children, ...props }: MenuItemProps) => (
   <MenuItem
     className={(values) =>
       twMerge(
-        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
+        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[focused]:bg-accent data-[focused]:text-accent-foreground data-[disabled]:opacity-50',
         typeof className === 'function' ? className(values) : className,
       )
     }
