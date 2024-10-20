@@ -3,9 +3,10 @@ import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
 import { housePath } from '@modules/houses/routes';
-import type {
-  HouseDataSchema,
-  HouseSchema,
+import {
+  houseKeys,
+  type HouseDataSchema,
+  type HouseSchema,
 } from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
@@ -83,7 +84,7 @@ export function Element() {
     onSuccess: () => {
       toast.success(t('ms_deleteHouseSuccess'));
       table.toggleAllRowsSelected(false);
-      queryClient.invalidateQueries({ queryKey: ['houses-index'] });
+      queryClient.invalidateQueries({ queryKey: houseKeys.list(queryParams) });
     },
     onError: () => {
       toast.error(t('ms_error'));
@@ -108,9 +109,8 @@ export function Element() {
     isLoading,
     isFetching,
   } = useQuery<HouseDataSchema>({
-    queryKey: ['houses-index', queryParams],
+    queryKey: houseKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
-    refetchOnReconnect: true,
   });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -217,12 +217,12 @@ export function Element() {
 
   const filterFields: DataTableFilterField<HouseSchema>[] = [
     {
-      label: 'Tên nhà trọ',
+      label: t('house_name'),
       value: 'name',
       placeholder: 'Nhập tên nhà trọ',
     },
     {
-      label: 'Trạng thái',
+      label: t('house_status'),
       value: 'status',
       placeholder: 'Chọn trạng thái',
       options: [
@@ -256,7 +256,9 @@ export function Element() {
       ) : isError ? (
         <ErrorCard
           onRetry={() =>
-            queryClient.refetchQueries({ queryKey: ['houses-index'] })
+            queryClient.refetchQueries({
+              queryKey: houseKeys.list(queryParams),
+            })
           }
         />
       ) : (

@@ -1,5 +1,8 @@
 import type { QueryOptions } from '@app/types';
 import {
+  type HouseCreateRequestSchema,
+  type HouseCreateResponseSchema,
+  houseCreateResponseSchema,
   houseIndexResponseSchema,
   type HouseIndexResponseSchema,
 } from '@modules/houses/schema/house.schema';
@@ -14,5 +17,12 @@ export const houseRepositories = {
       .json<HouseIndexResponseSchema>();
 
     return houseIndexResponseSchema.parse(resp);
+  },
+  create: async (house: HouseCreateRequestSchema) => {
+    const resp = await http.instance
+      .post('houses/create', { json: house })
+      .json<HouseCreateResponseSchema>();
+
+    return houseCreateResponseSchema.parse(resp);
   },
 };
