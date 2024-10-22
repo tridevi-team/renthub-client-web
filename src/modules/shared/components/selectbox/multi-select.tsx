@@ -194,7 +194,7 @@ export const MultiSelect = React.forwardRef<
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              'flex h-auto min-h-10 w-full items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit',
+              'flex h-auto min-h-9 w-full items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
               className,
             )}
           >
@@ -264,7 +264,7 @@ export const MultiSelect = React.forwardRef<
               </div>
             ) : (
               <div className="mx-auto flex w-full items-center justify-between">
-                <span className="mx-3 text-muted-foreground text-sm">
+                <span className="mx-3 font-normal text-muted-foreground text-sm">
                   {placeholder}
                 </span>
                 <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
