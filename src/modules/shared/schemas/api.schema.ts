@@ -1,9 +1,9 @@
 import { dataTableConfig } from '@app/config/data-table.config';
+import { z } from '@app/lib/vi-zod';
 import {
   type ErrorLocale,
   errorLocale,
 } from '@shared/hooks/use-i18n/locales/vi/error.locale';
-import { z } from 'zod';
 
 const {
   comparisonOperators,

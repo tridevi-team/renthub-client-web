@@ -1,6 +1,6 @@
+import { z } from '@app/lib/vi-zod';
 import type { Option } from '@app/types';
 import ky from 'ky';
-import z from 'zod';
 
 const cityResponseSchema = z.array(
   z.object({
