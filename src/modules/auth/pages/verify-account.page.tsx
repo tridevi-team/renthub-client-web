@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
     if (!parsed.success) return json(parsed.error, { status: 400 });
     try {
-      await authRepositories.veryfyAccount({
+      await authRepositories.verifyAccount({
         json: parsed.data,
       });
 

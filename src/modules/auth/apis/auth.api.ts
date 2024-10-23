@@ -66,7 +66,7 @@ export const authRepositories = {
 
     return authRegisterResponseSchema.parse(resp);
   },
-  veryfyAccount: async ({ json }: { json: AuthVerifyEmailRequestSchema }) => {
+  verifyAccount: async ({ json }: { json: AuthVerifyEmailRequestSchema }) => {
     const resp = await http.instance
       .put('auth/verify-account', { json })
       .json<AuthVerifyEmailResponseSchema>();
