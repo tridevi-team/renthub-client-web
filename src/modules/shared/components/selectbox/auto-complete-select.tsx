@@ -1,17 +1,15 @@
+import { cn } from '@app/lib/utils';
+import type { Option } from '@app/types';
 import {
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from '@shared/components/selectbox/command';
-import { Command as CommandPrimitive } from 'cmdk';
-import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
-
 import { Skeleton } from '@shared/components/ui/skeleton';
-
-import { cn } from '@app/lib/utils';
-import type { Option } from '@app/types';
-import { Check } from 'lucide-react';
+import { Command as CommandPrimitive } from 'cmdk';
+import { Check, X } from 'lucide-react';
+import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
 
 type AutoCompleteProps = {
   options: Option[];
@@ -33,10 +31,10 @@ export const AutoComplete = ({
   isLoading = false,
 }: AutoCompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState<number | string | undefined>(value);
   const [inputValue, setInputValue] = useState<string | number>(value || '');
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
@@ -45,12 +43,10 @@ export const AutoComplete = ({
         return;
       }
 
-      // Keep the options displayed when the user is typing
       if (!isOpen) {
         setOpen(true);
       }
 
-      // This is not a default behaviour of the <input /> field
       if (event.key === 'Enter' && input.value !== '') {
         setSelected(input.value);
         onValueChange?.(input.value);
@@ -66,17 +62,16 @@ export const AutoComplete = ({
   const handleBlur = useCallback(() => {
     setOpen(false);
     setInputValue(selected ?? '');
+    setSearchValue('');
   }, [selected]);
 
   const handleSelectOption = useCallback(
     (selectedOption: string | number | undefined) => {
       setInputValue(selectedOption ?? '');
-
+      setSearchValue('');
       setSelected(selectedOption);
       onValueChange?.(selectedOption ?? '');
 
-      // This is a hack to prevent the input from being focused after the user selects an option
-      // We can call this hack: "The next tick"
       setTimeout(() => {
         inputRef?.current?.blur();
       }, 0);
@@ -84,19 +79,56 @@ export const AutoComplete = ({
     [onValueChange],
   );
 
+  const handleInputChange = (value: string) => {
+    setSearchValue(value);
+    if (!isOpen) {
+      setOpen(true);
+    }
+  };
+
+  const handleClear = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setSelected(undefined);
+    setInputValue('');
+    setSearchValue('');
+    onValueChange?.('');
+    inputRef.current?.focus();
+  };
+
+  const filteredOptions = searchValue
+    ? options.filter((option) =>
+        option.label
+          .toString()
+          .toLowerCase()
+          .includes(searchValue.toLowerCase()),
+      )
+    : options;
+
   return (
     <CommandPrimitive onKeyDown={handleKeyDown}>
-      <div>
+      <div className="relative">
         <CommandInput
           ref={inputRef}
-          value={inputValue as string}
-          onValueChange={isLoading ? undefined : setInputValue}
+          value={isOpen ? searchValue : (inputValue as string)}
+          onValueChange={isLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            setSearchValue('');
+          }}
           placeholder={placeholder}
           disabled={disabled}
-          className="text-base"
+          className="pr-8 text-sm"
         />
+        {inputValue && (
+          <button
+            onClick={handleClear}
+            className="-translate-y-1/2 absolute top-1/2 right-2 rounded-full p-1 hover:bg-slate-100"
+            type="button"
+          >
+            <X className="h-4 w-4 text-slate-500" />
+          </button>
+        )}
       </div>
       <div className="relative mt-1">
         <div
@@ -113,9 +145,9 @@ export const AutoComplete = ({
                 </div>
               </CommandPrimitive.Loading>
             ) : null}
-            {options.length > 0 && !isLoading ? (
+            {filteredOptions.length > 0 && !isLoading ? (
               <CommandGroup>
-                {options.map((option) => {
+                {filteredOptions.map((option) => {
                   const isSelected = selected === option.value;
                   return (
                     <CommandItem
