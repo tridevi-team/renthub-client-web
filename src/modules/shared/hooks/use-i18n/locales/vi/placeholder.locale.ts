@@ -25,8 +25,8 @@ export const placeholderLocale = {
   ph_house_floors: 'Nhập số tầng',
   ph_house_rooms_per_floor: 'Nhập số phòng mỗi tầng',
   ph_house_max_renters: 'Nhập số người tối đa',
-  ph_house_num_collect_days: 'Chọn chu kỳ thu tiền',
-  ph_house_invoice_date: 'Hạn thanh toán',
-  ph_house_collection_cycle: 'Nhập ngày thu tiền',
+  ph_house_num_collect_days: 'Nhập số ngày',
+  ph_house_invoice_date: 'Nhập ngày',
+  ph_house_collection_cycle: 'Nhập chu kỳ',
   // #endregion HOUSE
 } as const;

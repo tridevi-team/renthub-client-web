@@ -24,9 +24,12 @@ export const houseLocale = {
   house_room_price: 'Giá phòng',
   house_description: 'Mô tả',
   house_collection_cycle: 'Chu kỳ thu tiền',
-  house_invoice_date: 'Hạn thanh toán',
-  house_num_collect_days: 'Ngày thu tiền',
+  house_invoice_date: 'Ngày lập hóa đơn',
+  house_num_collect_days: 'Hạn nộp tiền',
   house_create_loading: 'Đang tạo nhà trọ...',
+  house_desc_floor: 'Tầng sẽ được tạo tự động',
+  house_desc_num_of_floors: 'Phòng sẽ được tạo tự động',
+  house_desc_invoice_date: 'Tự động lập hóa đơn vào ngày này mỗi chu kỳ',
   // #endregion FORM + TABLE
 
   // #region BUTTON
