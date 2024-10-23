@@ -9,6 +9,13 @@ export const houseLocale = {
   house_name: 'Tên nhà trọ',
   house_address: 'Địa chỉ',
   house_created_at: 'Ngày tạo',
+  house_street: 'Đường',
+  house_ward: 'Phường/Xã',
+  house_district: 'Quận/Huyện',
+  house_city: 'Tỉnh/Thành phố',
+  house_status: 'Trạng thái',
+  house_status_active: 'Hoạt động',
+  house_status_inactive: 'Tạm ngưng',
   // #endregion FORM + TABLE
 
   // #region BUTTON

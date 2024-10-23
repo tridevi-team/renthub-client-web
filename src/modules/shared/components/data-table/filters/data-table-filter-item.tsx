@@ -4,17 +4,8 @@ import type { Table } from '@tanstack/react-table';
 import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { cn } from '@app/lib/utils';
-import { Button } from '@shared/components/ui/button';
-import { Input } from '@shared/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@shared/components/ui/popover';
-import { useDebounce } from '@shared/hooks/use-debounce';
-
 import { dataTableConfig } from '@app/config/data-table.config';
+import { cn } from '@app/lib/utils';
 import {
   Select,
   SelectContent,
@@ -23,7 +14,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/components/data-table/select';
+import { Button } from '@shared/components/ui/button';
+import { Input } from '@shared/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@shared/components/ui/popover';
+import { useDebounce } from '@shared/hooks/use-debounce';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DataTableAdvancedFacetedFilter } from './data-table-advanced-faceted-filter';
 interface DataTableFilterItemProps<TData> {
   table: Table<TData>;
@@ -44,6 +44,9 @@ export function DataTableFilterItem<TData>({
 }: DataTableFilterItemProps<TData>) {
   const [searchParams] = useSearchParams();
   const [t] = useI18n();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const column = table.getColumn(
     selectedOption.value ? String(selectedOption.value) : '',
   );
@@ -68,46 +71,60 @@ export function DataTableFilterItem<TData>({
   const [selectedOperator, setSelectedOperator] = React.useState(
     operators.find((c) => c.value === filterOperator) ?? operators[0],
   );
-  // Create query string
-  const createQueryString = React.useCallback(
-    (params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(searchParams?.toString());
 
-      for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          newSearchParams.delete(key);
-        } else {
-          newSearchParams.set(key, String(value));
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  React.useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    const filters = newSearchParams.getAll('filter');
+
+    if (selectedOption.options.length > 0) {
+      if (filterValues.length > 0) {
+        for (const value of filterValues) {
+          const newFilter = `${String(selectedOption.value)}:${selectedOperator?.value}:${value}`;
+          if (!filters.includes(newFilter)) {
+            filters.push(newFilter);
+          }
+          newSearchParams.append('filter', newFilter);
+        }
+      } else {
+        filters.splice(
+          filters.findIndex(
+            (item) =>
+              item.startsWith(`${String(selectedOption.value)}:`) &&
+              item.includes(`:${selectedOperator?.value}:`),
+          ),
+          1,
+        );
+        newSearchParams.delete('filter');
+        for (const filter of filters) {
+          newSearchParams.append('filter', filter);
         }
       }
+    } else {
+      if (debounceValue.length > 0) {
+        const newFilter = `${String(selectedOption.value)}:${selectedOperator?.value}:${debounceValue}`;
+        if (!filters.includes(newFilter)) {
+          filters.push(newFilter);
+        }
+        newSearchParams.delete('filter');
+        for (const filter of filters) {
+          newSearchParams.append('filter', filter);
+        }
+      } else {
+        filters.splice(
+          filters.findIndex(
+            (item) =>
+              item.startsWith(`${String(selectedOption.value)}:`) &&
+              item.includes(`:${selectedOperator?.value}:`),
+          ),
+          1,
+        );
+      }
+    }
 
-      return newSearchParams.toString();
-    },
-    [searchParams],
-  );
-
-  // Update query string
-  React.useEffect(() => {
-    // if (selectedOption.options.length > 0) {
-    //   // key=value1.value2.value3~operator
-    //   const newSearchParams = createQueryString({
-    //     [String(selectedOption.value)]:
-    //       filterValues.length > 0
-    //         ? `${filterValues.join('.')}~${selectedOperator?.value}`
-    //         : null,
-    //   });
-    //   router.push(`${pathname}?${newSearchParams}`);
-    // } else {
-    //   // key=value~operator
-    //   const newSearchParams = createQueryString({
-    //     [String(selectedOption.value)]:
-    //       debounceValue.length > 0
-    //         ? `${debounceValue}~${selectedOperator?.value}`
-    //         : null,
-    //   });
-    //   router.push(`${pathname}?${newSearchParams}`);
-    // }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
+    navigate(`${location.pathname}?${newSearchParams.toString()}`, {
+      replace: true,
+    });
   }, [selectedOption, debounceValue]);
 
   return (
@@ -183,11 +200,10 @@ export function DataTableFilterItem<TData>({
               setSelectedOptions((prev) =>
                 prev.filter((item) => item.value !== selectedOption.value),
               );
-
-              const newSearchParams = createQueryString({
-                [String(selectedOption.value)]: null,
+              searchParams.delete(String(selectedOption.value));
+              navigate(`${location.pathname}?${searchParams.toString()}`, {
+                replace: true,
               });
-              // router.push(`${pathname}?${newSearchParams}`);
             }}
           >
             <TrashIcon className="size-4" aria-hidden="true" />

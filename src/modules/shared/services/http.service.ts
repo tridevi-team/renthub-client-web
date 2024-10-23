@@ -39,7 +39,7 @@ class Http {
     }
 
     for (const sort of sorting) {
-      searchParams.push(['sorting[]', JSON.stringify(sort)]);
+      searchParams.push(['sort[]', JSON.stringify(sort)]);
     }
 
     // Handle pagination
@@ -60,9 +60,9 @@ export const http = new Http({
   hooks: {
     beforeRequest: [
       async (request) => {
-        const token = useAuthUserStore.getState().user?.token;
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`);
+        const accessToken = useAuthUserStore.getState().user?.accessToken;
+        if (accessToken) {
+          request.headers.set('Authorization', `Bearer ${accessToken}`);
         }
       },
     ],

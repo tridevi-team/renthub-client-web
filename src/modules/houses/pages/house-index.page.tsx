@@ -3,14 +3,21 @@ import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { houseRepositories } from '@modules/houses/apis/house.api';
 import { housePath } from '@modules/houses/routes';
-import type {
-  HouseDataSchema,
-  HouseSchema,
+import {
+  houseKeys,
+  type HouseDataSchema,
+  type HouseSchema,
 } from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
+import {
+  DataTableRowActions,
+  type Action,
+} from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import ErrorCard from '@shared/components/layout/error-section';
+import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -18,7 +25,8 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, Row } from '@tanstack/react-table';
+import { FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -60,19 +68,23 @@ export function Element() {
   const fetchData = useCallback(async (params: URLSearchParams) => {
     const searchParams = processSearchParams(params, 'houses');
 
-    const response = await houseRepositories.index({ searchParams });
-    return response.data || null;
+    try {
+      const response = await houseRepositories.index({ searchParams });
+      return response.data || null;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }, []);
 
   const deleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       console.log('ids:', ids);
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 5 seconds
+      await new Promise((resolve) => setTimeout(resolve, 3000));
     },
     onSuccess: () => {
       toast.success(t('ms_deleteHouseSuccess'));
       table.toggleAllRowsSelected(false);
-      queryClient.invalidateQueries({ queryKey: ['houses-index'] });
+      queryClient.invalidateQueries({ queryKey: houseKeys.list(queryParams) });
     },
     onError: () => {
       toast.error(t('ms_error'));
@@ -92,13 +104,13 @@ export function Element() {
   }, [navigate]);
 
   const {
+    isError,
     data: houseData,
     isLoading,
     isFetching,
   } = useQuery<HouseDataSchema>({
-    queryKey: ['houses-index', queryParams],
+    queryKey: houseKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
-    refetchOnReconnect: true,
   });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -107,6 +119,22 @@ export function Element() {
       setIsInitialLoading(false);
     }
   }, [isLoading]);
+
+  const actionColumn: Action<HouseSchema>[] = [
+    {
+      label: t('bt_edit'),
+      icon: <FileEdit className="mr-2 h-4 w-4" />,
+      onClick: (row: Row<HouseSchema>) => {
+        navigate(housePath.edit.replace(':id', row.original.id));
+      },
+    },
+    {
+      label: t('bt_delete'),
+      icon: <Trash className="mr-2 h-4 w-4" />,
+      isDanger: true,
+      onClick: (row: Row<HouseSchema>) => onDelete([row.original]),
+    },
+  ];
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -131,40 +159,70 @@ export function Element() {
     {
       accessorKey: 'name',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Tên nhà trọ" />
+        <DataTableColumnHeader column={column} title={t('house_name')} />
       ),
     },
     {
-      accessorKey: 'address',
+      accessorKey: 'address.street',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Địa chỉ" />
+        <DataTableColumnHeader column={column} title={t('house_street')} />
       ),
-      cell: ({ row }) => {
-        const { city, ward, street, district } = row.original.address;
-        return `${street}, ${ward}, ${district}, ${city}`;
-      },
-      enableSorting: true,
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'address.ward',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('house_ward')} />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'address.district',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('house_district')} />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'address.city',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('house_city')} />
+      ),
+      enableSorting: false,
     },
     {
       accessorKey: 'status',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Trạng thái" />
+        <DataTableColumnHeader column={column} title={t('house_status')} />
       ),
       cell: ({ row }) => {
-        return row.original.status === 0 ? 'active' : 'inactive';
+        return row.original.status === 0 ? (
+          <Badge variant="outline">{t('house_status_inactive')}</Badge>
+        ) : (
+          <Badge variant="outline">{t('house_status_active')}</Badge>
+        );
       },
       enableSorting: true,
+    },
+    {
+      id: 'actions',
+      header: () => null,
+      cell: ({ row }) => (
+        <DataTableRowActions row={row} actions={actionColumn} />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
   ];
 
   const filterFields: DataTableFilterField<HouseSchema>[] = [
     {
-      label: 'Tên nhà trọ',
+      label: t('house_name'),
       value: 'name',
       placeholder: 'Nhập tên nhà trọ',
     },
     {
-      label: 'Trạng thái',
+      label: t('house_status'),
       value: 'status',
       placeholder: 'Chọn trạng thái',
       options: [
@@ -194,6 +252,14 @@ export function Element() {
           filterableColumnCount={2}
           cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
           shrinkZero
+        />
+      ) : isError ? (
+        <ErrorCard
+          onRetry={() =>
+            queryClient.refetchQueries({
+              queryKey: houseKeys.list(queryParams),
+            })
+          }
         />
       ) : (
         <DataTable

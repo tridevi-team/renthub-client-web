@@ -19,18 +19,20 @@ import {
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useMediaQuery } from '@shared/hooks/use-media-query';
 import { Trash } from 'lucide-react';
+import { Link } from 'react-aria-components';
 
 interface ConfirmationDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   title: string;
   description: string;
-  onConfirm: () => Promise<void>;
+  onConfirm: () => Promise<void> | void;
   showTrigger?: boolean;
   triggerText?: string;
   confirmText?: string;
   cancelText?: string;
   icon?: React.ReactNode;
   length?: number;
+  children?: React.ReactNode;
 }
 
 export function ConfirmationDialog({
@@ -43,11 +45,12 @@ export function ConfirmationDialog({
   cancelText,
   icon = <Trash className="mr-2 size-4" aria-hidden="true" />,
   length,
+  children,
   ...props
 }: ConfirmationDialogProps) {
   const [t] = useI18n();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [showDeleteTaskDialog, setShowDeleteTaskDialog] = React.useState(false);
+  const [showDialog, setShowDialog] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const defaultDeleteText = t('bt_delete');
   const defaultConfirmText = t('bt_confirm');
@@ -57,7 +60,7 @@ export function ConfirmationDialog({
     setIsLoading(true);
     try {
       await onConfirm();
-      setShowDeleteTaskDialog(false);
+      setShowDialog(false);
     } catch (error) {
       console.log('error:', error);
     } finally {
@@ -65,15 +68,26 @@ export function ConfirmationDialog({
     }
   };
 
-  const triggerButton = (
-    <Button
-      variant="danger"
-      size="sm"
-      onClick={() => setShowDeleteTaskDialog(true)}
-    >
+  const handleOpenDialog = () => {
+    setShowDialog(true);
+  };
+
+  const defaultTriggerButton = (
+    <Button variant="danger" size="sm" onClick={handleOpenDialog}>
       {icon}
       {triggerText || defaultDeleteText} {length !== undefined && `(${length})`}
     </Button>
+  );
+
+  const triggerElement = children ? (
+    <Link
+      onPress={handleOpenDialog}
+      onKeyUp={(e) => e.key === 'Enter' && handleOpenDialog()}
+    >
+      {children}
+    </Link>
+  ) : (
+    defaultTriggerButton
   );
 
   const content = (
@@ -100,16 +114,16 @@ export function ConfirmationDialog({
 
   if (isDesktop) {
     return (
-      <Dialog open={showDeleteTaskDialog} {...props}>
-        {showTrigger && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
+      <Dialog open={showDialog} {...props}>
+        {showTrigger && <DialogTrigger asChild>{triggerElement}</DialogTrigger>}
         <DialogContent>{content}</DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={showDeleteTaskDialog} {...props}>
-      {showTrigger && <DrawerTrigger asChild>{triggerButton}</DrawerTrigger>}
+    <Drawer open={showDialog} {...props}>
+      {showTrigger && <DrawerTrigger asChild>{triggerElement}</DrawerTrigger>}
       <DrawerContent>{content}</DrawerContent>
     </Drawer>
   );

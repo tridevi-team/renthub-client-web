@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { cn } from '@app/lib/utils';
-import { DataTableViewOptions } from '@shared/components/data-table/data-table-view-options';
+// import { DataTableViewOptions } from '@shared/components/data-table/data-table-view-options';
 import { DataTableFilterCombobox } from '@shared/components/data-table/filters/data-table-filter-combobox';
 import { Button } from '@shared/components/ui/button';
 
@@ -102,7 +102,7 @@ export function DataTableAdvancedToolbar<TData>({
               onSelect={onFilterComboboxItemSelect}
             />
           )}
-          <DataTableViewOptions table={table} />
+          {/* <DataTableViewOptions table={table} /> */}
         </div>
       </div>
       <div

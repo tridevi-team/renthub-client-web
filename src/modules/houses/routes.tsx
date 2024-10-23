@@ -11,9 +11,9 @@ export const houseId = {
 
 export const housePath = {
   root: '/houses',
-  index: '/',
-  create: '/create',
-  edit: '/:id/edit',
+  index: '/houses/',
+  create: '/houses/create',
+  edit: '/houses/:id/edit',
 } as const;
 
 const houseIndexRoute = {
