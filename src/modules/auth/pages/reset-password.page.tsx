@@ -38,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
       await authRepositories.resetPassword({ json: parsed.data });
 
       useEmailStore.getState().setData(null);
-      toast.success(messageLocale.ms_resetPasswordSuccess);
+      toast.success(messageLocale.ms_reset_password_success);
       return redirect(authPath.login);
     } catch (error) {
       if (error instanceof HTTPError) {

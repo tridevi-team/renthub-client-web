@@ -40,10 +40,10 @@ export const ResendCodeButton = () => {
         },
       });
       setLoading(false);
-      toast.info(t('ms_resendCodeSuccess'));
+      toast.info(t('ms_resend_code_success'));
     } catch (error) {
       setLoading(false);
-      return toast.error(t('ms_codeResendFailed'));
+      return toast.error(t('ms_code_resend_failed'));
     }
   };
 

@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
           status: 'code-sent',
         });
       });
-      toast.info(messageLocale.ms_registerSuccess);
+      toast.info(messageLocale.ms_register_success);
       return redirect(authPath.verifyAccount);
     } catch (error) {
       if (error instanceof HTTPError) {

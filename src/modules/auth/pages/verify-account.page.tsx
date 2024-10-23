@@ -43,7 +43,7 @@ export const action: ActionFunction = async ({ request }) => {
         useEmailStore.getState().setData(null);
       });
 
-      toast.info(messageLocale.ms_verifySuccess);
+      toast.info(messageLocale.ms_verify_success);
       return redirect(authPath.login);
     } catch (error) {
       if (error instanceof HTTPError) {
