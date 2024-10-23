@@ -35,7 +35,7 @@ const _Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {suffixElement && (
-          <div className="pointer-events-none absolute right-3 flex items-center text-gray-500">
+          <div className="pointer-events-none absolute right-3 flex items-center bg-white text-gray-500">
             {suffixElement}
           </div>
         )}
