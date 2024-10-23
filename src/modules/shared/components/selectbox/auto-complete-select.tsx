@@ -10,13 +10,19 @@ import { Skeleton } from '@shared/components/ui/skeleton';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Check, X } from 'lucide-react';
-import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react';
 
 type AutoCompleteProps = {
   options: Option[];
   emptyMessage?: string;
   value?: number | string | undefined;
-  onValueChange?: (value: number | string) => void;
+  onValueChange?: (value: number | string | undefined) => void;
   isLoading?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -35,7 +41,9 @@ export const AutoComplete = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState<number | string | undefined>(value);
-  const [inputValue, setInputValue] = useState<string | number>(value || '');
+  const [inputValue, setInputValue] = useState<string | number | undefined>(
+    value,
+  );
   const [searchValue, setSearchValue] = useState<string>('');
 
   const handleKeyDown = useCallback(
@@ -63,7 +71,7 @@ export const AutoComplete = ({
 
   const handleBlur = useCallback(() => {
     setOpen(false);
-    setInputValue(selected ?? '');
+    setInputValue(selected);
     setSearchValue('');
   }, [selected]);
 
@@ -91,9 +99,9 @@ export const AutoComplete = ({
   const handleClear = (event: React.MouseEvent) => {
     event.stopPropagation();
     setSelected(undefined);
-    setInputValue('');
+    setInputValue(undefined);
     setSearchValue('');
-    onValueChange?.('');
+    onValueChange?.(undefined);
     inputRef.current?.focus();
   };
 
@@ -106,12 +114,20 @@ export const AutoComplete = ({
       )
     : options;
 
+  useEffect(() => {
+    if (!options.length) {
+      setSelected(undefined);
+      setInputValue(undefined);
+      setSearchValue('');
+    }
+  }, [options]);
+
   return (
     <CommandPrimitive onKeyDown={handleKeyDown}>
       <div className="relative">
         <CommandInput
           ref={inputRef}
-          value={isOpen ? searchValue : (inputValue as string)}
+          value={isOpen ? searchValue : (inputValue as string) ?? ''}
           onValueChange={isLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
           onFocus={() => {
