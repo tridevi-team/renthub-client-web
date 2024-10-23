@@ -7,13 +7,14 @@ import {
   CommandList,
 } from '@shared/components/selectbox/command';
 import { Skeleton } from '@shared/components/ui/skeleton';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Check, X } from 'lucide-react';
 import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
 
 type AutoCompleteProps = {
   options: Option[];
-  emptyMessage: string;
+  emptyMessage?: string;
   value?: number | string | undefined;
   onValueChange?: (value: number | string) => void;
   isLoading?: boolean;
@@ -30,6 +31,7 @@ export const AutoComplete = ({
   disabled,
   isLoading = false,
 }: AutoCompleteProps) => {
+  const [t] = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setOpen] = useState(false);
   const [selected, setSelected] = useState<number | string | undefined>(value);
@@ -172,7 +174,7 @@ export const AutoComplete = ({
             ) : null}
             {!isLoading ? (
               <CommandPrimitive.Empty className="select-none rounded-sm px-2 py-3 text-center text-sm">
-                {emptyMessage}
+                {emptyMessage ?? t('common_no_item')}
               </CommandPrimitive.Empty>
             ) : null}
           </CommandList>

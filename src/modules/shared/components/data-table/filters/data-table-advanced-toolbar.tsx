@@ -27,7 +27,7 @@ export function DataTableAdvancedToolbar<TData>({
   className,
   ...props
 }: DataTableAdvancedToolbarProps<TData>) {
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [t] = useI18n();
 
   const options = React.useMemo<DataTableFilterOption<TData>[]>(() => {
@@ -147,7 +147,7 @@ export function DataTableAdvancedToolbar<TData>({
               onClick={() => setOpenCombobox(true)}
             >
               <PlusIcon className="mr-2 size-4 opacity-50" aria-hidden="true" />
-              {t('common_addFilter')}
+              {t('common_add_filter')}
             </Button>
           </DataTableFilterCombobox>
         ) : null}

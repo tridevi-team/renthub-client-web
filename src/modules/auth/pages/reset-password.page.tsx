@@ -191,7 +191,7 @@ const ResetPasswordForm = () => {
             </Label>
             <Input
               type="password"
-              placeholder={t('ph_confirmPassword')}
+              placeholder={t('ph_confirm_password')}
               ref={ref}
             />
             <FieldError className="text-destructive">

@@ -4,6 +4,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbSeparator,
 } from '@shared/components/ui/breadcrumbs';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type React from 'react';
@@ -63,7 +64,10 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
               {crumb.isLast ? (
                 <span>{crumb.label}</span>
               ) : (
-                <Link href={crumb.path}>{crumb.label}</Link>
+                <Link href={crumb.path}>
+                  {crumb.label}
+                  <BreadcrumbSeparator />
+                </Link>
               )}
             </BreadcrumbLink>
           </BreadcrumbItem>

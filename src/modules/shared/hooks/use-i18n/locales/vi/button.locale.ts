@@ -15,4 +15,5 @@ export const buttonLocale = {
   bt_download: 'Tải xuống',
   bt_duplicate: 'Tạo bản sao',
   bt_retry: 'Thử lại',
+  bt_preview: 'Xem trước',
 } as const;

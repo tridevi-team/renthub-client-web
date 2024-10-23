@@ -38,8 +38,8 @@ export function TableToolbarActions<T>({
       )}
       {onDelete && selectedItems.length > 0 && (
         <ConfirmationDialog
-          description={t('common_confirmDeleteMessage')}
-          title={t('common_confirmDelete')}
+          description={t('common_confirm_delete_message')}
+          title={t('common_confirm_delete')}
           length={selectedItemsCount}
           onConfirm={() => onDelete(selectedItems)}
         />
