@@ -24,19 +24,35 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
     let currentPath = '';
 
     for (const segment of segments) {
-      const matchedSegment = Object.keys(currentConfig).find((key) => {
-        if (key.startsWith('/:')) {
-          return true;
-        }
-        return key === `/${segment}` || key === '';
-      });
+      // Tìm segment match chính xác trước
+      let matchedSegment = Object.keys(currentConfig).find(
+        (key) => key === `/${segment}`,
+      );
 
+      // Nếu không có match chính xác, kiểm tra các pattern động
       if (!matchedSegment) {
+        matchedSegment = Object.keys(currentConfig).find((key) => {
+          if (!key.startsWith('/:')) return false;
+
+          // Lấy phần còn lại của path config (phần sau /:id)
+          const remainingConfigPath = key.split('/').slice(2).join('/');
+          // Lấy phần còn lại của current path
+          const remainingCurrentPath = segments
+            .slice(segments.indexOf(segment) + 1)
+            .join('/');
+
+          // So sánh phần còn lại để đảm bảo match đúng pattern
+          return remainingConfigPath === remainingCurrentPath;
+        });
+      }
+
+      if (!matchedSegment && segment !== '') {
         break;
       }
 
-      currentPath += matchedSegment.replace(/\/:(\w+)/g, `/${segment}`);
-      const { label, children } = currentConfig[matchedSegment];
+      const actualPath = matchedSegment || '';
+      currentPath += actualPath.replace(/\/:(\w+)/g, `/${segment}`);
+      const { label, children } = currentConfig[actualPath];
       breadcrumbs.push({
         path: currentPath || '/',
         label: t(label),
@@ -62,11 +78,11 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
           <BreadcrumbItem key={crumb.path}>
             <BreadcrumbLink asChild>
               {crumb.isLast ? (
-                <span>{crumb.label}</span>
+                <b>{crumb.label}</b>
               ) : (
-                <Link href={crumb.path}>
+                <Link href={crumb.path} className="flex items-center">
                   {crumb.label}
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="mt-0.5 ml-2" />
                 </Link>
               )}
             </BreadcrumbLink>

@@ -22,6 +22,10 @@ export const breadcrumbConfig: BreadcrumbConfig = {
         label: 'br_houses_edit',
         dynamicSegments: [':id'],
       },
+      '/:id/preview': {
+        label: 'br_houses_preview',
+        dynamicSegments: [':id'],
+      },
     },
   },
 };
