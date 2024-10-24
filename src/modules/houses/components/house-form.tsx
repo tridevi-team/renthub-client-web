@@ -3,6 +3,7 @@ import type { Option } from '@app/types';
 import { housePath } from '@modules/houses/routes';
 import type {
   houseCreateRequestSchema,
+  HouseCreateResponseSchema,
   houseUpdateRequestSchema,
 } from '@modules/houses/schema/house.schema';
 import { provinceRepositories } from '@shared/apis/city.api';
@@ -33,13 +34,17 @@ type HouseFormProps = {
       z.infer<typeof houseCreateRequestSchema | typeof houseUpdateRequestSchema>
     >
   >;
-  onSubmit: (values: z.infer<typeof houseCreateRequestSchema>) => void;
+  loading?: boolean;
+  onSubmit: (
+    values: z.infer<typeof houseCreateRequestSchema>,
+  ) => Promise<HouseCreateResponseSchema>;
   isUpdate?: boolean;
 };
 
 export default function HouseForm({
   form,
   onSubmit,
+  loading,
   isUpdate = false,
 }: HouseFormProps) {
   const [t] = useI18n();
@@ -410,20 +415,23 @@ export default function HouseForm({
             </FormItem>
           )}
         />
-        <Button
-          variant="outline"
-          className="mr-2"
-          onClick={() => {
-            navigate(`${housePath.root}/${housePath.index}`);
-          }}
-        >
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          {t('bt_back')}
-        </Button>
-        <Button type="submit">
-          <Save className="mr-2 h-4 w-4" />
-          {t('bt_save')}
-        </Button>
+        <div className="flex justify-start space-x-2">
+          <Button
+            loading={loading}
+            variant="outline"
+            className="min-w-24"
+            onClick={() => {
+              navigate(`${housePath.root}/${housePath.index}`);
+            }}
+          >
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            {t('bt_back')}
+          </Button>
+          <Button type="submit" className="min-w-24" loading={loading}>
+            <Save className="mr-2 h-4 w-4" />
+            {t('bt_save')}
+          </Button>
+        </div>
       </form>
     </Form>
   );

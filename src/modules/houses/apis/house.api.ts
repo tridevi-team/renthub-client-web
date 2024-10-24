@@ -3,6 +3,9 @@ import {
   type HouseCreateRequestSchema,
   type HouseCreateResponseSchema,
   houseCreateResponseSchema,
+  type HouseDetailRequestSchema,
+  houseDetailResponseSchema,
+  type HouseDetailResponseSchema,
   houseIndexResponseSchema,
   type HouseIndexResponseSchema,
 } from '@modules/houses/schema/house.schema';
@@ -19,10 +22,23 @@ export const houseRepositories = {
     return houseIndexResponseSchema.parse(resp);
   },
   create: async (house: HouseCreateRequestSchema) => {
+    const { street, ward, district, city, ...rest } = house;
     const resp = await http.instance
-      .post('houses/create', { json: house })
+      .post('houses/create', {
+        json: {
+          address: { street, ward, district, city },
+          ...rest,
+        },
+      })
       .json<HouseCreateResponseSchema>();
 
     return houseCreateResponseSchema.parse(resp);
+  },
+  detail: async (id: HouseDetailRequestSchema) => {
+    const resp = await http.instance
+      .get(`houses/${id}/details`)
+      .json<HouseDetailResponseSchema>();
+
+    return houseDetailResponseSchema.parse(resp);
   },
 };
