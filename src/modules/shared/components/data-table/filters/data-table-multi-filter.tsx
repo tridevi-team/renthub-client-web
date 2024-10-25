@@ -96,7 +96,7 @@ export function DataTableMultiFilter<TData>({
               );
             }}
           >
-            {t('common_clearFilter')}
+            {t('common_clear_filter')}
           </Button>
         </div>
       </PopoverContent>
@@ -260,7 +260,7 @@ export function MultiFilterRow<TData>({
         )
       ) : (
         <Input
-          placeholder={t('common_typeHere')}
+          placeholder={t('common_type_here')}
           className="h-8"
           value={value}
           onChange={(event) => setValue(event.target.value)}

@@ -61,9 +61,9 @@ export function DataTableFilterCombobox<TData>({
       </PopoverTrigger>
       <PopoverContent className="w-[12.5rem] p-0" align="end">
         <Command>
-          <CommandInput placeholder={t('common_filterBy')} />
+          <CommandInput placeholder={t('common_filter_by')} />
           <CommandList>
-            <CommandEmpty>{t('common_noResultFound')}</CommandEmpty>
+            <CommandEmpty>{t('common_no_result_found')}</CommandEmpty>
             <CommandGroup>
               {options
                 .filter(
@@ -118,7 +118,7 @@ export function DataTableFilterCombobox<TData>({
                 }}
               >
                 <PlusIcon className="mr-2 size-4" aria-hidden="true" />
-                {t('common_addFilter')}
+                {t('common_add_filter')}
               </CommandItem>
             </CommandGroup>
           </CommandList>

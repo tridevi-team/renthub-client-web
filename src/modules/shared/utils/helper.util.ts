@@ -221,7 +221,7 @@ export const processSearchParams = (
   const sort = params.get('sort')?.split('.') || [];
   const sorting = sort[0]
     ? [{ field: `${fieldPrefix}.${sort[0]}`, direction: sort[1] }]
-    : [{ field: `${fieldPrefix}.id`, direction: 'desc' }];
+    : [{ field: `${fieldPrefix}.createdAt`, direction: 'desc' }];
 
   const page = Number.parseInt(params.get('page') || '1', 10);
   const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);

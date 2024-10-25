@@ -1,4 +1,4 @@
-import type { DataTableFilterOption, Option } from '@app/types';
+import type { DataTableFilterOption } from '@app/types';
 import { CheckIcon } from '@radix-ui/react-icons';
 import type { Column } from '@tanstack/react-table';
 
@@ -17,7 +17,12 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 interface DataTableAdvancedFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
-  options: Option[];
+  options: {
+    label: string;
+    value: string;
+    icon?: React.ElementType;
+    withCount?: boolean;
+  }[];
   selectedValues: Set<string>;
   setSelectedOptions: React.Dispatch<
     React.SetStateAction<DataTableFilterOption<TData>[]>
@@ -43,7 +48,7 @@ export function DataTableAdvancedFacetedFilter<TData, TValue>({
         />
       </div>
       <CommandList>
-        <CommandEmpty>{t('common_noResultFound')}</CommandEmpty>
+        <CommandEmpty>{t('common_no_result_found')}</CommandEmpty>
         <CommandGroup className="px-0">
           {options.map((option) => {
             const isSelected = selectedValues.has(option.value);
@@ -120,7 +125,7 @@ export function DataTableAdvancedFacetedFilter<TData, TValue>({
                 }}
                 className="justify-center text-center"
               >
-                {t('common_clearFilter')}
+                {t('common_clear_filter')}
               </CommandItem>
             </CommandGroup>
           </>

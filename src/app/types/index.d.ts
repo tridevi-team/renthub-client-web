@@ -3,10 +3,11 @@ export interface SearchParams {
 }
 
 export interface Option {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
   icon?: React.ComponentType<{ className?: string }>;
   withCount?: boolean;
+  code?: string | number;
 }
 
 export interface FilterOption {
@@ -29,16 +30,23 @@ export interface QueryOptions {
 
 export interface DataTableFilterField<TData> {
   label: string;
+  type?: 'text' | 'select' | 'date' | 'number';
   value: keyof TData;
   placeholder?: string;
-  options?: Option[];
+  options?: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export interface DataTableFilterOption<TData> {
   id: string;
   label: string;
   value: keyof TData;
-  options: Option[];
+  options: {
+    label: string;
+    value: string;
+  }[];
   filterValues?: string[];
   filterOperator?: string;
   isMulti?: boolean;

@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
           status: 'code-sent',
         });
       });
-      toast.info(messageLocale.ms_registerSuccess);
+      toast.info(messageLocale.ms_register_success);
       return redirect(authPath.verifyAccount);
     } catch (error) {
       if (error instanceof HTTPError) {
@@ -203,7 +203,7 @@ const RegisterForm = () => {
                   <SelectContent>
                     <For
                       each={GENDER_OPTIONS}
-                      fallback={<p>{t('common_noItem')}</p>}
+                      fallback={<p>{t('common_no_item')}</p>}
                     >
                       {(option) => (
                         <SelectItem key={option.value} id={option.value}>
@@ -240,7 +240,7 @@ const RegisterForm = () => {
               isRequired
             >
               <Label className="field-required">{t('auth_phoneNumber')}</Label>
-              <Input placeholder={t('ph_phoneNumber')} ref={ref} />
+              <Input placeholder={t('ph_phone_number')} ref={ref} />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>
@@ -298,7 +298,7 @@ const RegisterForm = () => {
               <Label className="field-required">
                 {t('auth_confirmPassword')}
               </Label>
-              <Input placeholder={t('ph_confirmPassword')} ref={ref} />
+              <Input placeholder={t('ph_confirm_password')} ref={ref} />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>

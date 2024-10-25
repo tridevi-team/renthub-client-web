@@ -20,14 +20,14 @@ interface DataTablePaginationProps<TData> {
 
 export function DataTablePagination<TData>({
   table,
-  pageSizeOptions = [5, 10, 25, 50, 100],
+  pageSizeOptions = [10, 25, 50, 100],
 }: DataTablePaginationProps<TData>) {
   const [t] = useI18n();
 
   return (
     <div className="flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8">
       <div className="flex-1 whitespace-nowrap text-muted-foreground text-sm">
-        {t('common_rowSelected', {
+        {t('common_row_selected', {
           selectedRowCount: table
             .getFilteredSelectedRowModel()
             .rows.length.toString(),
@@ -37,7 +37,7 @@ export function DataTablePagination<TData>({
       <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
         <div className="flex items-center space-x-2">
           <p className="whitespace-nowrap font-medium text-sm">
-            {t('common_rowPerPage')}
+            {t('common_row_per_page')}
           </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -58,7 +58,7 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex items-center justify-center font-medium text-sm">
-          {t('common_pageOf', {
+          {t('common_page_of', {
             pageIndex: (table.getState().pagination.pageIndex + 1).toString(),
             pageCount: table.getPageCount().toString(),
           })}

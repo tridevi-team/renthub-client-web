@@ -222,7 +222,7 @@ export function DataTableFilterItem<TData>({
           )
         ) : (
           <Input
-            placeholder={t('common_typeHere')}
+            placeholder={t('common_type_here')}
             className="h-8"
             value={value}
             onChange={(event) => setValue(event.target.value)}

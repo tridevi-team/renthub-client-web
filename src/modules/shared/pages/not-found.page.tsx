@@ -23,8 +23,10 @@ export function Element() {
       />
       <Button variant="outline" className="mt-5 h-10 justify-center">
         <Link onPress={() => navigate(-1)}>
-          {t('common_backTo', {
-            target: userStore.user ? t('common_previousPage') : t('auth_login'),
+          {t('common_back_to', {
+            target: userStore.user
+              ? t('common_previous_page')
+              : t('auth_login'),
           })}
         </Link>
       </Button>

@@ -43,7 +43,9 @@ export function ReloadPromptSw() {
   useEffect(() => {
     if (offlineReady || needRefresh) {
       toast(
-        offlineReady ? t('common_appReady') : t('common_newContentAvailable'),
+        offlineReady
+          ? t('common_app_ready')
+          : t('common_new_content_available'),
         {
           closeButton: true,
           duration: 60 * 1_000,

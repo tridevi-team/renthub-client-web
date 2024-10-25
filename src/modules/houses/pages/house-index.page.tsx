@@ -26,7 +26,7 @@ import { checkAuthUser } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { FileEdit, Trash } from 'lucide-react';
+import { FileEdit, Trash, View } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -53,7 +53,7 @@ export function Element() {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
-  const [searchParams, _] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const queryParams = useMemo(() => {
@@ -82,7 +82,7 @@ export function Element() {
       await new Promise((resolve) => setTimeout(resolve, 3000));
     },
     onSuccess: () => {
-      toast.success(t('ms_deleteHouseSuccess'));
+      toast.success(t('ms_delete_house_success'));
       table.toggleAllRowsSelected(false);
       queryClient.invalidateQueries({ queryKey: houseKeys.list(queryParams) });
     },
@@ -100,7 +100,7 @@ export function Element() {
   );
 
   const onCreate = useCallback(() => {
-    navigate(housePath.create);
+    navigate(`${housePath.root}/${housePath.create}`);
   }, [navigate]);
 
   const {
@@ -126,6 +126,15 @@ export function Element() {
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: (row: Row<HouseSchema>) => {
         navigate(housePath.edit.replace(':id', row.original.id));
+      },
+    },
+    {
+      label: t('bt_preview'),
+      icon: <View className="mr-2 h-4 w-4" />,
+      onClick: (row: Row<HouseSchema>) => {
+        navigate(
+          `${housePath.root}/${housePath.preview.replace(':id', row.original.id)}`,
+        );
       },
     },
     {
@@ -238,7 +247,7 @@ export function Element() {
     pageCount: houseData?.pageCount || 0,
     filterFields,
     initialState: {
-      // columnPinning: { right: ['actions'] },
+      columnPinning: { right: ['actions'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });

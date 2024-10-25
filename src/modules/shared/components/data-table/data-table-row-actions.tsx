@@ -55,8 +55,8 @@ export function DataTableRowActions<TData>({
             return (
               <ConfirmationDialog
                 key={`${action.label}-${index}`}
-                description={t('common_confirmDeleteMessage')}
-                title={t('common_confirmDelete')}
+                description={t('common_confirm_delete_message')}
+                title={t('common_confirm_delete')}
                 onConfirm={async () => {
                   await action.onClick(row);
                 }}

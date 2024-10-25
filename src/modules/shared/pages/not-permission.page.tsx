@@ -23,7 +23,7 @@ export function Element() {
       />
       <Button variant="outline" className="mt-5 h-10 justify-center">
         <Link href={userStore.user ? dashboardPath.root : authPath.login}>
-          {t('common_backTo', {
+          {t('common_back_to', {
             target: userStore.user ? t('dashboard_title') : t('auth_login'),
           })}
         </Link>

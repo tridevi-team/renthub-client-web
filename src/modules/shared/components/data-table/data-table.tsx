@@ -58,9 +58,9 @@ export function DataTable<TData, TValue>({
   const isMediumScreen = useMediaQuery('(min-width: 768px)');
 
   const getScrollAreaHeight = () => {
-    if (isLargeScreen) return 'h-[450px]';
-    if (isMediumScreen) return 'h-[400px]';
-    return 'h-[300px]';
+    if (isLargeScreen) return 'max-h-[450px]';
+    if (isMediumScreen) return 'max-h-[400px]';
+    return 'max-h-[300px]';
   };
 
   return (
@@ -120,7 +120,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {t('common_noResultFound')}
+                  {t('common_no_result_found')}
                 </TableCell>
               </TableRow>
             )}
