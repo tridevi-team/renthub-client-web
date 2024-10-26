@@ -15,6 +15,8 @@ export const errorLocale = {
   UNKNOWN_ERROR: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau',
   OOPS: 'Oops! Đã xảy ra lỗi',
   SOMETHING_WENT_WRONG: 'Có lỗi xảy ra khi tải dữ liệu',
+  ID_REQUIRED: 'ID không được để trống',
+  NOT_FOUND: 'Không tìm thấy dữ liệu',
 } as const;
 
 export type ErrorLocale = keyof typeof errorLocale;

@@ -28,5 +28,6 @@ export const placeholderLocale = {
   ph_house_num_collect_days: 'Nhập số ngày',
   ph_house_invoice_date: 'Nhập ngày',
   ph_house_collection_cycle: 'Nhập chu kỳ',
+  ph_house_contract_default: 'Nhập hợp đồng mặc định',
   // #endregion HOUSE
 } as const;

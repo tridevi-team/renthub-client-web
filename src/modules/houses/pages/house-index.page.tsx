@@ -125,7 +125,9 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: (row: Row<HouseSchema>) => {
-        navigate(housePath.edit.replace(':id', row.original.id));
+        navigate(
+          `${housePath.root}/${housePath.edit.replace(':id', row.original.id)}`,
+        );
       },
     },
     {
@@ -247,7 +249,7 @@ export function Element() {
     pageCount: houseData?.pageCount || 0,
     filterFields,
     initialState: {
-      columnPinning: { right: ['actions'] },
+      columnPinning: { right: ['actions'], left: ['select', 'name'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
