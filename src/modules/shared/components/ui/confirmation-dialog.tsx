@@ -98,7 +98,13 @@ export function ConfirmationDialog({
       </DialogHeader>
       <DialogFooter className="gap-2 sm:space-x-0">
         <DialogClose asChild>
-          <Button variant="outline">{cancelText || defaultCancelText}</Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowDialog(false)}
+            disabled={isLoading}
+          >
+            {cancelText || defaultCancelText}
+          </Button>
         </DialogClose>
         <Button
           variant="destructive"
