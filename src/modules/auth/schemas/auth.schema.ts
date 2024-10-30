@@ -1,5 +1,25 @@
 import { z } from '@app/lib/vi-zod';
 
+const PERMISSION_KEY = [
+  'house',
+  'role',
+  'room',
+  'renter',
+  'service',
+  'bill',
+  'equipment',
+  'payment',
+] as const;
+
+export type PermissionKeyType = (typeof PERMISSION_KEY)[number];
+
+const CRUDPermissionSchema = z.object({
+  create: z.boolean(),
+  read: z.boolean(),
+  update: z.boolean(),
+  delete: z.boolean(),
+});
+
 export const appUserStoreSchema = z
   .object({
     id: z.string(),
@@ -21,6 +41,7 @@ export const appUserStoreSchema = z
             ward: z.string(),
             street: z.string(),
           }),
+          permissions: z.record(z.enum(PERMISSION_KEY), CRUDPermissionSchema),
         }),
       )
       .nullable(),
