@@ -36,8 +36,8 @@ export const useAuthUserStore = create<UserStore>()(
   devtools(
     persist(
       (set) => ({
-        user: null,
-        setUser: (newUser) => {
+        user: null as z.infer<typeof appUserStoreSchema> | null,
+        setUser: (newUser: z.infer<typeof appUserStoreSchema>) => {
           set({ user: newUser });
         },
         clearUser: () => {
