@@ -35,4 +35,7 @@ export const commonLocale = {
   common_confirm_delete_message:
     'Bạn có chắc chắn muốn xóa những bản ghi đã chọn này không? Hành động này không thể hoàn tác.',
   common_field_required: '{field} là bắt buộc',
+  common_view_all: 'Xem tất cả',
+  common_notifications: 'Thông báo',
+  common_mark_all_as_read: 'Đánh dấu tất cả đã đọc',
 } as const;

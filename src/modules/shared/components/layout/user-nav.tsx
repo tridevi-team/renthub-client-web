@@ -38,7 +38,7 @@ export function UserNav() {
       if (names.length > 1) {
         return `${names[0][0]}${names[names.length - 1][0]}`;
       }
-      return names[0][0];
+      return names[0][0].toUpperCase();
     }
     return 'JD';
   };
@@ -53,7 +53,7 @@ export function UserNav() {
                 variant="outline"
                 className="relative h-9 w-9 rounded-full"
               >
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-9 w-9">
                   <AvatarImage src="#" alt="Avatar" />
                   <AvatarFallback className="bg-transparent">
                     {genAvatarFallback()}
