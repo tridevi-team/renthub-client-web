@@ -42,4 +42,8 @@ export const houseLocale = {
   // #region COMMON
 
   // #endregion COMMON
+
+  // #region NAVBAR
+  house_not_found: 'Không tìm thấy nhà trọ',
+  // #endregion NAVBAR
 } as const;

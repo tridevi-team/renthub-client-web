@@ -20,6 +20,18 @@ const CRUDPermissionSchema = z.object({
   delete: z.boolean(),
 });
 
+export const houseInStoreSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  address: z.object({
+    city: z.string(),
+    district: z.string(),
+    ward: z.string(),
+    street: z.string(),
+  }),
+  permissions: z.record(z.enum(PERMISSION_KEY), CRUDPermissionSchema),
+});
+
 export const appUserStoreSchema = z
   .object({
     id: z.string(),
@@ -30,21 +42,7 @@ export const appUserStoreSchema = z
     status: z.number(),
     verify: z.number(),
     accessToken: z.string(),
-    houses: z
-      .array(
-        z.object({
-          id: z.string(),
-          name: z.string(),
-          address: z.object({
-            city: z.string(),
-            district: z.string(),
-            ward: z.string(),
-            street: z.string(),
-          }),
-          permissions: z.record(z.enum(PERMISSION_KEY), CRUDPermissionSchema),
-        }),
-      )
-      .nullable(),
+    houses: z.array(houseInStoreSchema),
   })
   .nullable();
 
