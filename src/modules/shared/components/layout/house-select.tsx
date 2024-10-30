@@ -43,9 +43,9 @@ export function HouseSelect() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="mr-3 h-9 w-64 justify-between"
+          className="mr-1 h-9 w-64 justify-between"
         >
-          <div className="mr-3 flex items-center gap-2 truncate">
+          <div className="flex items-center gap-2 truncate">
             <Home className="h-4 w-4 shrink-0 opacity-50" />
             <span className="truncate">
               {selectedHouse ? selectedHouse.name : t('ph_house_select')}
