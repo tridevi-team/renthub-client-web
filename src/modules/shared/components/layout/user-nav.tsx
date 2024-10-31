@@ -1,6 +1,7 @@
 import { Lock, LogOut, User } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
+import { useHouseStore } from '@app/stores';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { authPath } from '@modules/auth/routes';
 import {
@@ -25,12 +26,15 @@ import {
   TooltipTrigger,
 } from '@shared/components/ui/tooltip';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 export function UserNav() {
   const [t] = useI18n();
   const navigate = useNavigate();
   const { clearUser, user } = useAuthUserStore();
+  const queryClient = useQueryClient();
+  const { setData: setSelectedHouse } = useHouseStore();
 
   const genAvatarFallback = () => {
     if (user?.fullName) {
@@ -96,8 +100,10 @@ export function UserNav() {
         <DropdownMenuItem
           className="hover:cursor-pointer"
           onClick={() => {
-            clearUser(); // reset `user` store
-            navigate(authPath.login); // back to login
+            clearUser();
+            setSelectedHouse(null);
+            queryClient.clear();
+            navigate(authPath.login);
           }}
         >
           <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />

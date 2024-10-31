@@ -2,6 +2,9 @@ import { House, LogOut } from 'lucide-react';
 import { Link } from 'react-aria-components';
 
 import { cn } from '@app/lib/utils';
+import { useHouseStore } from '@app/stores';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
 import { dashboardPath } from '@modules/dashboard/routes';
 import { Menu } from '@shared/components/layout/menu';
 import { SidebarToggle } from '@shared/components/layout/sidebar-toggle';
@@ -16,10 +19,16 @@ import { BRAND_NAME } from '@shared/constants/general.constant';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
   const [t] = useI18n();
+  const queryClient = useQueryClient();
+  const { clearUser } = useAuthUserStore();
+  const navigate = useNavigate();
+  const { setData: setSelectedHouse } = useHouseStore();
   if (!sidebar) return null;
 
   return (
@@ -58,7 +67,12 @@ export function Sidebar() {
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
               <Button
-                onClick={() => {}}
+                onClick={() => {
+                  clearUser();
+                  setSelectedHouse(null);
+                  queryClient.clear();
+                  navigate(authPath.login);
+                }}
                 variant="outline"
                 className="mt-5 h-10 w-full justify-center"
               >

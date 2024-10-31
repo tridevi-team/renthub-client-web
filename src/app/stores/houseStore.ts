@@ -2,7 +2,7 @@ import { houseInStoreSchema } from '@modules/auth/schemas/auth.schema';
 import { createGenericStore } from '@shared/hooks/use-store';
 import type { z } from 'zod';
 
-const houseSchema = houseInStoreSchema;
+const houseSchema = houseInStoreSchema.nullable();
 
 export type useHouseStore = z.infer<typeof houseSchema>;
 
@@ -15,3 +15,6 @@ export const {
   houseSchema,
   1, // version
 );
+
+// Add clearHouse to useHouseStore
+useHouseStore.setState({ data: null });

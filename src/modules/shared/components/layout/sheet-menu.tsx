@@ -1,4 +1,7 @@
 import { cn } from '@app/lib/utils';
+import { useHouseStore } from '@app/stores';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
 import { dashboardPath } from '@modules/dashboard/routes';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { Menu } from '@shared/components/layout/menu';
@@ -16,12 +19,18 @@ import {
 } from '@shared/components/ui/tooltip';
 import { BRAND_NAME } from '@shared/constants/general.constant';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useQueryClient } from '@tanstack/react-query';
 import { House, LogOut, MenuIcon } from 'lucide-react';
 import { Link } from 'react-aria-components';
+import { useNavigate } from 'react-router-dom';
 
 export function SheetMenu() {
   const isOpen = true;
   const [t] = useI18n();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { clearUser } = useAuthUserStore();
+  const { setData: setSelectedHouse } = useHouseStore();
 
   return (
     <Sheet>
@@ -51,7 +60,12 @@ export function SheetMenu() {
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
               <Button
-                onClick={() => {}}
+                onClick={() => {
+                  clearUser();
+                  setSelectedHouse(null);
+                  queryClient.clear();
+                  navigate(authPath.login);
+                }}
                 variant="outline"
                 className="mt-5 h-10 w-full justify-center"
               >
