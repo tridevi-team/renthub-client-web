@@ -99,9 +99,7 @@ export default function HouseForm({ form, onSubmit, loading }: HouseFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="field-required">
-                {t('house_name')}
-              </FormLabel>
+              <FormLabel>{t('house_name')}</FormLabel>
               <FormControl>
                 <Input
                   placeholder={t('ph_house_name')}
@@ -306,9 +304,7 @@ export default function HouseForm({ form, onSubmit, loading }: HouseFormProps) {
               name="invoiceDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="field-required">
-                    {t('house_invoice_date')}
-                  </FormLabel>
+                  <FormLabel>{t('house_invoice_date')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder={t('ph_house_invoice_date')}

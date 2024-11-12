@@ -5,7 +5,6 @@ import { housePath } from '@modules/houses/routes';
 import type {
   HouseDeleteRequestSchema,
   houseUpdateRequestSchema,
-  HouseUpdateResponseSchema,
 } from '@modules/houses/schema/house.schema';
 import { provinceRepositories } from '@shared/apis/city.api';
 import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
@@ -33,9 +32,7 @@ import useSWR from 'swr';
 type HouseFormProps = {
   form: ReturnType<typeof useForm<z.infer<typeof houseUpdateRequestSchema>>>;
   loading?: boolean;
-  onSubmit: (
-    values: z.infer<typeof houseUpdateRequestSchema>,
-  ) => Promise<HouseUpdateResponseSchema>;
+  onSubmit: (values: z.infer<typeof houseUpdateRequestSchema>) => Promise<void>;
 };
 
 export default function HouseEditForm({
@@ -370,47 +367,47 @@ export default function HouseEditForm({
             </FormItem>
           )}
         />
-      </form>
-      <div className="flex justify-center space-x-2">
-        <Button
-          type="button"
-          loading={loading}
-          variant="outline"
-          className="min-w-24"
-          onClick={() => {
-            navigate(`${housePath.root}`);
-          }}
-        >
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          {t('bt_back')}
-        </Button>
-        <ConfirmationDialog
-          description={t('common_confirm_delete_message')}
-          title={t('common_confirm_delete')}
-          onConfirm={() => onDelete(form.getValues('id'))}
-        >
+        <div className="flex justify-center space-x-2">
           <Button
             type="button"
-            variant="destructive"
+            loading={loading}
+            variant="outline"
+            className="min-w-24"
+            onClick={() => {
+              navigate(`${housePath.root}`);
+            }}
+          >
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            {t('bt_back')}
+          </Button>
+          <ConfirmationDialog
+            description={t('common_confirm_delete_message')}
+            title={t('common_confirm_delete')}
+            onConfirm={() => onDelete(form.getValues('id'))}
+          >
+            <Button
+              type="button"
+              variant="destructive"
+              className="min-w-24"
+              loading={loading}
+            >
+              <Trash className="mr-2 h-4 w-4" />
+              {t('bt_delete')}
+            </Button>
+          </ConfirmationDialog>
+          <Button
+            type="submit"
             className="min-w-24"
             loading={loading}
+            onClick={() => {
+              form.handleSubmit(onSubmit);
+            }}
           >
-            <Trash className="mr-2 h-4 w-4" />
-            {t('bt_delete')}
+            <Save className="mr-2 h-4 w-4" />
+            {t('bt_save')}
           </Button>
-        </ConfirmationDialog>
-        <Button
-          type="submit"
-          className="min-w-24"
-          loading={loading}
-          onClick={() => {
-            form.handleSubmit(onSubmit);
-          }}
-        >
-          <Save className="mr-2 h-4 w-4" />
-          {t('bt_save')}
-        </Button>
-      </div>
+        </div>
+      </form>
     </Form>
   );
 }

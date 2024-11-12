@@ -1,17 +1,22 @@
 import type { z } from '@app/lib/vi-zod';
+import { queryClient } from '@app/providers/query/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { houseRepositories } from '@modules/houses/apis/house.api';
 import HouseEditForm from '@modules/houses/components/house-edit-form';
 import { useHouseDetail } from '@modules/houses/hooks/use-house-detail.hook';
-import { useHouseUpdate } from '@modules/houses/hooks/use-house-update.hook';
 import { housePath } from '@modules/houses/routes';
 import {
+  houseKeys,
   houseUpdateRequestSchema,
   type HouseUpdateRequestSchema,
+  type HouseUpdateResponseSchema,
 } from '@modules/houses/schema/house.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
+import to from 'await-to-js';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -41,7 +46,6 @@ export function Element() {
   const { id } = useParams();
 
   const { data: houseDetail } = useHouseDetail(id);
-  const mutation = useHouseUpdate();
 
   const form = useForm<HouseUpdateRequestSchema>({
     mode: 'onChange',
@@ -64,16 +68,26 @@ export function Element() {
   }, [houseDetail, form]);
 
   const onSubmit = async (values: z.infer<typeof houseUpdateRequestSchema>) => {
+    console.log('aaaaaaaaaaaaaaaa');
     setLoading(true);
-    try {
-      const result = await mutation.mutateAsync(values);
-      form.reset();
-      navigate(`${housePath.root}`);
-      return result;
-    } catch (error) {
-      setLoading(false);
-      return Promise.reject(error);
+    const [err, _]: [
+      ErrorResponseSchema | null,
+      HouseUpdateResponseSchema | undefined,
+    ] = await to(houseRepositories.update(values));
+    setLoading(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
     }
+    await queryClient.invalidateQueries({
+      queryKey: houseKeys.list({}),
+    });
+    toast.success(t('ms_update_house_success'));
+    navigate(`${housePath.root}`);
   };
 
   return (
