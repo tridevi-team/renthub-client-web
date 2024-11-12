@@ -38,14 +38,16 @@ export function AccountInfoDialog({
   isOpen,
   onClose,
   onSubmit,
-  isLoading,
+  isLoadingData,
   userResponse,
+  isSubmitting,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UpdateUserInfoRequestSchema) => void;
-  isLoading: boolean;
+  isLoadingData: boolean;
   userResponse: UserInfoResponseSchema | null;
+  isSubmitting: boolean;
 }) {
   const [t] = useI18n();
   const user = userResponse?.data;
@@ -163,7 +165,7 @@ export function AccountInfoDialog({
         <DialogHeader>
           <DialogTitle>{t('account_title')}</DialogTitle>
         </DialogHeader>
-        {isLoading ? (
+        {isLoadingData ? (
           <Loader2 className="animate-spin content-center" />
         ) : (
           <Form {...form}>
@@ -342,7 +344,7 @@ export function AccountInfoDialog({
                   </Col>
                 </Row>
                 <DialogFooter>
-                  <Button type="submit" loading={isLoading}>
+                  <Button type="submit" loading={isSubmitting}>
                     {t('bt_save')}
                   </Button>
                 </DialogFooter>
