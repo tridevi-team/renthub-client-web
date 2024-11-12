@@ -1,12 +1,14 @@
 import { Lock, LogOut, User } from 'lucide-react';
-import { Link } from 'react-aria-components';
 
 import { useHouseStore } from '@app/stores';
 import { authRepositories } from '@modules/auth/apis/auth.api';
 import { AccountInfoDialog } from '@modules/auth/components/account-info-dialog';
+import { ChangePasswordDialog } from '@modules/auth/components/change-password-dialog';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { authPath } from '@modules/auth/routes';
 import type {
+  ChangePasswordRequestSchema,
+  ChangePasswordResponseSchema,
   UpdateUserInfoRequestSchema,
   UpdateUserInfoResponseSchema,
   UserInfoResponseSchema,
@@ -47,9 +49,13 @@ export function UserNav() {
   const queryClient = useQueryClient();
   const { setData: setSelectedHouse } = useHouseStore();
   const [isAccountDialogOpen, setAccountDialogOpen] = useState(false);
+  const [isChangePasswordDialogOpen, setChangePasswordDialogOpen] =
+    useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [userInformation, setUserInformation] =
     useState<UserInfoResponseSchema | null>(null);
+
   const genAvatarFallback = () => {
     if (user?.fullName) {
       const names = user.fullName.split(' ');
@@ -68,26 +74,55 @@ export function UserNav() {
       UserInfoResponseSchema | undefined,
     ] = await to(authRepositories.getInfo());
     setLoading(false);
-    console.log('err:', err);
     if (err) {
-      toast.error(t(err.code));
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
       return;
     }
     return user || null;
   };
 
   const onUpdateUserInfo = async (data: UpdateUserInfoRequestSchema) => {
-    setLoading(true);
+    setSubmitting(true);
     const [err, _]: [
       ErrorResponseSchema | null,
       UpdateUserInfoResponseSchema | undefined,
     ] = await to(authRepositories.updateInfo({ json: data }));
-    setLoading(false);
+    setSubmitting(false);
     if (err) {
-      toast.error(t(err.code));
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
     }
     toast.success(t('ms_update_account_success'));
     setAccountDialogOpen(false);
+  };
+
+  const onChangePassword = async (data: ChangePasswordRequestSchema) => {
+    setSubmitting(true);
+    const [err, _]: [
+      ErrorResponseSchema | null,
+      ChangePasswordResponseSchema | undefined,
+    ] = await to(authRepositories.changePassword({ json: data }));
+    setSubmitting(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    toast.success(t('ms_change_password_success'));
+    clearUser();
+    setSelectedHouse(null);
+    queryClient.clear();
+    navigate(authPath.login);
   };
 
   return (
@@ -140,11 +175,12 @@ export function UserNav() {
               <User className="mr-3 h-4 w-4 text-muted-foreground" />
               {t('menu_account')}
             </DropdownMenuItem>
-            <DropdownMenuItem className="hover:cursor-pointer" asChild>
-              <Link className="flex items-center" onPress={() => {}}>
-                <Lock className="mr-3 h-4 w-4 text-muted-foreground" />
-                {t('menu_changePassword')}
-              </Link>
+            <DropdownMenuItem
+              className="hover:cursor-pointer"
+              onClick={() => setChangePasswordDialogOpen(true)}
+            >
+              <Lock className="mr-3 h-4 w-4 text-muted-foreground" />
+              {t('menu_changePassword')}
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -165,9 +201,16 @@ export function UserNav() {
       <AccountInfoDialog
         isOpen={isAccountDialogOpen}
         onClose={() => setAccountDialogOpen(false)}
-        isLoading={loading}
+        isLoadingData={loading}
+        isSubmitting={submitting}
         onSubmit={onUpdateUserInfo}
         userResponse={userInformation}
+      />
+      <ChangePasswordDialog
+        isOpen={isChangePasswordDialogOpen}
+        onClose={() => setChangePasswordDialogOpen(false)}
+        isSubmitting={submitting}
+        onSubmit={onChangePassword}
       />
     </>
   );

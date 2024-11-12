@@ -30,4 +30,11 @@ export const dashboardLocale = {
   account_phone_number: 'Số điện thoại',
   account_gender: 'Giới tính',
   // #endregion ACCOUNT
+
+  // #region CHANGE PASSWORD
+  account_change_password_title: 'Đổi mật khẩu',
+  account_old_password: 'Mật khẩu cũ',
+  account_new_password: 'Mật khẩu mới',
+  account_confirm_password: 'Xác nhận mật khẩu',
+  // #endregion CHANGE PASSWORD
 } as const;

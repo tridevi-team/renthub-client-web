@@ -9,6 +9,7 @@ export const errorLocale = {
   GET_USER_NOT_FOUND: 'Người dùng không tồn tại',
   ACCOUNT_ALREADY_VERIFIED: 'Tài khoản đã được xác minh',
   INVALID_USER: 'Email hoặc mật khẩu không chính xác',
+  INCORRECT_OLD_PASSWORD: 'Mật khẩu cũ không chính xác',
   // #endregion
 
   VALIDATION_ERROR: 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại',

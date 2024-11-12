@@ -1,10 +1,13 @@
 import {
   authForgotPasswordResponseSchema,
   authResetPasswordResponseSchema,
+  changePasswordResponseSchema,
   userInfoResponseSchema,
   type AuthForgotPasswordRequestSchema,
   type AuthForgotPasswordResponseSchema,
   type AuthResetPasswordResponseSchema,
+  type ChangePasswordRequestSchema,
+  type ChangePasswordResponseSchema,
   type UpdateUserInfoRequestSchema,
   type UpdateUserInfoResponseSchema,
   type UserInfoResponseSchema,
@@ -129,5 +132,12 @@ export const authRepositories = {
       .json<UpdateUserInfoResponseSchema>();
 
     return userInfoResponseSchema.parse(resp);
+  },
+  changePassword: async ({ json }: { json: ChangePasswordRequestSchema }) => {
+    const resp = await http.instance
+      .put('users/update-password', { json })
+      .json<ChangePasswordResponseSchema>();
+
+    return changePasswordResponseSchema.parse(resp);
   },
 } as const;

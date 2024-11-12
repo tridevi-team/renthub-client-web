@@ -19,6 +19,7 @@ export const messageLocale = {
 
   // #region ACCOUNT
   ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
+  ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',
   // #endregion
 
   // #region Error

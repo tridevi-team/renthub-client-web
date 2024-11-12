@@ -162,6 +162,41 @@ export const updateUserInfoResponseSchema = z.object({
   message: z.string(),
 });
 
+export const changePasswordRequestSchema = z
+  .object({
+    oldPassword: z.string(),
+    newPassword: z
+      .string()
+      .trim()
+      .min(8)
+      .refine(
+        (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(password),
+        {
+          params: {
+            i18n: {
+              key: 'vld_password',
+            },
+          },
+        },
+      ),
+    confirmPassword: z.string().trim(),
+  })
+  .superRefine(({ confirmPassword, newPassword }, ctx) => {
+    if (confirmPassword !== newPassword) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Mật khẩu nhập lại không khớp',
+        path: ['confirmPassword'],
+      });
+    }
+  });
+
+export const changePasswordResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+});
+
 export type AppUserStoreSchema = z.infer<typeof appUserStoreSchema>;
 export type AuthForgotPasswordRequestSchema = z.infer<
   typeof authForgotPasswordRequestSchema
@@ -183,4 +218,11 @@ export type UpdateUserInfoRequestSchema = z.infer<
 >;
 export type UpdateUserInfoResponseSchema = z.infer<
   typeof updateUserInfoResponseSchema
+>;
+
+export type ChangePasswordRequestSchema = z.infer<
+  typeof changePasswordRequestSchema
+>;
+export type ChangePasswordResponseSchema = z.infer<
+  typeof changePasswordResponseSchema
 >;
