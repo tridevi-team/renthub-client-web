@@ -160,7 +160,11 @@ const ResetPasswordForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_password')}</Label>
-            <Input type="password" placeholder={t('ph_password')} ref={ref} />
+            <Input
+              customType="password"
+              placeholder={t('ph_password')}
+              ref={ref}
+            />
             <FieldError className="text-destructive">
               {error?.message}
             </FieldError>
@@ -190,7 +194,7 @@ const ResetPasswordForm = () => {
               {t('auth_confirmPassword')}
             </Label>
             <Input
-              type="password"
+              customType="password"
               placeholder={t('ph_confirm_password')}
               ref={ref}
             />

@@ -154,7 +154,6 @@ const LoginForm = () => {
         }) => (
           <TextField
             className="group/password pt-4"
-            type="password"
             validationBehavior="aria"
             name={name}
             value={value}
@@ -164,7 +163,11 @@ const LoginForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_password')}</Label>
-            <Input placeholder={t('ph_password')} ref={ref} />
+            <Input
+              placeholder={t('ph_password')}
+              ref={ref}
+              customType="password"
+            />
             <Link
               href={authPath.forgotPassword}
               variant="link"
