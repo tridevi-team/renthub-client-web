@@ -1,8 +1,9 @@
 import { navigate } from '@app/providers/router/navigation';
 import type { QueryOptions } from '@app/types';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { errorResponseSchema } from '@modules/shared/schemas/api.schema';
 import { env } from '@shared/constants/env.constant';
-import ky, { type Options, type SearchParamsOption } from 'ky';
+import ky, { type Options, type SearchParamsOption, HTTPError } from 'ky';
 
 class Http {
   instance: typeof ky;
@@ -71,6 +72,24 @@ export const http = new Http({
         if (response.status === 401) {
           useAuthUserStore.getState().clearUser();
           navigate('/login');
+        }
+      },
+    ],
+  },
+});
+
+// Extend ky to handle custom error responses
+http.instance = http.instance.extend({
+  hooks: {
+    afterResponse: [
+      async (_request, _options, response) => {
+        if (!response.ok) {
+          const errorResponse = await response.json();
+          const parsedError = errorResponseSchema.safeParse(errorResponse);
+          if (!parsedError.success) {
+            throw new HTTPError(response, _request, _options);
+          }
+          throw parsedError.data;
         }
       },
     ],
