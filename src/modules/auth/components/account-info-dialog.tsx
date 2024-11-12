@@ -152,7 +152,13 @@ export function AccountInfoDialog({
   }, [user, provinces, form]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        onClose();
+        form.reset();
+      }}
+    >
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{t('account_title')}</DialogTitle>
