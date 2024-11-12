@@ -58,7 +58,7 @@ export function AccountInfoDialog({
       city: '',
       district: '',
       ward: '',
-      street: '',
+      street: user?.address?.street || '',
       birthday: user?.birthday ? new Date(user.birthday) : new Date(),
       gender: user?.gender || '',
       phoneNumber: user?.phoneNumber || '',
@@ -72,83 +72,84 @@ export function AccountInfoDialog({
 
   const onChangeCity = useCallback(
     async (selectedCity: string | undefined | number) => {
-      form.setValue('district', '');
-      form.setValue('ward', '');
-      setDistricts([]);
-      setWards([]);
-      if (selectedCity) {
-        const city = provinces?.find((item) => item.value === selectedCity);
-        if (city) {
-          const resp = await provinceRepositories.district(city.code);
-          setDistricts(resp);
-        }
+      if (!selectedCity) {
+        form.setValue('district', '');
+        form.setValue('ward', '');
+        setDistricts([]);
+        setWards([]);
+        return;
+      }
+      const city = provinces?.find((item) => item.value === selectedCity);
+      if (city) {
+        const resp = await provinceRepositories.district(city.code);
+        setDistricts(resp);
       }
     },
-    [form, provinces],
+    [provinces, form],
   );
 
   const onChangeDistrict = useCallback(
     async (selectedDistrict: string | undefined | number) => {
-      form.setValue('ward', '');
-      setWards([]);
-      if (selectedDistrict) {
-        const district = districts.find(
-          (item) => item.value === selectedDistrict,
-        );
-        if (district) {
-          const resp = await provinceRepositories.ward(district.code);
-          setWards(resp);
-        }
+      if (!selectedDistrict) {
+        form.setValue('ward', '');
+        setWards([]);
+        return;
+      }
+      const district = districts.find(
+        (item) => item.value === selectedDistrict,
+      );
+      if (district) {
+        const resp = await provinceRepositories.ward(district.code);
+        setWards(resp);
       }
     },
-    [form, districts],
+    [districts, form],
   );
 
-  const citySelected = form.watch('city');
-  const districtSelected = form.watch('district');
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (citySelected && provinces) {
-      onChangeCity(citySelected).then(() => {
-        if (districtSelected) {
-          onChangeDistrict(districtSelected);
-        }
-      });
-    }
-  }, [citySelected, provinces]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (districtSelected && districts.length > 0) {
-      onChangeDistrict(districtSelected);
-    }
-  }, [districtSelected, districts]);
-
-  useEffect(() => {
-    if (userResponse) {
-      const userData = userResponse.data;
+    if (user) {
       form.reset({
-        fullName: userData.fullName || '',
-        email: userData.email || '',
-        city: '',
-        district: '',
-        ward: '',
-        street: '',
-        birthday: userData.birthday ? new Date(userData.birthday) : new Date(),
-        gender: userData.gender || '',
-        phoneNumber: userData.phoneNumber || '',
+        fullName: user.fullName || '',
+        email: user.email || '',
+        city: user.address?.city || '',
+        district: user.address?.district || '',
+        ward: user.address?.ward || '',
+        street: user.address?.street || '',
+        birthday: user.birthday ? new Date(user.birthday) : new Date(),
+        gender: user.gender || '',
+        phoneNumber: user.phoneNumber || '',
       });
-
-      if (userData.address) {
-        const { city, district, ward, street } = userData.address;
-        form.setValue('city', city);
-        form.setValue('district', district);
-        form.setValue('ward', ward);
-        form.setValue('street', street);
-      }
     }
-  }, [userResponse, form]);
+  }, [user, form]);
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      const address = user?.address;
+      if (address?.city) {
+        form.setValue('city', address.city);
+        const city = provinces?.find((item) => item.value === address.city);
+        if (city) {
+          const districtsResp = await provinceRepositories.district(city.code);
+          setDistricts(districtsResp);
+          if (address.district) {
+            form.setValue('district', address.district);
+            const district = districtsResp.find(
+              (item) => item.value === address.district,
+            );
+            if (district) {
+              const wardsResp = await provinceRepositories.ward(district.code);
+              setWards(wardsResp);
+              if (address.ward) {
+                form.setValue('ward', address.ward);
+              }
+            }
+          }
+        }
+      }
+    };
+
+    fetchInitialData();
+  }, [user, provinces, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
