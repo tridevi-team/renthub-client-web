@@ -112,7 +112,6 @@ export default function HouseEditForm({
     }
   }, [citySelected, provinces]);
 
-  // Thêm một useEffect riêng để xử lý district
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (districtSelected && districts.length > 0) {

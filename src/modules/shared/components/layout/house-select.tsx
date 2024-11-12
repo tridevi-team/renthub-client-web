@@ -1,5 +1,5 @@
 import { cn } from '@app/lib/utils';
-import { useHouseStore } from '@app/stores/houseStore';
+import { useHouseStore } from '@app/stores';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { housePath } from '@modules/houses/routes';
 import { Button } from '@shared/components/ui/button';

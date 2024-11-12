@@ -17,6 +17,10 @@ export const messageLocale = {
   ms_delete_house_success: 'Xóa nhà trọ thành công',
   // #endregion
 
+  // #region ACCOUNT
+  ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
+  // #endregion
+
   // #region Error
   ms_error: 'Có lỗi xảy ra, vui lòng thử lại sau',
   ms_delete_success: 'Xóa thành công',

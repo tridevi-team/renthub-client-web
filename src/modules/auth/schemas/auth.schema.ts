@@ -9,6 +9,7 @@ const PERMISSION_KEY = [
   'bill',
   'equipment',
   'payment',
+  'notification',
 ] as const;
 
 export type PermissionKeyType = (typeof PERMISSION_KEY)[number];
@@ -106,8 +107,62 @@ export const authResetPasswordResponseSchema = z.object({
   message: z.string(),
 });
 
-export type AppUserStoreSchema = z.infer<typeof appUserStoreSchema>;
+export const userInfoResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    email: z.string(),
+    password: z.string(),
+    fullName: z.string(),
+    gender: z.string(),
+    phoneNumber: z.string(),
+    address: z.object({
+      city: z.string(),
+      district: z.string(),
+      ward: z.string(),
+      street: z.string(),
+    }),
+    birthday: z.string(),
+    role: z.string(),
+    type: z.string(),
+    status: z.number(),
+    verify: z.number(),
+    firstLogin: z.number(),
+    createdAt: z.string(),
+    updatedBy: z.string().nullable(),
+    updatedAt: z.string(),
+  }),
+});
 
+export const updateUserInfoRequestSchema = z.object({
+  fullName: z.string(),
+  phoneNumber: z
+    .string()
+    .min(1)
+    .refine((phoneNumber) => /^0\d{9}$/.test(phoneNumber), {
+      params: {
+        i18n: {
+          key: 'vld_phoneNumber',
+        },
+      },
+    }),
+  city: z.string(),
+  district: z.string(),
+  ward: z.string(),
+  street: z.string(),
+  birthday: z.date(),
+  gender: z.string(),
+});
+
+export const updateUserInfoResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+});
+
+export type AppUserStoreSchema = z.infer<typeof appUserStoreSchema>;
 export type AuthForgotPasswordRequestSchema = z.infer<
   typeof authForgotPasswordRequestSchema
 >;
@@ -120,4 +175,12 @@ export type AuthResetPasswordRequestSchema = z.infer<
 >;
 export type AuthResetPasswordResponseSchema = z.infer<
   typeof authResetPasswordResponseSchema
+>;
+
+export type UserInfoResponseSchema = z.infer<typeof userInfoResponseSchema>;
+export type UpdateUserInfoRequestSchema = z.infer<
+  typeof updateUserInfoRequestSchema
+>;
+export type UpdateUserInfoResponseSchema = z.infer<
+  typeof updateUserInfoResponseSchema
 >;

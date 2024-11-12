@@ -1,4 +1,10 @@
 export const placeholderLocale = {
+  // #region COMMON
+  ph_search: 'Tìm kiếm',
+  ph_select: 'Chọn',
+  ph_select_date: 'Chọn ngày',
+  // #endregion COMMON
+
   // #region AUTH
   ph_username: 'Nhập tên đăng nhập',
   ph_password: 'Nhập mật khẩu',
@@ -30,6 +36,16 @@ export const placeholderLocale = {
   ph_house_collection_cycle: 'Nhập chu kỳ',
   ph_house_contract_default: 'Nhập hợp đồng mặc định',
   ph_house_select: 'Chọn nhà trọ',
-
   // #endregion HOUSE
+
+  // #region USER
+  ph_user_full_name: 'Nhập họ và tên',
+  ph_user_email: 'Nhập email',
+  ph_user_phone_number: 'Nhập số đi động',
+  ph_user_birthday: 'Nhập ngày sinh',
+  ph_user_gender: 'Chọn giới tính',
+  ph_user_city: 'Chọn thành phố',
+  ph_user_district: 'Chọn quận/huyện',
+  ph_user_ward: 'Chọn phường/xã',
+  ph_user_street: 'Nhập tên đường',
 } as const;
