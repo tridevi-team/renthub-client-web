@@ -22,7 +22,7 @@ import { Checkbox } from '@shared/components/ui/checkbox';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import { checkAuthUser } from '@shared/utils/checker.util';
+import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
@@ -39,10 +39,16 @@ import { toast } from 'sonner';
 
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
-
+  const hasPermission = checkPermissionPage({
+    module: 'house',
+    action: 'read',
+  });
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
     return redirect(authPath.login);
+  }
+  if (!hasPermission) {
+    return redirect(authPath.notPermission);
   }
 
   return null;
@@ -237,8 +243,8 @@ export function Element() {
       value: 'status',
       placeholder: 'Chọn trạng thái',
       options: [
-        { label: 'active', value: '0' },
-        { label: 'inactive', value: '1' },
+        { label: t('house_active'), value: '0' },
+        { label: t('house_inactive'), value: '1' },
       ],
     },
   ];
@@ -259,9 +265,8 @@ export function Element() {
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
-          searchableColumnCount={1}
           filterableColumnCount={2}
-          cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+          cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
           shrinkZero
         />
       ) : isError ? (
