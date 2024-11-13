@@ -5,16 +5,14 @@ import type { z } from 'zod';
 const houseSchema = houseInStoreSchema.nullable();
 
 export type useHouseStore = z.infer<typeof houseSchema>;
+export const useHouseStoreName = 'app-house-selected-store';
 
 export const {
   useStore: useHouseStore,
   storeSchema: houseStoreSchema,
   localStorageSchema: houseLocalStorageSchema,
 } = createGenericStore<typeof houseSchema>(
-  'app-house-selected-store',
+  useHouseStoreName,
   houseSchema,
   1, // version
 );
-
-// Add clearHouse to useHouseStore
-useHouseStore.setState({ data: null });
