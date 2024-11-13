@@ -13,6 +13,7 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Link } from '@shared/components/ui/link';
+import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
@@ -41,7 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
       unstable_batchedUpdates(() => {
         useAuthUserStore.getState().setUser(user);
       });
-
+      toast.success(messageLocale.ms_login_success);
       return redirect(dashboardPath.root);
     } catch (error) {
       if (isErrorResponseSchema(error)) {
