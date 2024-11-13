@@ -118,12 +118,14 @@ export const userInfoResponseSchema = z.object({
     fullName: z.string(),
     gender: z.string(),
     phoneNumber: z.string(),
-    address: z.object({
-      city: z.string(),
-      district: z.string(),
-      ward: z.string(),
-      street: z.string(),
-    }),
+    address: z
+      .object({
+        city: z.string(),
+        district: z.string(),
+        ward: z.string(),
+        street: z.string(),
+      })
+      .nullable(),
     birthday: z.string(),
     role: z.string(),
     type: z.string(),
