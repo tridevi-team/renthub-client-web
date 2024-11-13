@@ -1,3 +1,4 @@
+import { useHouseStoreName } from '@app/stores';
 import type { UserStoreLocalStorage } from '@auth/hooks/use-auth-user-store.hook';
 import {
   userStoreLocalStorageSchema,
@@ -32,26 +33,19 @@ export function checkUserHasHouse() {
 }
 
 export function checkPermissionPage({
-  permission,
-  houseId,
+  module,
+  action,
 }: {
-  permission: PermissionKeyType;
-  houseId: string;
+  module: PermissionKeyType;
+  action: 'create' | 'read' | 'update' | 'delete';
 }) {
-  const appUser = localStorage.getItem(userStoreName) ?? '{}';
-  const parsedAppUser = JSON.parse(appUser) as UserStoreLocalStorage;
-  const parsed = userStoreLocalStorageSchema.safeParse(parsedAppUser);
-
-  if (!parsed.success) return false;
-  if (!parsed.data.state.user) return false;
-  if (!parsed.data.state.user.houses?.length) return false;
-
-  const houses = parsed.data.state.user.houses;
-  const house = houses.find((h) => h.id === houseId);
-  if (!house) return false;
-
-  const { permissions } = house;
-  if (!permissions) return false;
-
-  return permissions[permission];
+  try {
+    const houseSelected = localStorage.getItem(useHouseStoreName) ?? '{}';
+    const parsedHouseSelected = JSON.parse(houseSelected);
+    return (
+      parsedHouseSelected?.state?.data?.permissions[module]?.[action] ?? false
+    );
+  } catch (error) {
+    return false;
+  }
 }
