@@ -68,7 +68,6 @@ export function Element() {
   }, [houseDetail, form]);
 
   const onSubmit = async (values: z.infer<typeof houseUpdateRequestSchema>) => {
-    console.log('aaaaaaaaaaaaaaaa');
     setLoading(true);
     const [err, _]: [
       ErrorResponseSchema | null,
