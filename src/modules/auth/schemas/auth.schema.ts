@@ -1,6 +1,6 @@
 import { z } from '@app/lib/vi-zod';
 
-const PERMISSION_KEY = [
+export const PERMISSION_KEY = [
   'house',
   'role',
   'room',
