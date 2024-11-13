@@ -135,7 +135,7 @@ export const authRepositories = {
   },
   changePassword: async ({ json }: { json: ChangePasswordRequestSchema }) => {
     const resp = await http.instance
-      .put('users/update-password', { json })
+      .patch('users/change-password', { json })
       .json<ChangePasswordResponseSchema>();
 
     return changePasswordResponseSchema.parse(resp);
