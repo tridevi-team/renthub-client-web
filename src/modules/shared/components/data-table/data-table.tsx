@@ -2,7 +2,6 @@ import type { DataTableFilterField } from '@app/types';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
 import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
-import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import {
   Table,
@@ -13,12 +12,12 @@ import {
   TableRow,
 } from '@shared/components/ui/table';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import { useMediaQuery } from '@shared/hooks/use-media-query.hook';
 import {
   flexRender,
   type ColumnDef,
   type Table as TanstackTable,
 } from '@tanstack/react-table';
+import styled from 'styled-components';
 
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
@@ -31,6 +30,7 @@ interface DataTableProps<TData, TValue> {
     onDownload?: () => void;
   };
   additionalActionButtons?: React.ReactNode;
+  columnWidths?: string[];
 }
 
 const TableRowSkeleton = ({ columns }: { columns: number }) => (
@@ -44,6 +44,25 @@ const TableRowSkeleton = ({ columns }: { columns: number }) => (
   </TableRow>
 );
 
+const ScrollableDiv = styled.div`
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #a8a8a8;
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: #8f8f8f;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+`;
+
 export function DataTable<TData, TValue>({
   table,
   columns,
@@ -51,17 +70,10 @@ export function DataTable<TData, TValue>({
   loading = false,
   actions,
   additionalActionButtons,
+  columnWidths = [],
 }: DataTableProps<TData, TValue>) {
   const rowsPerPage = table.getState().pagination.pageSize;
   const [t] = useI18n();
-  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
-  const isMediumScreen = useMediaQuery('(min-width: 768px)');
-
-  const getScrollAreaHeight = () => {
-    if (isLargeScreen) return 'max-h-[450px]';
-    if (isMediumScreen) return 'max-h-[400px]';
-    return 'max-h-[300px]';
-  };
 
   return (
     <div className="space-y-4">
@@ -72,15 +84,17 @@ export function DataTable<TData, TValue>({
           additionalButtons={additionalActionButtons}
         />
       </DataTableAdvancedToolbar>
-      <ScrollArea
-        className={`relative ${getScrollAreaHeight()} w-full rounded-md border`}
-      >
+      <ScrollableDiv className="max-h-[60vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                {headerGroup.headers.map((header, index) => (
+                  <TableHead
+                    key={header.id}
+                    className="sticky top-0 z-[100]"
+                    style={{ width: columnWidths[index] }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -104,8 +118,11 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, index) => (
+                    <TableCell
+                      key={cell.id}
+                      style={{ width: columnWidths[index] }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -126,7 +143,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </ScrollArea>
+      </ScrollableDiv>
       <DataTablePagination table={table} />
     </div>
   );
