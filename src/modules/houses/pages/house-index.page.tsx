@@ -236,12 +236,16 @@ export function Element() {
     {
       label: t('house_name'),
       value: 'name',
-      placeholder: 'Nhập tên nhà trọ',
+      placeholder: t('common_ph_input', {
+        field: t('house_name').toLowerCase(),
+      }),
     },
     {
       label: t('house_status'),
       value: 'status',
-      placeholder: 'Chọn trạng thái',
+      placeholder: t('common_ph_select', {
+        field: t('house_status').toLowerCase(),
+      }),
       options: [
         { label: t('house_active'), value: '0' },
         { label: t('house_inactive'), value: '1' },

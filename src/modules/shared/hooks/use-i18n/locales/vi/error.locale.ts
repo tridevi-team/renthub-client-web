@@ -103,10 +103,11 @@ export const errorLocale = {
   // #region General
   VALIDATION_ERROR: 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại',
   UNKNOWN_ERROR: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau',
-  OOPS: 'Oops! Đã xảy ra lỗi',
+  OOPS: 'Oops!',
   SOMETHING_WENT_WRONG: 'Có lỗi xảy ra khi tải dữ liệu',
   ID_REQUIRED: 'ID không được để trống',
   NOT_FOUND: 'Không tìm thấy dữ liệu',
+  NOT_PERMISSION: 'Bạn không có quyền truy cập',
   // #endregion
 } as const;
 

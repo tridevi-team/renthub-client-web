@@ -38,4 +38,7 @@ export const commonLocale = {
   common_view_all: 'Xem tất cả',
   common_notifications: 'Thông báo',
   common_mark_all_as_read: 'Đánh dấu tất cả đã đọc',
+  common_ph_select: 'Chọn {field}',
+  common_ph_search: 'Tìm kiếm {field}',
+  common_ph_input: 'Nhập {field}',
 } as const;

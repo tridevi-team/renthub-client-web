@@ -48,4 +48,5 @@ export const placeholderLocale = {
   ph_user_district: 'Chọn quận/huyện',
   ph_user_ward: 'Chọn phường/xã',
   ph_user_street: 'Nhập tên đường',
+  // #endregion USER
 } as const;
