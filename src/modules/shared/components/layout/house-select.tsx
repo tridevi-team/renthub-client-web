@@ -1,4 +1,5 @@
 import { cn } from '@app/lib/utils';
+import { queryClient } from '@app/providers/query/client';
 import { useHouseStore } from '@app/stores';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { housePath } from '@modules/houses/routes';
@@ -71,6 +72,7 @@ export function HouseSelect() {
                         } else {
                           setSelectedHouse(house);
                         }
+                        queryClient.invalidateQueries();
                         setOpen(false);
                       }}
                     >
