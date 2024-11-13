@@ -1,4 +1,9 @@
-import { authLoginRoute, authRegisterRoute, notFoundRoute } from '@auth/routes';
+import {
+  authLoginRoute,
+  authRegisterRoute,
+  notFoundRoute,
+  notPermissionRoute,
+} from '@auth/routes';
 import { dashboardRoute } from '@modules/dashboard/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { createBrowserRouter } from 'react-router-dom';
@@ -11,6 +16,7 @@ export const browserRouter = createBrowserRouter(
     dashboardRoute,
     houseRoute,
     notFoundRoute,
+    notPermissionRoute,
   ],
   {
     future: {
