@@ -2,12 +2,13 @@ import { houseRepositories } from '@modules/houses/apis/house.api';
 import { houseKeys } from '@modules/houses/schema/house.schema';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
+import { isErrorResponseSchema } from '@shared/utils/type-guards';
 import {
   useMutation,
   useQueryClient,
   type UseMutationOptions,
 } from '@tanstack/react-query';
-import { HTTPError } from 'ky';
+import type { HTTPError } from 'ky';
 import { toast } from 'sonner';
 import type { Except } from 'type-fest';
 import type { ZodError } from 'zod';
@@ -43,11 +44,8 @@ export function useHouseDelete(
       onSuccess?.(data, variables, context);
     },
     onError: async (error, variables, context) => {
-      if (error instanceof HTTPError) {
-        const json = (await error.response.json()) as ErrorResponseSchema;
-        toast.error(json.code);
-      } else {
-        toast.error(error.message);
+      if (isErrorResponseSchema(error)) {
+        toast.error(error.code);
       }
 
       onError?.(error, variables, context);
