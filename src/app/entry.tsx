@@ -24,6 +24,7 @@ export function Entry() {
         </AppI18nProvider>
       </AppQueryProvider>
       <Toaster
+        richColors
         toastOptions={{
           style: {
             zIndex: 9999,
