@@ -73,16 +73,7 @@ export const http = new Http({
           useAuthUserStore.getState().clearUser();
           navigate('/login');
         }
-      },
-    ],
-  },
-});
 
-// Extend ky to handle custom error responses
-http.instance = http.instance.extend({
-  hooks: {
-    afterResponse: [
-      async (_request, _options, response) => {
         if (!response.ok) {
           const errorResponse = await response.json();
           const parsedError = errorResponseSchema.safeParse(errorResponse);
