@@ -16,7 +16,7 @@ import { Link } from '@shared/components/ui/link';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { HTTPError } from 'ky';
+import { isErrorResponseSchema } from '@shared/utils/type-guards';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -44,9 +44,8 @@ export const action: ActionFunction = async ({ request }) => {
 
       return redirect(dashboardPath.root);
     } catch (error) {
-      if (error instanceof HTTPError) {
-        const response = (await error.response.json()) as ErrorResponseSchema;
-        if (response.code === 'VERIFY_ACCOUNT_FIRST') {
+      if (isErrorResponseSchema(error)) {
+        if (error.code === 'VERIFY_ACCOUNT_FIRST') {
           useEmailStore.getState().setData({
             email,
             target: 'verify-account',
@@ -55,7 +54,7 @@ export const action: ActionFunction = async ({ request }) => {
           await authRepositories.resendVerifyCode({ json: { email } });
           return redirect(authPath.verifyAccount);
         }
-        return json(response);
+        return json(error);
       }
     }
   }
