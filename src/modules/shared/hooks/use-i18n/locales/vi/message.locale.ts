@@ -17,6 +17,12 @@ export const messageLocale = {
   ms_delete_house_success: 'Xóa nhà trọ thành công',
   // #endregion
 
+  // #region Floor
+  ms_create_floor_success: 'Tạo tầng mới thành công',
+  ms_update_floor_success: 'Cập nhật thông tin tầng thành công',
+  ms_delete_floor_success: 'Xóa tầng thành công',
+  // #endregion
+
   // #region ACCOUNT
   ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
   ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',

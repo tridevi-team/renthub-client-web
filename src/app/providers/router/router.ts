@@ -5,6 +5,7 @@ import {
   notPermissionRoute,
 } from '@auth/routes';
 import { dashboardRoute } from '@modules/dashboard/routes';
+import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ export const browserRouter = createBrowserRouter(
     authRegisterRoute,
     dashboardRoute,
     houseRoute,
+    floorRoute,
     notFoundRoute,
     notPermissionRoute,
   ],
