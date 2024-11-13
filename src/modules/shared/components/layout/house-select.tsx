@@ -5,7 +5,6 @@ import { housePath } from '@modules/houses/routes';
 import { Button } from '@shared/components/ui/button';
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -58,46 +57,49 @@ export function HouseSelect() {
         <Command className="flex flex-col">
           <CommandInput placeholder={t('ph_house_select')} />
           <CommandList className="overflow-hidden">
-            <CommandEmpty>{t('house_not_found')}</CommandEmpty>
-            <ScrollArea className="h-[300px]">
-              <CommandGroup>
-                {houses.map((house) => (
-                  <CommandItem
-                    key={house.id}
-                    onSelect={() => {
-                      if (selectedHouse?.id === house.id) {
-                        setSelectedHouse(house);
-                      } else {
-                        setSelectedHouse(house);
-                      }
-                      setOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        selectedHouse?.id === house.id
-                          ? 'opacity-100'
-                          : 'opacity-0',
-                      )}
-                    />
-                    <div className="flex flex-col">
-                      <span>{house.name}</span>
-                      <span className="text-muted-foreground text-sm">
-                        {[
-                          house.address.street,
-                          house.address.ward,
-                          house.address.district,
-                          house.address.city,
-                        ]
-                          .filter(Boolean)
-                          .join(', ')}
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </ScrollArea>
+            {houses.length === 0 ? (
+              <></>
+            ) : (
+              <ScrollArea className="h-80 pb-3">
+                <CommandGroup>
+                  {houses.map((house) => (
+                    <CommandItem
+                      key={house.id}
+                      onSelect={() => {
+                        if (selectedHouse?.id === house.id) {
+                          setSelectedHouse(house);
+                        } else {
+                          setSelectedHouse(house);
+                        }
+                        setOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          'mr-2 h-4 w-4',
+                          selectedHouse?.id === house.id
+                            ? 'opacity-100'
+                            : 'opacity-0',
+                        )}
+                      />
+                      <div className="flex flex-col">
+                        <span>{house.name}</span>
+                        <span className="text-muted-foreground text-sm">
+                          {[
+                            house.address.street,
+                            house.address.ward,
+                            house.address.district,
+                            house.address.city,
+                          ]
+                            .filter(Boolean)
+                            .join(', ')}
+                        </span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </ScrollArea>
+            )}
           </CommandList>
           <div className="border-t">
             <CommandGroup>
@@ -105,9 +107,18 @@ export function HouseSelect() {
                 asChild
                 className="mx-auto flex w-full items-center justify-center py-2"
               >
-                <Link to={housePath.index} className="font-medium">
-                  {t('br_houses')}
-                </Link>
+                {houses.length === 0 ? (
+                  <Link
+                    to={`${housePath.root}/${housePath.create}`}
+                    className="font-medium"
+                  >
+                    {t('br_houses_create')}
+                  </Link>
+                ) : (
+                  <Link to={housePath.index} className="font-medium">
+                    {t('br_houses')}
+                  </Link>
+                )}
               </CommandItem>
             </CommandGroup>
           </div>
