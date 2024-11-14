@@ -2,12 +2,15 @@ import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { floorRepositories } from '@modules/floors/apis/floor.api';
+import { FloorDialog } from '@modules/floors/components/floor-dialog';
 import {
   floorKeys,
+  type FloorCreateRequestSchema,
+  type FloorCreateResponseSchema,
   type FloorDataSchema,
+  type FloorDeleteResponseSchema,
   type FloorSchema,
 } from '@modules/floors/schema/floor.schema';
-import { housePath } from '@modules/houses/routes';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
@@ -18,21 +21,25 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import ErrorCard from '@shared/components/layout/error-section';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
+import {
+  DEFAULT_DATE_FORMAT,
+  PREFIX_FLOOR_NAME,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
+import to from 'await-to-js';
 import dayjs from 'dayjs';
 import { FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
   useLocation,
-  useNavigate,
   useSearchParams,
   type LoaderFunction,
 } from 'react-router-dom';
@@ -58,10 +65,12 @@ export const loader: LoaderFunction = () => {
 export function Element() {
   const [t] = useI18n();
   const location = useLocation();
-  const navigate = useNavigate();
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isShowFloorDialog, setIsShowFloorDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<FloorSchema>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -83,32 +92,105 @@ export function Element() {
     }
   }, []);
 
-  const deleteMutation = useMutation({
-    mutationFn: async (ids: string[]) => {
-      console.log('ids:', ids);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    },
-    onSuccess: () => {
-      toast.success(t('ms_delete_floor_success'));
-      table.toggleAllRowsSelected(false);
-      queryClient.invalidateQueries({ queryKey: floorKeys.list(queryParams) });
-    },
-    onError: () => {
-      toast.error(t('ms_error'));
-    },
-  });
+  // const fetchFloorDetail = useCallback(
+  //   async (id: string) => {
+  //     const [err, data]: AwaitToResult<FloorDetailResponseSchema> = await to(
+  //       floorRepositories.detail({ id }),
+  //     );
+  //     if (err) {
+  //       if ('code' in err) {
+  //         toast.error(t(err.code));
+  //       } else {
+  //         toast.error(t('UNKNOWN_ERROR'));
+  //       }
+  //       return;
+  //     }
+  //     return data;
+  //   },
+  //   [t],
+  // );
 
   const onDelete = useCallback(
     async (selectedItems: FloorSchema[]) => {
-      const ids = selectedItems.map((item) => item.id);
-      await deleteMutation.mutateAsync(ids);
+      const [err, _]: AwaitToResult<FloorDeleteResponseSchema> = await to(
+        floorRepositories.deleteMany({
+          ids: selectedItems.map((item) => item.id),
+        }),
+      );
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      await queryClient.invalidateQueries({
+        queryKey: floorKeys.list(queryParams),
+      });
+      toast.success(t('ms_delete_floor_success'));
     },
-    [deleteMutation],
+    [t, queryParams],
   );
 
-  const onCreate = useCallback(() => {
-    navigate(`${housePath.root}/${housePath.create}`);
-  }, [navigate]);
+  const onClickCreateButton = useCallback(() => {
+    setSelectedItem(undefined);
+    setIsShowFloorDialog(true);
+  }, []);
+
+  const onCreate = useCallback(
+    async (data: FloorCreateRequestSchema) => {
+      setIsSubmitting(true);
+      const [err, _]: AwaitToResult<FloorCreateResponseSchema> = await to(
+        floorRepositories.create({
+          floor: {
+            ...data,
+            name: `${PREFIX_FLOOR_NAME} ${data.name}`,
+          },
+        }),
+      );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      setIsShowFloorDialog(false);
+      await queryClient.invalidateQueries({
+        queryKey: floorKeys.list(queryParams),
+      });
+      toast.success(t('ms_create_floor_success'));
+    },
+    [t, queryParams],
+  );
+
+  const onUpdate = useCallback(
+    async (data: FloorSchema) => {
+      if (!selectedItem) return;
+      setIsSubmitting(true);
+      const [err, _]: AwaitToResult<FloorCreateResponseSchema> = await to(
+        floorRepositories.update({ id: selectedItem?.id, floor: data }),
+      );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      setIsShowFloorDialog(false);
+      await queryClient.invalidateQueries({
+        queryKey: floorKeys.list(queryParams),
+      });
+      toast.success(t('ms_update_floor_success'));
+    },
+    [t, queryParams, selectedItem],
+  );
 
   const {
     isError,
@@ -131,7 +213,10 @@ export function Element() {
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: (row: Row<FloorSchema>) => {},
+      onClick: async (row: Row<FloorSchema>) => {
+        setSelectedItem(row.original);
+        setIsShowFloorDialog(true);
+      },
     },
     {
       label: t('bt_delete'),
@@ -252,17 +337,28 @@ export function Element() {
           }
         />
       ) : (
-        <DataTable
-          actions={{
-            onDelete,
-            onCreate,
-          }}
-          table={table}
-          columns={columns}
-          filterOptions={filterFields}
-          loading={isFetching}
-          columnWidths={['2rem', '5rem', '27rem', '5rem', '9rem', '2rem']}
-        />
+        <>
+          <DataTable
+            actions={{
+              onDelete,
+              onCreate: onClickCreateButton,
+            }}
+            table={table}
+            columns={columns}
+            filterOptions={filterFields}
+            loading={isFetching}
+            columnWidths={['2rem', '5rem', '27rem', '5rem', '9rem', '2rem']}
+          />
+
+          <FloorDialog
+            isOpen={isShowFloorDialog}
+            onClose={() => setIsShowFloorDialog(false)}
+            onCreate={onCreate}
+            onUpdate={onUpdate}
+            initialData={selectedItem}
+            isSubmitting={isSubmitting}
+          />
+        </>
       )}
     </ContentLayout>
   );

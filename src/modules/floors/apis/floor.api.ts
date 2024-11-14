@@ -67,4 +67,16 @@ export const floorRepositories = {
 
     return floorDeleteResponseSchema.parse(resp);
   },
+  deleteMany: async ({ ids }: { ids: string[] }) => {
+    const houseId = getHouseSelected()?.id;
+    const resp = await http.instance
+      .delete(`floors/${houseId}/delete-floors`, {
+        json: {
+          ids,
+        },
+      })
+      .json<FloorDeleteResponseSchema>();
+
+    return floorDeleteResponseSchema.parse(resp);
+  },
 };

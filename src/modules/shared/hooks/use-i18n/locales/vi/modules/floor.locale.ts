@@ -10,6 +10,7 @@ export const floorLocale = {
   floor_description: 'Mô tả',
   floor_created_at: 'Ngày tạo',
   floor_updated_at: 'Ngày cập nhật',
+  floor_prefix_input: 'Tầng',
   // #endregion FORM + TABLE
 
   // #region BUTTON
