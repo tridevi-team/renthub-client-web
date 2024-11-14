@@ -1,4 +1,5 @@
 import type { DataTableFilterField } from '@app/types';
+import type { PermissionKeyType } from '@modules/auth/schemas/auth.schema';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
 import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
@@ -31,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   };
   additionalActionButtons?: (table: TanstackTable<TData>) => React.ReactNode;
   columnWidths?: string[];
+  moduleName?: PermissionKeyType;
 }
 
 const TableRowSkeleton = ({ columns }: { columns: number }) => (
@@ -71,6 +73,7 @@ export function DataTable<TData, TValue>({
   actions,
   additionalActionButtons,
   columnWidths = [],
+  moduleName,
 }: DataTableProps<TData, TValue>) {
   const rowsPerPage = table.getState().pagination.pageSize;
   const [t] = useI18n();
@@ -82,6 +85,7 @@ export function DataTable<TData, TValue>({
           table={table}
           actions={actions}
           additionalButtons={additionalActionButtons}
+          moduleName={moduleName}
         />
       </DataTableAdvancedToolbar>
       <ScrollableDiv className="max-h-[60vh] overflow-auto rounded-md border">
