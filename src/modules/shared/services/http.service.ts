@@ -30,7 +30,7 @@ class Http {
    * Make Query Search
    */
 
-  _makeQuery(options: QueryOptions): SearchParamsOption {
+  _makeQuery(options: QueryOptions, isSelect = false): SearchParamsOption {
     const { filters = [], sorting = [], pageSize, page } = options;
     const searchParams: [string, string | number | boolean][] = [];
 
@@ -49,6 +49,10 @@ class Http {
     }
     if (page !== undefined) {
       searchParams.push(['page', page.toString()]);
+    }
+
+    if (isSelect) {
+      searchParams.push(['isSelect', 'true']);
     }
 
     return searchParams;
