@@ -35,9 +35,10 @@ import {
   TooltipTrigger,
 } from '@shared/components/ui/tooltip';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { useQueryClient } from '@tanstack/react-query';
 import to from 'await-to-js';
+
+import type { AwaitToResult } from '@shared/types/date.type';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -69,10 +70,9 @@ export function UserNav() {
 
   const getUserInfo = async () => {
     setLoading(true);
-    const [err, user]: [
-      ErrorResponseSchema | null,
-      UserInfoResponseSchema | undefined,
-    ] = await to(authRepositories.getInfo());
+    const [err, user]: AwaitToResult<UserInfoResponseSchema> = await to(
+      authRepositories.getInfo(),
+    );
     setLoading(false);
     if (err) {
       if ('code' in err) {
@@ -87,10 +87,9 @@ export function UserNav() {
 
   const onUpdateUserInfo = async (data: UpdateUserInfoRequestSchema) => {
     setSubmitting(true);
-    const [err, _]: [
-      ErrorResponseSchema | null,
-      UpdateUserInfoResponseSchema | undefined,
-    ] = await to(authRepositories.updateInfo({ json: data }));
+    const [err, _]: AwaitToResult<UpdateUserInfoResponseSchema> = await to(
+      authRepositories.updateInfo({ json: data }),
+    );
     setSubmitting(false);
     if (err) {
       if ('code' in err) {
@@ -105,10 +104,9 @@ export function UserNav() {
 
   const onChangePassword = async (data: ChangePasswordRequestSchema) => {
     setSubmitting(true);
-    const [err, _]: [
-      ErrorResponseSchema | null,
-      ChangePasswordResponseSchema | undefined,
-    ] = await to(authRepositories.changePassword({ json: data }));
+    const [err, _]: AwaitToResult<ChangePasswordResponseSchema> = await to(
+      authRepositories.changePassword({ json: data }),
+    );
     setSubmitting(false);
     if (err) {
       if ('code' in err) {
