@@ -26,8 +26,8 @@ interface DataTableProps<TData, TValue> {
   loading?: boolean;
   actions?: {
     onDelete?: (selectedItems: TData[]) => Promise<void>;
-    onCreate?: () => void;
-    onDownload?: () => void;
+    onCreate?: () => Promise<void> | void;
+    onDownload?: () => Promise<void> | void;
   };
   additionalActionButtons?: (table: TanstackTable<TData>) => React.ReactNode;
   columnWidths?: string[];
