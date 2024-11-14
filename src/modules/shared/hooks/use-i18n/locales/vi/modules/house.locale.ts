@@ -37,6 +37,8 @@ export const houseLocale = {
 
   // #region BUTTON
   house_add_new: 'Thêm nhà trọ',
+  house_action_active: 'Chuyển sang hoạt động',
+  house_action_inactive: 'Tạm ngưng hoạt động',
   // #endregion BUTTON
 
   // #region COMMON
