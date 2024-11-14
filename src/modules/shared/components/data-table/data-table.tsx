@@ -29,7 +29,7 @@ interface DataTableProps<TData, TValue> {
     onCreate?: () => void;
     onDownload?: () => void;
   };
-  additionalActionButtons?: React.ReactNode;
+  additionalActionButtons?: (table: TanstackTable<TData>) => React.ReactNode;
   columnWidths?: string[];
 }
 

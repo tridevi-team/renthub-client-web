@@ -5,7 +5,6 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { Table } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
 import type React from 'react';
-
 interface TableToolbarActionsProps<T> {
   table: Table<T>;
   actions?: {
@@ -13,7 +12,7 @@ interface TableToolbarActionsProps<T> {
     onCreate?: () => void;
     onDownload?: () => void;
   };
-  additionalButtons?: React.ReactNode;
+  additionalButtons?: (table: Table<T>) => React.ReactNode;
 }
 
 export function TableToolbarActions<T>({
@@ -50,7 +49,7 @@ export function TableToolbarActions<T>({
           {t('bt_download')}
         </Button>
       )}
-      {additionalButtons}
+      {additionalButtons?.(table)}
     </div>
   );
 }
