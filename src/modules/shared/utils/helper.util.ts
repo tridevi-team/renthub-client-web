@@ -1,3 +1,4 @@
+import { useHouseStore } from '@app/stores';
 import { deepReadObject } from '@rifandani/nxact-yutiriti';
 import React from 'react';
 import { extendTailwindMerge } from 'tailwind-merge';
@@ -227,4 +228,8 @@ export const processSearchParams = (
   const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
 
   return { filters, sorting, page, pageSize };
+};
+
+export const getHouseSelected = () => {
+  return useHouseStore.getState().data;
 };
