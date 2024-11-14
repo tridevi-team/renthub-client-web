@@ -82,7 +82,10 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params, 'floors');
+    const searchParams = processSearchParams(params, 'floors', {
+      field: 'name',
+      direction: 'asc',
+    });
 
     try {
       const response = await floorRepositories.index({ searchParams });
@@ -348,6 +351,7 @@ export function Element() {
             filterOptions={filterFields}
             loading={isFetching}
             columnWidths={['2rem', '5rem', '27rem', '5rem', '9rem', '2rem']}
+            moduleName="house"
           />
 
           <FloorDialog

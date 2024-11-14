@@ -208,6 +208,7 @@ export const tw = extendTailwindMerge<'alert'>({
 export const processSearchParams = (
   params: URLSearchParams,
   fieldPrefix = '',
+  defaultSorting = { field: 'createdAt', direction: 'desc' },
 ): {
   filters: Array<{ field: string; operator: string; value: string }>;
   sorting: Array<{ field: string; direction: string }>;
@@ -222,7 +223,12 @@ export const processSearchParams = (
   const sort = params.get('sort')?.split('.') || [];
   const sorting = sort[0]
     ? [{ field: `${fieldPrefix}.${sort[0]}`, direction: sort[1] }]
-    : [{ field: `${fieldPrefix}.createdAt`, direction: 'desc' }];
+    : [
+        {
+          field: `${fieldPrefix}.${defaultSorting.field}`,
+          direction: defaultSorting.direction,
+        },
+      ];
 
   const page = Number.parseInt(params.get('page') || '1', 10);
   const pageSize = Number.parseInt(params.get('pageSize') || '10', 10);
