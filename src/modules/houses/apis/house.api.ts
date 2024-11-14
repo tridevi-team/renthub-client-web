@@ -14,6 +14,9 @@ import {
   type HouseUpdateRequestSchema,
   houseUpdateResponseSchema,
   type HouseUpdateResponseSchema,
+  type HouseUpdateStatusRequestSchema,
+  houseUpdateStatusResponseSchema,
+  type HouseUpdateStatusResponseSchema,
 } from '@modules/houses/schema/house.schema';
 import { http } from '@shared/services/http.service';
 
@@ -67,5 +70,17 @@ export const houseRepositories = {
       .json<HouseDeleteResponseSchema>();
 
     return houseDeleteResponseSchema.parse(resp);
+  },
+  changeStatus: async ({ ids, status }: HouseUpdateStatusRequestSchema) => {
+    const resp = await http.instance
+      .patch('houses/update-status', {
+        json: {
+          ids,
+          status: status ? 1 : 0,
+        },
+      })
+      .json<HouseUpdateStatusResponseSchema>();
+
+    return houseUpdateStatusResponseSchema.parse(resp);
   },
 };

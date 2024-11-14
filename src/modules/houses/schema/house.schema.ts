@@ -121,6 +121,17 @@ export const houseDeleteResponseSchema = z.object({
   message: z.string(),
 });
 
+export const houseUpdateStatusRequestSchema = z.object({
+  ids: z.array(z.string()),
+  status: z.boolean(),
+});
+
+export const houseUpdateStatusResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+});
+
 export type HouseSchema = z.infer<typeof house>;
 export type HouseDataSchema = z.infer<typeof houseData>;
 export type HouseIndexResponseSchema = z.infer<typeof houseIndexResponseSchema>;
@@ -139,6 +150,13 @@ export type HouseUpdateResponseSchema = z.infer<
 export type HouseDeleteRequestSchema = z.infer<typeof houseDeleteRequestSchema>;
 export type HouseDeleteResponseSchema = z.infer<
   typeof houseDeleteResponseSchema
+>;
+
+export type HouseUpdateStatusRequestSchema = z.infer<
+  typeof houseUpdateStatusRequestSchema
+>;
+export type HouseUpdateStatusResponseSchema = z.infer<
+  typeof houseUpdateStatusResponseSchema
 >;
 
 export const houseKeys = {

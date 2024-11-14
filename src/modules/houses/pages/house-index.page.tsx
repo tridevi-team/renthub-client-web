@@ -7,6 +7,7 @@ import {
   houseKeys,
   type HouseDataSchema,
   type HouseSchema,
+  type HouseUpdateStatusResponseSchema,
 } from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
@@ -18,15 +19,18 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import ErrorCard from '@shared/components/layout/error-section';
 import { Badge } from '@shared/components/ui/badge';
+import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { ColumnDef, Row } from '@tanstack/react-table';
-import { FileEdit, Trash, View } from 'lucide-react';
+import type { ColumnDef, Row, Table } from '@tanstack/react-table';
+import to from 'await-to-js';
+import { FileEdit, View } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -61,6 +65,7 @@ export function Element() {
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -109,6 +114,32 @@ export function Element() {
     navigate(`${housePath.root}/${housePath.create}`);
   }, [navigate]);
 
+  const onChangeStatusHouse = useCallback(
+    async (ids: string[], status: boolean) => {
+      setLoading(true);
+      const [err, _]: AwaitToResult<HouseUpdateStatusResponseSchema> = await to(
+        houseRepositories.changeStatus({
+          ids,
+          status,
+        }),
+      );
+      setLoading(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      await queryClient.invalidateQueries({
+        queryKey: houseKeys.list({}),
+      });
+      toast.success(t('ms_update_house_success'));
+    },
+    [t],
+  );
+
   const {
     isError,
     data: houseData,
@@ -145,13 +176,42 @@ export function Element() {
         );
       },
     },
-    {
-      label: t('bt_delete'),
-      icon: <Trash className="mr-2 h-4 w-4" />,
-      isDanger: true,
-      onClick: (row: Row<HouseSchema>) => onDelete([row.original]),
-    },
+    // {
+    //   label: t('bt_delete'),
+    //   icon: <Trash className="mr-2 h-4 w-4" />,
+    //   isDanger: true,
+    //   onClick: (row: Row<HouseSchema>) => onDelete([row.original]),
+    // },
   ];
+
+  const additionalActionButtons = (table: Table<HouseSchema>) => {
+    const selectedItems = table
+      .getFilteredSelectedRowModel()
+      .rows.map((row) => row.original);
+    const ids = selectedItems.map((item) => item.id);
+    return (
+      ids?.length > 0 && (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onChangeStatusHouse(ids, true)}
+            disabled={loading}
+          >
+            {t('house_action_active')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onChangeStatusHouse(ids, false)}
+            disabled={loading}
+          >
+            {t('house_action_inactive')}
+          </Button>
+        </div>
+      )
+    );
+  };
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -284,9 +344,10 @@ export function Element() {
       ) : (
         <DataTable
           actions={{
-            onDelete,
+            // onDelete,
             onCreate,
           }}
+          additionalActionButtons={additionalActionButtons}
           table={table}
           columns={columns}
           filterOptions={filterFields}

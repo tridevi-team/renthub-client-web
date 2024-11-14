@@ -9,7 +9,6 @@ import type {
 import { provinceRepositories } from '@shared/apis/city.api';
 import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
 import { Button } from '@shared/components/ui/button';
-import { ConfirmationDialog } from '@shared/components/ui/confirmation-dialog';
 import {
   Form,
   FormControl,
@@ -23,7 +22,7 @@ import { Input } from '@shared/components/ui/input';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import { Textarea } from '@shared/components/ui/textarea';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import { ChevronLeft, Save, Trash } from 'lucide-react';
+import { ChevronLeft, Save } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import type { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -380,7 +379,7 @@ export default function HouseEditForm({
             <ChevronLeft className="mr-2 h-4 w-4" />
             {t('bt_back')}
           </Button>
-          <ConfirmationDialog
+          {/* <ConfirmationDialog
             description={t('common_confirm_delete_message')}
             title={t('common_confirm_delete')}
             onConfirm={() => onDelete(form.getValues('id'))}
@@ -394,7 +393,7 @@ export default function HouseEditForm({
               <Trash className="mr-2 h-4 w-4" />
               {t('bt_delete')}
             </Button>
-          </ConfirmationDialog>
+          </ConfirmationDialog> */}
           <Button
             type="submit"
             className="min-w-24"
