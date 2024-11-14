@@ -1,6 +1,8 @@
 import type { z } from '@app/lib/vi-zod';
 import { queryClient } from '@app/providers/query/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { PERMISSION_KEY } from '@modules/auth/schemas/auth.schema';
 import { houseRepositories } from '@modules/houses/apis/house.api';
 import HouseEditForm from '@modules/houses/components/house-edit-form';
 import { useHouseDetail } from '@modules/houses/hooks/use-house-detail.hook';
@@ -67,9 +69,36 @@ export function Element() {
     }
   }, [houseDetail, form]);
 
+  const updateHouseInUserStore = (
+    updatedHouse: HouseUpdateResponseSchema['data'],
+  ) => {
+    const { user, setUser } = useAuthUserStore.getState();
+    if (user) {
+      const updatedUser = {
+        ...user,
+        houses: user.houses.map((house) =>
+          house.id === updatedHouse.id
+            ? {
+                ...updatedHouse,
+                permissions:
+                  house.permissions ||
+                  Object.fromEntries(
+                    PERMISSION_KEY.map((key) => [
+                      key,
+                      { create: true, read: true, update: true, delete: true },
+                    ]),
+                  ),
+              }
+            : house,
+        ),
+      };
+      setUser(updatedUser);
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof houseUpdateRequestSchema>) => {
     setLoading(true);
-    const [err, _]: [
+    const [err, resp]: [
       ErrorResponseSchema | null,
       HouseUpdateResponseSchema | undefined,
     ] = await to(houseRepositories.update(values));
@@ -81,6 +110,9 @@ export function Element() {
         toast.error(t('UNKNOWN_ERROR'));
       }
       return;
+    }
+    if (resp) {
+      updateHouseInUserStore(resp.data);
     }
     await queryClient.invalidateQueries({
       queryKey: houseKeys.list({}),
