@@ -2,6 +2,7 @@ import { z } from '@app/lib/vi-zod';
 
 export const PERMISSION_KEY = [
   'house',
+  'floor',
   'role',
   'room',
   'renter',
@@ -10,6 +11,7 @@ export const PERMISSION_KEY = [
   'equipment',
   'payment',
   'notification',
+  'issue',
 ] as const;
 
 export type PermissionKeyType = (typeof PERMISSION_KEY)[number];
