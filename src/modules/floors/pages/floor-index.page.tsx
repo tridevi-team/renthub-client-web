@@ -197,7 +197,7 @@ export function Element() {
 
   const {
     isError,
-    data: houseData,
+    data: floorData,
     isLoading,
     isFetching,
   } = useQuery<FloorDataSchema>({
@@ -312,9 +312,9 @@ export function Element() {
   ];
 
   const { table } = useDataTable({
-    data: houseData?.results || [],
+    data: floorData?.results || [],
     columns,
-    pageCount: houseData?.pageCount || 0,
+    pageCount: floorData?.pageCount || 0,
     filterFields,
     initialState: {
       columnPinning: { right: ['actions'], left: ['select', 'name'] },

@@ -2,6 +2,7 @@ import type { z } from '@app/lib/vi-zod';
 import { queryClient } from '@app/providers/query/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
 import { PERMISSION_KEY } from '@modules/auth/schemas/auth.schema';
 import { houseRepositories } from '@modules/houses/apis/house.api';
 import HouseEditForm from '@modules/houses/components/house-edit-form';
@@ -23,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   type LoaderFunction,
+  redirect,
   useLocation,
   useNavigate,
   useParams,
@@ -34,6 +36,7 @@ export const loader: LoaderFunction = () => {
 
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
+    return redirect(authPath.login);
   }
 
   return null;
