@@ -7,7 +7,6 @@ export const floorId = {
   index: 'floor:index',
   create: 'floor:create',
   edit: 'floor:edit',
-  preview: 'floor:preview',
 } as const;
 
 export const floorPath = {

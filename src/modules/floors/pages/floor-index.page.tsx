@@ -95,24 +95,6 @@ export function Element() {
     }
   }, []);
 
-  // const fetchFloorDetail = useCallback(
-  //   async (id: string) => {
-  //     const [err, data]: AwaitToResult<FloorDetailResponseSchema> = await to(
-  //       floorRepositories.detail({ id }),
-  //     );
-  //     if (err) {
-  //       if ('code' in err) {
-  //         toast.error(t(err.code));
-  //       } else {
-  //         toast.error(t('UNKNOWN_ERROR'));
-  //       }
-  //       return;
-  //     }
-  //     return data;
-  //   },
-  //   [t],
-  // );
-
   const onDelete = useCallback(
     async (selectedItems: FloorSchema[]) => {
       const [err, _]: AwaitToResult<FloorDeleteResponseSchema> = await to(
