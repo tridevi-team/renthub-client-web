@@ -31,4 +31,16 @@ export const breadcrumbConfig: BreadcrumbConfig = {
   '/floors': {
     label: 'br_floors',
   },
+  '/roles': {
+    label: 'br_roles',
+    children: {
+      '/create': {
+        label: 'br_roles_create',
+      },
+      '/:id/edit': {
+        label: 'br_roles_edit',
+        dynamicSegments: [':id'],
+      },
+    },
+  },
 };

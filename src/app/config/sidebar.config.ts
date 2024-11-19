@@ -56,9 +56,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes('/accounts'),
             },
             {
-              href: '/accounts/roles',
+              href: '/roles',
               label: 'Quản lý Vai trò',
-              active: pathname.includes('/accounts/roles'),
+              active: pathname.includes('/roles'),
             },
           ],
         },

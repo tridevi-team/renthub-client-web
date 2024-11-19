@@ -23,6 +23,13 @@ export const messageLocale = {
   ms_delete_floor_success: 'Xóa tầng thành công',
   // #endregion
 
+  // #region Role
+  ms_create_role_success: 'Tạo vai trò mới thành công',
+  ms_update_role_success: 'Cập nhật thông tin vai trò thành công',
+  ms_delete_role_success: 'Xóa vai trò thành công',
+  ms_assign_role_success: 'Phân quyền thành công',
+  // #endregion
+
   // #region ACCOUNT
   ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
   ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',

@@ -16,7 +16,7 @@ export const PERMISSION_KEY = [
 
 export type PermissionKeyType = (typeof PERMISSION_KEY)[number];
 
-const CRUDPermissionSchema = z.object({
+export const CRUDPermissionSchema = z.object({
   create: z.boolean(),
   read: z.boolean(),
   update: z.boolean(),

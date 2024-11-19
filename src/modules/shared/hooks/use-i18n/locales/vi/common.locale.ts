@@ -9,7 +9,7 @@ export const commonLocale = {
   common_sorted_not: 'Chưa sắp xếp. Nhấn để sắp xếp tăng dần.',
   common_sort_ascending: 'Sắp xếp tăng dần',
   common_sort_descending: 'Sắp xếp giảm dần',
-  common_no_result_found: 'Không tìm thấy kết quả phù hợp',
+  common_no_result_found: 'Không có dữ liệu',
   common_clear_filter: 'Xóa bộ lọc',
   common_reset_filters: 'Đặt lại bộ lọc',
   common_custom_view: 'Tùy chỉnh',
