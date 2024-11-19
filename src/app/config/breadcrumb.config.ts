@@ -28,4 +28,7 @@ export const breadcrumbConfig: BreadcrumbConfig = {
       },
     },
   },
+  '/floors': {
+    label: 'br_floors',
+  },
 };

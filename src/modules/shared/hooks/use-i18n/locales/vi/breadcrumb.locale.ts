@@ -9,4 +9,6 @@ export const breadcrumbLocale = {
   br_houses_create: 'Thêm mới nhà trọ',
   br_houses_edit: 'Chỉnh sửa nhà trọ',
   br_houses_preview: 'Xem trước nhà trọ',
+
+  br_floors: 'Quản lý Tầng',
 } as const;
