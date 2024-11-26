@@ -51,6 +51,7 @@ export const roleCreateRequestSchema = z.object({
   name: z.string().min(1),
   description: z.string().default('').nullable(),
   permissions: z.record(z.enum(PERMISSION_KEY), CRUDPermissionSchema),
+  status: z.string().default('active').nullable(),
 });
 export const roleCreateResponseSchema = z.object({
   success: z.boolean(),
@@ -61,7 +62,7 @@ export const roleCreateResponseSchema = z.object({
 
 export const roleUpdateRequestSchema = z.object({
   name: z.string().trim().min(1),
-  status: z.boolean(),
+  status: z.string().default('active').nullable(),
   description: z.string().default('').nullable(),
   permissions: z.record(z.enum(PERMISSION_KEY), CRUDPermissionSchema),
 });

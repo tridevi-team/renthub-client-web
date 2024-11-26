@@ -45,9 +45,24 @@ const roleCreateRoute = {
   },
 } satisfies RouteObject;
 
+const roleEditRoute = {
+  id: roleId.edit,
+  path: rolePath.edit,
+  index: true,
+  lazy: async () => {
+    const edit = await import('./pages/role-edit.page.tsx');
+
+    return {
+      loader: edit.loader,
+      element: <edit.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} satisfies RouteObject;
+
 export const roleRoute = {
   id: roleId.root,
   path: rolePath.root,
   element: <PageWrapper />,
-  children: [roleIndexRoute, roleCreateRoute],
+  children: [roleIndexRoute, roleCreateRoute, roleEditRoute],
 } satisfies RouteObject;

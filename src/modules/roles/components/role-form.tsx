@@ -4,7 +4,11 @@ import {
   type PermissionKeyType,
 } from '@modules/auth/schemas/auth.schema';
 import { rolePath } from '@modules/roles/routes';
-import type { roleCreateRequestSchema } from '@modules/roles/schema/role.schema';
+import type {
+  roleCreateRequestSchema,
+  roleUpdateRequestSchema,
+} from '@modules/roles/schema/role.schema';
+import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
 import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import {
@@ -20,20 +24,28 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { ChevronLeft, Save } from 'lucide-react';
 import { Col, Row } from 'react-grid-system';
-import type { useForm } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-type RoleCreateFormProps = {
-  form: ReturnType<typeof useForm<z.infer<typeof roleCreateRequestSchema>>>;
+type RoleFormProps = {
+  form: UseFormReturn<
+    z.infer<typeof roleUpdateRequestSchema | typeof roleCreateRequestSchema>
+  >;
   loading?: boolean;
-  onSubmit: (values: z.infer<typeof roleCreateRequestSchema>) => void;
+  onSubmit: (
+    values: z.infer<
+      typeof roleUpdateRequestSchema | typeof roleCreateRequestSchema
+    >,
+  ) => void;
+  isEdit?: boolean;
 };
 
-export function RoleCreateForm({
+export function RoleForm({
   form,
   loading,
   onSubmit,
-}: RoleCreateFormProps) {
+  isEdit = false,
+}: RoleFormProps) {
   const [t] = useI18n();
   const navigate = useNavigate();
 
@@ -84,6 +96,29 @@ export function RoleCreateForm({
               )}
             />
           </Col>
+          <Col xs={24}>
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('role_status')}</FormLabel>
+                  <FormControl>
+                    <AutoComplete
+                      options={[
+                        { label: t('role_active'), value: 'active' },
+                        { label: t('role_inactive'), value: 'inactive' },
+                      ]}
+                      value={field.value ?? 'active'}
+                      onValueChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Col>
+
           <Col xs={24}>
             <FormField
               control={form.control}

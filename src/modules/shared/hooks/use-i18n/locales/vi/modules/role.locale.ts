@@ -19,6 +19,9 @@ export const roleLocale = {
   role_create: 'Tạo',
   role_update: 'Sửa',
   role_delete: 'Xóa',
+  role_status: 'Trạng thái',
+  role_active: 'Kích hoạt',
+  role_inactive: 'Không kích hoạt',
 
   role_house: 'Quản lý nhà',
   role_floor: 'Quản lý tầng',

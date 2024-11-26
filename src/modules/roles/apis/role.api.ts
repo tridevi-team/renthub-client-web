@@ -34,7 +34,7 @@ export const roleRepositories = {
       .post(`roles/${houseId}/create`, {
         json: {
           ...role,
-          status: true,
+          status: role.status === 'active',
         },
       })
       .json<RoleCreateResponseSchema>();
@@ -54,7 +54,10 @@ export const roleRepositories = {
   }: { id: string; role: RoleUpdateRequestSchema }) => {
     const resp = await http.instance
       .put(`roles/${id}/update`, {
-        json: role,
+        json: {
+          ...role,
+          status: role.status === 'active',
+        },
       })
       .json<RoleUpdateResponseSchema>();
 

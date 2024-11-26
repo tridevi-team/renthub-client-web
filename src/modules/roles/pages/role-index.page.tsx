@@ -22,6 +22,7 @@ import {
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import ErrorCard from '@shared/components/layout/error-section';
+import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
@@ -142,7 +143,11 @@ export function Element() {
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<RoleSchema>) => {},
+      onClick: async (row: Row<RoleSchema>) => {
+        navigate(
+          `${rolePath.root}/${rolePath.edit.replace(':id', row.original.id)}`,
+        );
+      },
     },
     {
       label: t('bt_delete'),
@@ -205,6 +210,20 @@ export function Element() {
         if (!date.isValid()) return null;
         return date.format(DEFAULT_DATE_FORMAT);
       },
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('role_status')} />
+      ),
+      cell: ({ row }) => {
+        return row.original.status === 0 ? (
+          <Badge variant="outline">{t('role_inactive')}</Badge>
+        ) : (
+          <Badge variant="outline">{t('role_active')}</Badge>
+        );
+      },
+      enableSorting: true,
     },
     {
       id: 'actions',
@@ -272,7 +291,15 @@ export function Element() {
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          columnWidths={['2rem', '7rem', '27rem', '5rem', '9rem', '2rem']}
+          columnWidths={[
+            '2rem',
+            '11rem',
+            '20rem',
+            '9rem',
+            '11rem',
+            '9rem',
+            '2rem',
+          ]}
           moduleName="role"
         />
       )}
