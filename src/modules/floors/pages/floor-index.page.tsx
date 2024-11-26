@@ -332,7 +332,7 @@ export function Element() {
             columns={columns}
             filterOptions={filterFields}
             loading={isFetching}
-            columnWidths={['2rem', '5rem', '27rem', '5rem', '9rem', '2rem']}
+            columnWidths={['2rem', '7rem', '27rem', '7rem', '9rem', '2rem']}
             moduleName="house"
           />
 
