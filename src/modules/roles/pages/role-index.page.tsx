@@ -1,10 +1,7 @@
 import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import {
-  floorKeys,
-  type FloorSchema,
-} from '@modules/floors/schema/floor.schema';
+import { floorKeys } from '@modules/floors/schema/floor.schema';
 import { roleRepositories } from '@modules/roles/apis/role.api';
 import { rolePath } from '@modules/roles/routes';
 import {
@@ -236,7 +233,7 @@ export function Element() {
     },
   ];
 
-  const filterFields: DataTableFilterField<FloorSchema>[] = [
+  const filterFields: DataTableFilterField<RoleSchema>[] = [
     {
       label: t('role_name'),
       value: 'name',
@@ -291,15 +288,6 @@ export function Element() {
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          columnWidths={[
-            '2rem',
-            '11rem',
-            '20rem',
-            '9rem',
-            '11rem',
-            '9rem',
-            '2rem',
-          ]}
           moduleName="role"
         />
       )}
