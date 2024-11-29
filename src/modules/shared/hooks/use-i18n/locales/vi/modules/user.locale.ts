@@ -9,7 +9,8 @@ export const userLocale = {
   user_role: 'Vai trò',
   user_status: 'Trạng thái',
   // #endregion FORM + TABLE
-
+  user_male: 'Nam',
+  user_female: 'Nữ',
   // #region BUTTON
 
   // #endregion BUTTON

@@ -51,9 +51,9 @@ export function getMenuList(pathname: string): Group[] {
           icon: Users,
           submenus: [
             {
-              href: '/accounts/',
+              href: '/users',
               label: 'Quản lý Tài khoản',
-              active: pathname.includes('/accounts'),
+              active: pathname.includes('/users'),
             },
             {
               href: '/roles',

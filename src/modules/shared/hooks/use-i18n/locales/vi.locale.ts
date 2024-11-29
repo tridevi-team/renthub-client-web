@@ -10,6 +10,7 @@ import { dashboardLocale } from '@shared/hooks/use-i18n/locales/vi/modules/dashb
 import { floorLocale } from '@shared/hooks/use-i18n/locales/vi/modules/floor.locale';
 import { houseLocale } from '@shared/hooks/use-i18n/locales/vi/modules/house.locale';
 import { roleLocale } from '@shared/hooks/use-i18n/locales/vi/modules/role.locale';
+import { userLocale } from '@shared/hooks/use-i18n/locales/vi/modules/user.locale';
 import { placeholderLocale } from '@shared/hooks/use-i18n/locales/vi/placeholder.locale';
 
 export type LocaleKeys =
@@ -25,6 +26,7 @@ export type LocaleKeys =
   | keyof typeof mesureLocale
   | keyof typeof floorLocale
   | keyof typeof roleLocale
+  | keyof typeof userLocale
   | keyof typeof houseLocale;
 
 export const viLocale = {
@@ -41,4 +43,5 @@ export const viLocale = {
   ...mesureLocale,
   ...floorLocale,
   ...roleLocale,
+  ...userLocale,
 } as const;

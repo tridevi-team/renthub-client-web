@@ -8,6 +8,7 @@ import { dashboardRoute } from '@modules/dashboard/routes';
 import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { roleRoute } from '@modules/roles/routes';
+import { userRoute } from '@modules/users/routes';
 import { createBrowserRouter } from 'react-router-dom';
 
 // router singleton
@@ -21,6 +22,7 @@ export const browserRouter = createBrowserRouter(
     roleRoute,
     notFoundRoute,
     notPermissionRoute,
+    userRoute,
   ],
   {
     future: {
