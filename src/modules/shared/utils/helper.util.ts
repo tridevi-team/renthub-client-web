@@ -198,7 +198,9 @@ export const tw = extendTailwindMerge<'alert'>({
  * Processes URL search parameters to extract filters, sorting, pagination page, and page size.
  *
  * @param params - The URLSearchParams object containing the search parameters.
- * @param fieldPrefix - An optional prefix to add to the field names in the filters and sorting.
+ * @param defaultFieldPrefix - An optional prefix to add to the field names in the filters and sorting.
+ * @param defaultSorting - An optional object specifying the default sorting field and direction.
+ * @param nameFieldToPrefix - An optional object mapping field names to their respective prefixes.
  * @returns An object containing the following properties:
  * - `filters`: An array of filter objects, each containing `field`, `operator`, and `value`.
  * - `sorting`: An array of sorting objects, each containing `field` and `direction`.
@@ -207,8 +209,9 @@ export const tw = extendTailwindMerge<'alert'>({
  */
 export const processSearchParams = (
   params: URLSearchParams,
-  fieldPrefix = '',
+  defaultFieldPrefix = '',
   defaultSorting = { field: 'createdAt', direction: 'desc' },
+  nameFieldToPrefix: Record<string, string> = {}, // { name: 'prefix1', fullname: 'prefix2' }
 ): {
   filters: Array<{ field: string; operator: string; value: string }>;
   sorting: Array<{ field: string; direction: string }>;
@@ -217,15 +220,21 @@ export const processSearchParams = (
 } => {
   const filters = params.getAll('filter').map((filter) => {
     const [field, operator, value] = filter.split(':');
-    return { field: `${fieldPrefix}.${field}`, operator, value };
+    const prefix = nameFieldToPrefix[field] || defaultFieldPrefix;
+    return { field: `${prefix}.${field}`, operator, value };
   });
 
   const sort = params.get('sort')?.split('.') || [];
   const sorting = sort[0]
-    ? [{ field: `${fieldPrefix}.${sort[0]}`, direction: sort[1] }]
+    ? [
+        {
+          field: `${nameFieldToPrefix[sort[0]] || defaultFieldPrefix}.${sort[0]}`,
+          direction: sort[1],
+        },
+      ]
     : [
         {
-          field: `${fieldPrefix}.${defaultSorting.field}`,
+          field: `${defaultFieldPrefix}.${defaultSorting.field}`,
           direction: defaultSorting.direction,
         },
       ];
