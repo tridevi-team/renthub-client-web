@@ -22,6 +22,11 @@
         "noExplicitAny": {
           "level": "info"
         }
+      },
+      "correctness": {
+        "useExhaustiveDependencies": {
+          "level": "info"
+        }
       }
     }
   },
