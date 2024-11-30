@@ -1,7 +1,7 @@
 import { cn } from '@app/lib/utils';
 
-import logoImg from '@assets/images/logo.png';
 import registerBg from '@assets/images/register_bg.png';
+import logoImg from '@assets/logo/logo-doc.png';
 import { BRAND_NAME } from '@shared/constants/general.constant';
 
 export default function RegisterLayout({
@@ -24,7 +24,7 @@ export default function RegisterLayout({
           <img
             src={logoImg}
             alt={BRAND_NAME}
-            className={cn('h-28 w-28', 'rounded-full')}
+            className={cn('h-36 w-36 bg-white', 'rounded-full')}
             loading="lazy"
             aria-label={BRAND_NAME}
           />

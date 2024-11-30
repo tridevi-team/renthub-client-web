@@ -79,10 +79,12 @@ export function Element() {
 
   return (
     <div>
-      <p className="text-center text-base text-secondary-foreground">
+      <p className=" text-center font-bold text-base text-primary">
         {t('auth_welcome')}
       </p>
-
+      <p className="text-center text-base text-secondary-foreground">
+        {t('auth_login_to_continue')}
+      </p>
       <LoginForm />
 
       <p className="py-12 text-center">
