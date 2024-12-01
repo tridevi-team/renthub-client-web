@@ -35,7 +35,14 @@ export const messageLocale = {
   ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',
   // #endregion
 
+  // #region Equipments
+  ms_create_equipment_success: 'Tạo thiết bị mới thành công',
+  ms_update_equipment_success: 'Cập nhật thiết bị mới thành công',
+  ms_delete_equipment_success: 'Xóa thiết bị thành công',
+  // #endregion
+
   // #region Error
   ms_error: 'Có lỗi xảy ra, vui lòng thử lại sau',
+  ms_invalid_form: 'Vui lòng kiểm tra lại thông tin',
   ms_delete_success: 'Xóa thành công',
 } as const;

@@ -22,7 +22,8 @@ export const authLocale = {
 
   // #region COMMON
   auth_register_title: 'Đăng ký tài khoản',
-  auth_welcome: 'Quản lý Nhà trọ dễ hơn bao giờ hết! Đăng nhập để tiếp tục',
+  auth_welcome: 'Quản lý Nhà trọ dễ hơn bao giờ hết!',
+  auth_login_to_continue: 'Đăng nhập để tiếp tục',
   auth_noAccount: 'Chưa có tài khoản?',
   auth_registerHere: 'Đăng ký ngay',
   auth_forgotPassword: 'Quên mật khẩu?',

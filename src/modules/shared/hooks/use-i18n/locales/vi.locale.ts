@@ -7,6 +7,7 @@ import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale'
 import { mesureLocale } from '@shared/hooks/use-i18n/locales/vi/mesure.locale';
 import { authLocale } from '@shared/hooks/use-i18n/locales/vi/modules/auth.locale';
 import { dashboardLocale } from '@shared/hooks/use-i18n/locales/vi/modules/dashboard.locale';
+import { equipmentLocale } from '@shared/hooks/use-i18n/locales/vi/modules/equipment.locale';
 import { floorLocale } from '@shared/hooks/use-i18n/locales/vi/modules/floor.locale';
 import { houseLocale } from '@shared/hooks/use-i18n/locales/vi/modules/house.locale';
 import { roleLocale } from '@shared/hooks/use-i18n/locales/vi/modules/role.locale';
@@ -15,7 +16,6 @@ import { placeholderLocale } from '@shared/hooks/use-i18n/locales/vi/placeholder
 
 export type LocaleKeys =
   | keyof typeof authLocale
-  | keyof typeof errorLocale
   | keyof typeof messageLocale
   | keyof typeof commonLocale
   | keyof typeof placeholderLocale
@@ -27,6 +27,7 @@ export type LocaleKeys =
   | keyof typeof floorLocale
   | keyof typeof roleLocale
   | keyof typeof userLocale
+  | keyof typeof equipmentLocale
   | keyof typeof houseLocale;
 
 export const viLocale = {
@@ -44,4 +45,5 @@ export const viLocale = {
   ...floorLocale,
   ...roleLocale,
   ...userLocale,
+  ...equipmentLocale,
 } as const;
