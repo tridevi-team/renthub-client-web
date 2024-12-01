@@ -30,6 +30,15 @@ export function HouseSelect() {
 
   const houses = user?.houses || [];
 
+  const onSelectHouse = (house: any) => {
+    if (selectedHouse?.id === house.id) {
+      return;
+    }
+    setSelectedHouse(house);
+    queryClient.invalidateQueries();
+    setOpen(false);
+  };
+
   useEffect(() => {
     if (!selectedHouse && houses.length > 0) {
       setSelectedHouse(houses[0]);
@@ -66,15 +75,7 @@ export function HouseSelect() {
                   {houses.map((house) => (
                     <CommandItem
                       key={house.id}
-                      onSelect={() => {
-                        if (selectedHouse?.id === house.id) {
-                          setSelectedHouse(house);
-                        } else {
-                          setSelectedHouse(house);
-                        }
-                        queryClient.invalidateQueries();
-                        setOpen(false);
-                      }}
+                      onSelect={() => onSelectHouse(house)}
                     >
                       <Check
                         className={cn(
@@ -88,10 +89,10 @@ export function HouseSelect() {
                         <span>{house.name}</span>
                         <span className="text-muted-foreground text-sm">
                           {[
-                            house.address.street,
-                            house.address.ward,
-                            house.address.district,
-                            house.address.city,
+                            house.address?.street || '',
+                            house.address?.ward || '',
+                            house.address?.district || '',
+                            house.address?.city || '',
                           ]
                             .filter(Boolean)
                             .join(', ')}
