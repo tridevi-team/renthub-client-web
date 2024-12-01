@@ -27,6 +27,7 @@ export function Entry() {
         richColors
         expand
         closeButton
+        visibleToasts={3}
         toastOptions={{
           style: {
             zIndex: 9999,
