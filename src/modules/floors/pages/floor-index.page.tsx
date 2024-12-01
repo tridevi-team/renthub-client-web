@@ -19,7 +19,6 @@ import {
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
-import ErrorCard from '@shared/components/layout/error-section';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import {
   DEFAULT_DATE_FORMAT,
@@ -313,14 +312,6 @@ export function Element() {
           cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
           shrinkZero
         />
-      ) : isError ? (
-        <ErrorCard
-          onRetry={() =>
-            queryClient.refetchQueries({
-              queryKey: floorKeys.list(queryParams),
-            })
-          }
-        />
       ) : (
         <>
           <DataTable
@@ -332,8 +323,7 @@ export function Element() {
             columns={columns}
             filterOptions={filterFields}
             loading={isFetching}
-            columnWidths={['2rem', '7rem', '27rem', '7rem', '9rem', '2rem']}
-            moduleName="house"
+            moduleName="floor"
           />
 
           <FloorDialog

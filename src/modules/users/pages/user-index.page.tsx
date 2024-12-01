@@ -130,7 +130,7 @@ export function Element() {
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'fullName',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('auth_fullName')} />
       ),
@@ -226,7 +226,7 @@ export function Element() {
   });
 
   return (
-    <ContentLayout title={t('role_index_title')} pathname={pathname}>
+    <ContentLayout title={t('user_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
@@ -241,15 +241,6 @@ export function Element() {
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          columnWidths={[
-            '2rem',
-            '11rem',
-            '20rem',
-            '9rem',
-            '11rem',
-            '9rem',
-            '2rem',
-          ]}
           moduleName="role"
         />
       )}
