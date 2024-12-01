@@ -1,6 +1,7 @@
 import type { z } from '@app/lib/vi-zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import HouseForm from '@modules/houses/components/house-form';
+import { authPath } from '@modules/auth/routes';
+import HouseForm from '@modules/houses/components/house-create-form';
 import { useHouseCreate } from '@modules/houses/hooks/use-house-create.hook';
 import { housePath } from '@modules/houses/routes';
 import {
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   type LoaderFunction,
+  redirect,
   useLocation,
   useNavigate,
 } from 'react-router-dom';
@@ -24,6 +26,7 @@ export const loader: LoaderFunction = () => {
 
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
+    return redirect(authPath.login);
   }
 
   return null;
@@ -45,7 +48,7 @@ export function Element() {
     try {
       const result = await mutation.mutateAsync(values);
       form.reset();
-      navigate(`${housePath.root}/${housePath.index}`);
+      navigate(`${housePath.root}`);
       return result;
     } catch (error) {
       setLoading(false);

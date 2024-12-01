@@ -15,6 +15,9 @@ export const houseLocale = {
   house_district: 'Quận/Huyện',
   house_city: 'Tỉnh/Thành phố',
   house_status: 'Trạng thái',
+  house_active: 'Hoạt động',
+  house_inactive: 'Tạm ngưng',
+  house_contract_default: 'Hợp đồng mặc định',
   house_status_active: 'Hoạt động',
   house_status_inactive: 'Tạm ngưng',
   house_num_of_floors: 'Số tầng',
@@ -33,10 +36,16 @@ export const houseLocale = {
   // #endregion FORM + TABLE
 
   // #region BUTTON
-
+  house_add_new: 'Thêm nhà trọ',
+  house_action_active: 'Chuyển sang hoạt động',
+  house_action_inactive: 'Tạm ngưng hoạt động',
   // #endregion BUTTON
 
   // #region COMMON
 
   // #endregion COMMON
+
+  // #region NAVBAR
+  house_not_found: 'Không tìm thấy nhà trọ',
+  // #endregion NAVBAR
 } as const;

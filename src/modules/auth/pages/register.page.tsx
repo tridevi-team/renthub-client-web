@@ -26,7 +26,7 @@ import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale'
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { HTTPError } from 'ky';
+import { isErrorResponseSchema } from '@shared/utils/type-guards';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -55,9 +55,8 @@ export const action: ActionFunction = async ({ request }) => {
       toast.info(messageLocale.ms_register_success);
       return redirect(authPath.verifyAccount);
     } catch (error) {
-      if (error instanceof HTTPError) {
-        const response = (await error.response.json()) as ErrorResponseSchema;
-        return json(response);
+      if (isErrorResponseSchema(error)) {
+        return json(error);
       }
     }
   }
@@ -258,7 +257,6 @@ const RegisterForm = () => {
           }) => (
             <TextField
               className="group/password pt-4"
-              type="password"
               validationBehavior="aria"
               name={name}
               value={value}
@@ -268,7 +266,11 @@ const RegisterForm = () => {
               isRequired
             >
               <Label className="field-required">{t('auth_password')}</Label>
-              <Input placeholder={t('ph_password')} ref={ref} />
+              <Input
+                placeholder={t('ph_password')}
+                ref={ref}
+                customType="password"
+              />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>
@@ -288,7 +290,6 @@ const RegisterForm = () => {
               className="group/confirmPassword pt-4"
               validationBehavior="aria"
               name={name}
-              type="password"
               value={value}
               onChange={onChange}
               onBlur={onBlur}
@@ -298,7 +299,11 @@ const RegisterForm = () => {
               <Label className="field-required">
                 {t('auth_confirmPassword')}
               </Label>
-              <Input placeholder={t('ph_confirm_password')} ref={ref} />
+              <Input
+                placeholder={t('ph_confirm_password')}
+                ref={ref}
+                customType="password"
+              />
               <FieldError className="text-destructive">
                 {error?.message}
               </FieldError>

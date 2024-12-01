@@ -73,15 +73,60 @@ export const houseCreateResponseSchema = z.object({
   message: z.string(),
   data: house,
 });
-export const houseUpdateRequestSchema = houseCreateRequestSchema;
+
+export const houseUpdateRequestSchema = z.object({
+  id: z.string(),
+  name: z.string().trim(),
+  city: z.string().trim(),
+  ward: z.string().trim(),
+  street: z.string().trim(),
+  district: z.string().trim(),
+  contractDefault: z.string().trim().nullable(),
+  description: z.string().default(''),
+  collectionCycle: z.coerce.number().min(1).max(60).optional(),
+  invoiceDate: z.coerce.number().min(1).max(31).optional(),
+  numCollectDays: z.coerce.number().min(1).max(365).optional(),
+  status: z.coerce.number().min(0).max(1),
+});
+
 export const houseUpdateResponseSchema = z.object({
   success: z.boolean(),
   code: z.string(),
   message: z.string(),
-  data: house,
+  data: z.object({
+    id: z.string(),
+    name: z.string(),
+    address: z.object({
+      city: z.string(),
+      ward: z.string(),
+      street: z.string(),
+      district: z.string(),
+    }),
+    contractDefault: z.string().nullable(),
+    description: z.string().nullable(),
+    collectionCycle: z.number(),
+    invoiceDate: z.number(),
+    numCollectDays: z.number(),
+    status: z.number(),
+    createdBy: z.string().nullable(),
+    createdAt: z.string().nullable(),
+    updatedBy: z.string().nullable(),
+    updatedAt: z.string().nullable(),
+  }),
 });
 export const houseDeleteRequestSchema = z.string();
 export const houseDeleteResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+});
+
+export const houseUpdateStatusRequestSchema = z.object({
+  ids: z.array(z.string()),
+  status: z.boolean(),
+});
+
+export const houseUpdateStatusResponseSchema = z.object({
   success: z.boolean(),
   code: z.string(),
   message: z.string(),
@@ -107,16 +152,23 @@ export type HouseDeleteResponseSchema = z.infer<
   typeof houseDeleteResponseSchema
 >;
 
+export type HouseUpdateStatusRequestSchema = z.infer<
+  typeof houseUpdateStatusRequestSchema
+>;
+export type HouseUpdateStatusResponseSchema = z.infer<
+  typeof houseUpdateStatusResponseSchema
+>;
+
 export const houseKeys = {
   all: ['houses'] as const,
   list: (params: Record<string, string | string[]> | undefined) =>
-    [houseKeys.all, 'list', ...(params ? [params] : [])] as const,
+    [...houseKeys.all, 'list', ...(params ? [params] : [])] as const,
   detail: (id: HouseDetailRequestSchema | undefined) =>
-    [houseKeys.all, 'detail', ...(id ? [id] : [])] as const,
+    [...houseKeys.all, 'detail', ...(id ? [id] : [])] as const,
   create: (params: HouseCreateRequestSchema | undefined) =>
-    [houseKeys.all, 'create:mutation', ...(params ? [params] : [])] as const,
+    [...houseKeys.all, 'create:mutation', ...(params ? [params] : [])] as const,
   update: (params: HouseUpdateRequestSchema | undefined) =>
-    [houseKeys.all, 'update:mutation', ...(params ? [params] : [])] as const,
+    [...houseKeys.all, 'update:mutation', ...(params ? [params] : [])] as const,
   delete: (id: HouseDeleteRequestSchema | undefined) =>
-    [houseKeys.all, 'delete:mutation', ...(id ? [id] : [])] as const,
+    [...houseKeys.all, 'delete:mutation', ...(id ? [id] : [])] as const,
 };

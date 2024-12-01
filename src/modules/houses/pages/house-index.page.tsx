@@ -7,6 +7,7 @@ import {
   houseKeys,
   type HouseDataSchema,
   type HouseSchema,
+  type HouseUpdateStatusResponseSchema,
 } from '@modules/houses/schema/house.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
@@ -18,15 +19,18 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import ErrorCard from '@shared/components/layout/error-section';
 import { Badge } from '@shared/components/ui/badge';
+import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import { checkAuthUser } from '@shared/utils/checker.util';
+import type { AwaitToResult } from '@shared/types/date.type';
+import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { ColumnDef, Row } from '@tanstack/react-table';
-import { FileEdit, Trash, View } from 'lucide-react';
+import type { ColumnDef, Row, Table } from '@tanstack/react-table';
+import to from 'await-to-js';
+import { FileEdit, View } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -39,10 +43,16 @@ import { toast } from 'sonner';
 
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
-
+  const hasPermission = checkPermissionPage({
+    module: 'house',
+    action: 'read',
+  });
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
     return redirect(authPath.login);
+  }
+  if (!hasPermission) {
+    return redirect(authPath.notPermission);
   }
 
   return null;
@@ -55,6 +65,7 @@ export function Element() {
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -103,6 +114,32 @@ export function Element() {
     navigate(`${housePath.root}/${housePath.create}`);
   }, [navigate]);
 
+  const onChangeStatusHouse = useCallback(
+    async (ids: string[], status: boolean) => {
+      setLoading(true);
+      const [err, _]: AwaitToResult<HouseUpdateStatusResponseSchema> = await to(
+        houseRepositories.changeStatus({
+          ids,
+          status,
+        }),
+      );
+      setLoading(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      await queryClient.invalidateQueries({
+        queryKey: houseKeys.list({}),
+      });
+      toast.success(t('ms_update_house_success'));
+    },
+    [t],
+  );
+
   const {
     isError,
     data: houseData,
@@ -125,7 +162,9 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: (row: Row<HouseSchema>) => {
-        navigate(housePath.edit.replace(':id', row.original.id));
+        navigate(
+          `${housePath.root}/${housePath.edit.replace(':id', row.original.id)}`,
+        );
       },
     },
     {
@@ -137,13 +176,42 @@ export function Element() {
         );
       },
     },
-    {
-      label: t('bt_delete'),
-      icon: <Trash className="mr-2 h-4 w-4" />,
-      isDanger: true,
-      onClick: (row: Row<HouseSchema>) => onDelete([row.original]),
-    },
+    // {
+    //   label: t('bt_delete'),
+    //   icon: <Trash className="mr-2 h-4 w-4" />,
+    //   isDanger: true,
+    //   onClick: (row: Row<HouseSchema>) => onDelete([row.original]),
+    // },
   ];
+
+  const additionalActionButtons = (table: Table<HouseSchema>) => {
+    const selectedItems = table
+      .getFilteredSelectedRowModel()
+      .rows.map((row) => row.original);
+    const ids = selectedItems.map((item) => item.id);
+    return (
+      ids?.length > 0 && (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onChangeStatusHouse(ids, true)}
+            disabled={loading}
+          >
+            {t('house_action_active')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onChangeStatusHouse(ids, false)}
+            disabled={loading}
+          >
+            {t('house_action_inactive')}
+          </Button>
+        </div>
+      )
+    );
+  };
 
   const columns: ColumnDef<HouseSchema>[] = [
     {
@@ -228,15 +296,19 @@ export function Element() {
     {
       label: t('house_name'),
       value: 'name',
-      placeholder: 'Nhập tên nhà trọ',
+      placeholder: t('common_ph_input', {
+        field: t('house_name').toLowerCase(),
+      }),
     },
     {
       label: t('house_status'),
       value: 'status',
-      placeholder: 'Chọn trạng thái',
+      placeholder: t('common_ph_select', {
+        field: t('house_status').toLowerCase(),
+      }),
       options: [
-        { label: 'active', value: '0' },
-        { label: 'inactive', value: '1' },
+        { label: t('house_active'), value: '0' },
+        { label: t('house_inactive'), value: '1' },
       ],
     },
   ];
@@ -247,7 +319,7 @@ export function Element() {
     pageCount: houseData?.pageCount || 0,
     filterFields,
     initialState: {
-      columnPinning: { right: ['actions'] },
+      columnPinning: { right: ['actions'], left: ['select', 'name'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
@@ -257,9 +329,8 @@ export function Element() {
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
-          searchableColumnCount={1}
           filterableColumnCount={2}
-          cellWidths={['10rem', '40rem', '12rem', '12rem', '8rem']}
+          cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
           shrinkZero
         />
       ) : isError ? (
@@ -273,9 +344,10 @@ export function Element() {
       ) : (
         <DataTable
           actions={{
-            onDelete,
+            // onDelete,
             onCreate,
           }}
+          additionalActionButtons={additionalActionButtons}
           table={table}
           columns={columns}
           filterOptions={filterFields}

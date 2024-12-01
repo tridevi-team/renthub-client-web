@@ -4,7 +4,6 @@ import { housePath } from '@modules/houses/routes';
 import type {
   houseCreateRequestSchema,
   HouseCreateResponseSchema,
-  houseUpdateRequestSchema,
 } from '@modules/houses/schema/house.schema';
 import { provinceRepositories } from '@shared/apis/city.api';
 import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
@@ -29,11 +28,7 @@ import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 
 type HouseFormProps = {
-  form: ReturnType<
-    typeof useForm<
-      z.infer<typeof houseCreateRequestSchema | typeof houseUpdateRequestSchema>
-    >
-  >;
+  form: ReturnType<typeof useForm<z.infer<typeof houseCreateRequestSchema>>>;
   loading?: boolean;
   onSubmit: (
     values: z.infer<typeof houseCreateRequestSchema>,
@@ -41,12 +36,7 @@ type HouseFormProps = {
   isUpdate?: boolean;
 };
 
-export default function HouseForm({
-  form,
-  onSubmit,
-  loading,
-  isUpdate = false,
-}: HouseFormProps) {
+export default function HouseForm({ form, onSubmit, loading }: HouseFormProps) {
   const [t] = useI18n();
   const navigate = useNavigate();
   const [districts, setDistricts] = useState<Option[]>([]);
@@ -314,9 +304,7 @@ export default function HouseForm({
               name="invoiceDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="field-required">
-                    {t('house_invoice_date')}
-                  </FormLabel>
+                  <FormLabel>{t('house_invoice_date')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder={t('ph_house_invoice_date')}
@@ -421,7 +409,7 @@ export default function HouseForm({
             variant="outline"
             className="min-w-24"
             onClick={() => {
-              navigate(`${housePath.root}/${housePath.index}`);
+              navigate(`${housePath.root}`);
             }}
           >
             <ChevronLeft className="mr-2 h-4 w-4" />

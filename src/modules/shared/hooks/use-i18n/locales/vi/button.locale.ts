@@ -16,4 +16,5 @@ export const buttonLocale = {
   bt_duplicate: 'Tạo bản sao',
   bt_retry: 'Thử lại',
   bt_preview: 'Xem trước',
+  bt_view_detail: 'Xem chi tiết',
 } as const;

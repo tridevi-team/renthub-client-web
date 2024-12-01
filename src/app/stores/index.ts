@@ -1,1 +1,2 @@
-export * from './emailStore';
+export * from './email-store';
+export * from './house-store';

@@ -17,7 +17,32 @@ export const messageLocale = {
   ms_delete_house_success: 'Xóa nhà trọ thành công',
   // #endregion
 
+  // #region Floor
+  ms_create_floor_success: 'Tạo tầng mới thành công',
+  ms_update_floor_success: 'Cập nhật thông tin tầng thành công',
+  ms_delete_floor_success: 'Xóa tầng thành công',
+  // #endregion
+
+  // #region Role
+  ms_create_role_success: 'Tạo vai trò mới thành công',
+  ms_update_role_success: 'Cập nhật thông tin vai trò thành công',
+  ms_delete_role_success: 'Xóa vai trò thành công',
+  ms_assign_role_success: 'Phân quyền thành công',
+  // #endregion
+
+  // #region ACCOUNT
+  ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
+  ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',
+  // #endregion
+
+  // #region Equipments
+  ms_create_equipment_success: 'Tạo thiết bị mới thành công',
+  ms_update_equipment_success: 'Cập nhật thiết bị mới thành công',
+  ms_delete_equipment_success: 'Xóa thiết bị thành công',
+  // #endregion
+
   // #region Error
   ms_error: 'Có lỗi xảy ra, vui lòng thử lại sau',
+  ms_invalid_form: 'Vui lòng kiểm tra lại thông tin',
   ms_delete_success: 'Xóa thành công',
 } as const;

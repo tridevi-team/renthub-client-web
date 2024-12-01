@@ -9,7 +9,7 @@ import {
 import { Skeleton } from '@shared/components/ui/skeleton';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Check, X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import {
   useCallback,
   useEffect,
@@ -105,13 +105,22 @@ export const AutoComplete = ({
     inputRef.current?.focus();
   };
 
+  // Safe string conversion for filtering
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const safeToString = (value: any): string => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    return String(value);
+  };
+
   const filteredOptions = searchValue
-    ? options.filter((option) =>
-        option.label
-          .toString()
-          .toLowerCase()
-          .includes(searchValue.toLowerCase()),
-      )
+    ? options.filter((option) => {
+        if (!option.label) return false;
+        const labelString = safeToString(option.label);
+        const searchString = safeToString(searchValue);
+        return labelString.toLowerCase().includes(searchString.toLowerCase());
+      })
     : options;
 
   useEffect(() => {
@@ -122,12 +131,24 @@ export const AutoComplete = ({
     }
   }, [options]);
 
+  useEffect(() => {
+    // Update selected value when value prop changes
+    setSelected(value);
+    setInputValue(value);
+  }, [value]);
+
   return (
     <CommandPrimitive onKeyDown={handleKeyDown}>
       <div className="relative">
         <CommandInput
           ref={inputRef}
-          value={isOpen ? searchValue : (inputValue as string) ?? ''}
+          value={
+            isOpen
+              ? searchValue
+              : safeToString(
+                  options.find((opt) => opt.value === inputValue)?.label ?? '',
+                )
+          }
           onValueChange={isLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
           onFocus={() => {
@@ -146,6 +167,9 @@ export const AutoComplete = ({
           >
             <X className="h-4 w-4 text-slate-500" />
           </button>
+        )}
+        {!inputValue && (
+          <ChevronDown className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-4 h-4 w-4 text-slate-500" />
         )}
       </div>
       <div className="relative mt-1">
@@ -170,7 +194,7 @@ export const AutoComplete = ({
                   return (
                     <CommandItem
                       key={option.value}
-                      value={option.label as string}
+                      value={safeToString(option.label)}
                       onMouseDown={(event) => {
                         event.preventDefault();
                         event.stopPropagation();

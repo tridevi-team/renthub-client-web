@@ -1,9 +1,16 @@
 import {
   authForgotPasswordResponseSchema,
   authResetPasswordResponseSchema,
+  changePasswordResponseSchema,
+  userInfoResponseSchema,
   type AuthForgotPasswordRequestSchema,
   type AuthForgotPasswordResponseSchema,
   type AuthResetPasswordResponseSchema,
+  type ChangePasswordRequestSchema,
+  type ChangePasswordResponseSchema,
+  type UpdateUserInfoRequestSchema,
+  type UpdateUserInfoResponseSchema,
+  type UserInfoResponseSchema,
 } from '@modules/auth/schemas/auth.schema';
 import {
   authLoginResponseSchema,
@@ -22,6 +29,7 @@ import {
   type AuthVerifyEmailResponseSchema,
 } from '@modules/auth/schemas/register.schema';
 import { http } from '@shared/services/http.service';
+import dayjs from 'dayjs';
 
 export const authKeys = {
   all: ['auth'] as const,
@@ -97,5 +105,39 @@ export const authRepositories = {
       .json<AuthResetPasswordResponseSchema>();
 
     return authResetPasswordResponseSchema.parse(resp);
+  },
+  getInfo: async () => {
+    const resp = await http.instance
+      .get('users/get-info')
+      .json<UserInfoResponseSchema>();
+
+    return userInfoResponseSchema.parse(resp);
+  },
+  updateInfo: async ({ json }: { json: UpdateUserInfoRequestSchema }) => {
+    const { city, district, ward, street, ...rest } = json;
+
+    const resp = await http.instance
+      .put('users/update-info', {
+        json: {
+          ...rest,
+          address: {
+            city,
+            district,
+            ward,
+            street,
+          },
+          birthday: dayjs(rest.birthday).format('YYYY-MM-DD'),
+        },
+      })
+      .json<UpdateUserInfoResponseSchema>();
+
+    return userInfoResponseSchema.parse(resp);
+  },
+  changePassword: async ({ json }: { json: ChangePasswordRequestSchema }) => {
+    const resp = await http.instance
+      .patch('users/change-password', { json })
+      .json<ChangePasswordResponseSchema>();
+
+    return changePasswordResponseSchema.parse(resp);
   },
 } as const;

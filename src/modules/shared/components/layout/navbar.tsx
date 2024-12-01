@@ -1,3 +1,5 @@
+import { HouseSelect } from '@shared/components/layout/house-select';
+import { NotificationPopover } from '@shared/components/layout/notification-popover';
 import { SheetMenu } from '@shared/components/layout/sheet-menu';
 import { UserNav } from '@shared/components/layout/user-nav';
 
@@ -15,6 +17,8 @@ export function Navbar({ title }: NavbarProps) {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           {/* <ModeToggle /> */}
+          <HouseSelect />
+          <NotificationPopover />
           <UserNav />
         </div>
       </div>

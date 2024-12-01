@@ -1,4 +1,5 @@
 import { StrictMode } from 'react';
+import { Toaster } from 'sonner';
 import { Devtools } from './devtools';
 import { AppI18nProvider } from './providers/i18n/provider';
 import { AppQueryProvider } from './providers/query/provider';
@@ -22,6 +23,17 @@ export function Entry() {
           </AppToastProvider>
         </AppI18nProvider>
       </AppQueryProvider>
+      <Toaster
+        richColors
+        expand
+        closeButton
+        visibleToasts={3}
+        toastOptions={{
+          style: {
+            zIndex: 9999,
+          },
+        }}
+      />
     </StrictMode>
   );
 }

@@ -9,7 +9,7 @@ export const commonLocale = {
   common_sorted_not: 'Chưa sắp xếp. Nhấn để sắp xếp tăng dần.',
   common_sort_ascending: 'Sắp xếp tăng dần',
   common_sort_descending: 'Sắp xếp giảm dần',
-  common_no_result_found: 'Không tìm thấy kết quả phù hợp',
+  common_no_result_found: 'Không có dữ liệu',
   common_clear_filter: 'Xóa bộ lọc',
   common_reset_filters: 'Đặt lại bộ lọc',
   common_custom_view: 'Tùy chỉnh',
@@ -35,4 +35,10 @@ export const commonLocale = {
   common_confirm_delete_message:
     'Bạn có chắc chắn muốn xóa những bản ghi đã chọn này không? Hành động này không thể hoàn tác.',
   common_field_required: '{field} là bắt buộc',
+  common_view_all: 'Xem tất cả',
+  common_notifications: 'Thông báo',
+  common_mark_all_as_read: 'Đánh dấu tất cả đã đọc',
+  common_ph_select: 'Chọn {field}',
+  common_ph_search: 'Tìm kiếm {field}',
+  common_ph_input: 'Nhập {field}',
 } as const;

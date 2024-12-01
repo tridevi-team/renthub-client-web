@@ -13,10 +13,11 @@ import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Link } from '@shared/components/ui/link';
+import { messageLocale } from '@shared/hooks/use-i18n/locales/vi/message.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { HTTPError } from 'ky';
+import { isErrorResponseSchema } from '@shared/utils/type-guards';
 import { FieldError, TextField } from 'react-aria-components';
 import { unstable_batchedUpdates } from 'react-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -41,12 +42,11 @@ export const action: ActionFunction = async ({ request }) => {
       unstable_batchedUpdates(() => {
         useAuthUserStore.getState().setUser(user);
       });
-
+      toast.success(messageLocale.ms_login_success);
       return redirect(dashboardPath.root);
     } catch (error) {
-      if (error instanceof HTTPError) {
-        const response = (await error.response.json()) as ErrorResponseSchema;
-        if (response.code === 'VERIFY_ACCOUNT_FIRST') {
+      if (isErrorResponseSchema(error)) {
+        if (error.code === 'VERIFY_ACCOUNT_FIRST') {
           useEmailStore.getState().setData({
             email,
             target: 'verify-account',
@@ -55,7 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
           await authRepositories.resendVerifyCode({ json: { email } });
           return redirect(authPath.verifyAccount);
         }
-        return json(response);
+        return json(error);
       }
     }
   }
@@ -79,10 +79,12 @@ export function Element() {
 
   return (
     <div>
-      <p className="text-center text-base text-secondary-foreground">
+      <p className=" text-center font-bold text-base text-primary">
         {t('auth_welcome')}
       </p>
-
+      <p className="text-center text-base text-secondary-foreground">
+        {t('auth_login_to_continue')}
+      </p>
       <LoginForm />
 
       <p className="py-12 text-center">
@@ -154,7 +156,6 @@ const LoginForm = () => {
         }) => (
           <TextField
             className="group/password pt-4"
-            type="password"
             validationBehavior="aria"
             name={name}
             value={value}
@@ -164,7 +165,11 @@ const LoginForm = () => {
             isRequired
           >
             <Label className="field-required">{t('auth_password')}</Label>
-            <Input placeholder={t('ph_password')} ref={ref} />
+            <Input
+              placeholder={t('ph_password')}
+              ref={ref}
+              customType="password"
+            />
             <Link
               href={authPath.forgotPassword}
               variant="link"

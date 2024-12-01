@@ -47,6 +47,21 @@ const houseCreateRoute = {
   },
 } satisfies RouteObject;
 
+const houseEditRoute = {
+  id: houseId.edit,
+  index: true,
+  path: housePath.edit,
+  lazy: async () => {
+    const edit = await import('./pages/house-edit.page.tsx');
+
+    return {
+      loader: edit.loader,
+      element: <edit.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} satisfies RouteObject;
+
 const previewRoute = {
   id: houseId.preview,
   path: housePath.preview,
@@ -66,5 +81,5 @@ export const houseRoute = {
   id: houseId.root,
   path: housePath.root,
   element: <PageWrapper />,
-  children: [houseIndexRoute, houseCreateRoute, previewRoute],
+  children: [houseIndexRoute, houseCreateRoute, houseEditRoute, previewRoute],
 } satisfies RouteObject;

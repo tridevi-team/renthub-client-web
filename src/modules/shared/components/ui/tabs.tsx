@@ -1,63 +1,53 @@
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 import * as React from 'react';
-import {
-  Tab as _Tab,
-  TabList as _TabList,
-  TabPanel as _TabPanel,
-  Tabs as _Tabs,
-} from 'react-aria-components';
-import { twMerge } from 'tailwind-merge';
 
-const Tabs = _Tabs;
+import { cn } from '@app/lib/utils';
 
-const TabList = React.forwardRef<
-  React.ElementRef<typeof _TabList>,
-  React.ComponentPropsWithoutRef<typeof _TabList>
+const Tabs = TabsPrimitive.Root;
+
+const TabsList = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.List>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
-  <_TabList
+  <TabsPrimitive.List
     ref={ref}
-    className={(values) =>
-      twMerge(
-        'inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground',
-        typeof className === 'function' ? className(values) : className,
-      )
-    }
+    className={cn(
+      'inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
+      className,
+    )}
     {...props}
   />
 ));
-TabList.displayName = 'TabList';
+TabsList.displayName = TabsPrimitive.List.displayName;
 
-const Tab = React.forwardRef<
-  React.ElementRef<typeof _Tab>,
-  React.ComponentPropsWithoutRef<typeof _Tab>
+const TabsTrigger = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
-  <_Tab
+  <TabsPrimitive.Trigger
     ref={ref}
-    className={(values) =>
-      twMerge(
-        'inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium text-sm ring-offset-background transition-all focus:outline-none data-[disabled]:pointer-events-none data-[selected]:bg-background data-[selected]:text-foreground data-[disabled]:opacity-50 data-[selected]:shadow-sm data-[focus-visible]:outline-none data-[focused]:outline-none data-[focus-visible]:ring-1 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-0',
-        typeof className === 'function' ? className(values) : className,
-      )
-    }
+    className={cn(
+      'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 font-medium text-sm ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow',
+      className,
+    )}
     {...props}
   />
 ));
-Tab.displayName = 'Tab';
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
-const TabPanel = React.forwardRef<
-  React.ElementRef<typeof _TabPanel>,
-  React.ComponentPropsWithoutRef<typeof _TabPanel>
+const TabsContent = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
-  <_TabPanel
+  <TabsPrimitive.Content
     ref={ref}
-    className={(values) =>
-      twMerge(
-        'mt-2 ring-offset-background data-[focus-visible]:outline-none data-[focus-visible]:ring-1 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-0',
-        typeof className === 'function' ? className(values) : className,
-      )
-    }
+    className={cn(
+      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      className,
+    )}
     {...props}
   />
 ));
-TabPanel.displayName = 'TabPanel';
+TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tab, TabList, TabPanel, Tabs };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

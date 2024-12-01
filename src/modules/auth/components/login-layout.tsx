@@ -1,8 +1,5 @@
-import { cn } from '@app/lib/utils';
-
 import loginBg from '@assets/images/login_bg.jpg';
-import { BRAND_NAME } from '@shared/constants/general.constant';
-import { House } from 'lucide-react';
+import logoNgang from '@assets/logo/logo-ngang.png';
 
 export default function LoginLayout({
   children,
@@ -27,14 +24,7 @@ export default function LoginLayout({
       {/* form */}
       <section className="flex min-h-screen w-full flex-col justify-center px-10 md:w-1/2 xl:px-20">
         <div className="mb-2 flex items-center justify-center gap-2 text-blue-600">
-          <House className="mr-1 h-8 w-8" />
-          <h1
-            className={cn(
-              'whitespace-nowrap font-bold text-3xl transition-[transform,opacity,display] duration-300 ease-in-out',
-            )}
-          >
-            {BRAND_NAME}
-          </h1>
+          <img src={logoNgang} alt="Logo" className="h-28" />
         </div>
         {children}
       </section>

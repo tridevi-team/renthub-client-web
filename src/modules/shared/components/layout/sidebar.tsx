@@ -1,8 +1,8 @@
-import { House, LogOut } from 'lucide-react';
-import { Link } from 'react-aria-components';
-
 import { cn } from '@app/lib/utils';
-import { dashboardPath } from '@modules/dashboard/routes';
+import { useHouseStore } from '@app/stores';
+import logo from '@assets/logo/logo.png';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
 import { Menu } from '@shared/components/layout/menu';
 import { SidebarToggle } from '@shared/components/layout/sidebar-toggle';
 import { Button } from '@shared/components/ui/button';
@@ -16,10 +16,18 @@ import { BRAND_NAME } from '@shared/constants/general.constant';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
+import { useQueryClient } from '@tanstack/react-query';
+import { LogOut } from 'lucide-react';
+import { Link } from 'react-aria-components';
+import { useNavigate } from 'react-router-dom';
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
   const [t] = useI18n();
+  const queryClient = useQueryClient();
+  const { clearUser } = useAuthUserStore();
+  const navigate = useNavigate();
+  const { setData: setSelectedHouse } = useHouseStore();
   if (!sidebar) return null;
 
   return (
@@ -39,15 +47,30 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link href={dashboardPath.index} className="flex items-center gap-2">
-            <House className="mr-1 h-6 w-6" />
+          <Link
+            className="flex items-center gap-2"
+            onPress={() => {
+              navigate('/');
+            }}
+          >
+            <img
+              src={logo}
+              alt={BRAND_NAME}
+              className={cn(
+                'mt-2 mr-2 transition-[transform,opacity,display] duration-300 ease-in-out',
+                sidebar?.isOpen === true ? 'w-8' : 'w-5',
+              )}
+              loading="lazy"
+              aria-label={BRAND_NAME}
+            />
             <h1
               className={cn(
-                'whitespace-nowrap font-bold text-lg transition-[transform,opacity,display] duration-300 ease-in-out',
+                'mt-2 whitespace-nowrap font-bold text-lg transition-[transform,opacity,display] duration-300 ease-in-out',
                 sidebar?.isOpen === false
                   ? '-translate-x-96 hidden opacity-0'
                   : 'translate-x-0 opacity-100',
               )}
+              aria-label={BRAND_NAME}
             >
               {BRAND_NAME}
             </h1>
@@ -58,7 +81,12 @@ export function Sidebar() {
           <Tooltip delayDuration={100}>
             <TooltipTrigger asChild>
               <Button
-                onClick={() => {}}
+                onClick={() => {
+                  clearUser();
+                  setSelectedHouse(null);
+                  queryClient.clear();
+                  navigate(authPath.login);
+                }}
                 variant="outline"
                 className="mt-5 h-10 w-full justify-center"
               >

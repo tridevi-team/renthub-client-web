@@ -15,7 +15,7 @@ import { Link } from '@shared/components/ui/link';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import { checkAuthUser } from '@shared/utils/checker.util';
-import { HTTPError } from 'ky';
+import { isErrorResponseSchema } from '@shared/utils/type-guards';
 import { FieldError, TextField } from 'react-aria-components';
 import { Controller, useForm } from 'react-hook-form';
 import type { ActionFunction, LoaderFunction } from 'react-router-dom';
@@ -42,9 +42,8 @@ export const action: ActionFunction = async ({ request }) => {
 
       return redirect(authPath.resetPassword);
     } catch (error) {
-      if (error instanceof HTTPError) {
-        const response = (await error.response.json()) as ErrorResponseSchema;
-        return json(response);
+      if (isErrorResponseSchema(error)) {
+        return json(error);
       }
     }
   }

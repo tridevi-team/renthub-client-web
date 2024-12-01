@@ -20,6 +20,7 @@ export const authPath = {
   forgotPassword: '/forgot-password',
   resetPassword: '/reset-password',
   verifyAccount: '/verify-account',
+  notPermission: '/not-permission',
 } as const;
 
 export const loginRoute = {
@@ -118,8 +119,18 @@ export const notFoundRoute = {
   id: 'notFound',
   path: '*',
   lazy: async () => {
-    const notFound = await import('../shared/pages/not-found.page');
+    const notFound = await import('@shared/pages/not-found.page');
 
     return { element: <notFound.Element /> };
+  },
+} as const satisfies RouteObject;
+
+export const notPermissionRoute = {
+  id: 'notPermission',
+  path: '/not-permission',
+  lazy: async () => {
+    const notPermission = await import('@shared/pages/not-permission.page');
+
+    return { element: <notPermission.Element /> };
   },
 } as const satisfies RouteObject;

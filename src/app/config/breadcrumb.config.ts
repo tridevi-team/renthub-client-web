@@ -28,4 +28,34 @@ export const breadcrumbConfig: BreadcrumbConfig = {
       },
     },
   },
+  '/floors': {
+    label: 'br_floors',
+  },
+  '/roles': {
+    label: 'br_roles',
+    children: {
+      '/create': {
+        label: 'br_roles_create',
+      },
+      '/:id/edit': {
+        label: 'br_roles_edit',
+        dynamicSegments: [':id'],
+      },
+    },
+  },
+  '/users': {
+    label: 'br_users',
+  },
+  '/equipments': {
+    label: 'br_equipments',
+    children: {
+      '/create': {
+        label: 'br_equipments_create',
+      },
+      '/:id/edit': {
+        label: 'br_equipments_edit',
+        dynamicSegments: [':id'],
+      },
+    },
+  },
 };

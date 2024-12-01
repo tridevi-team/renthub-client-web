@@ -1,8 +1,9 @@
 import { navigate } from '@app/providers/router/navigation';
 import type { QueryOptions } from '@app/types';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { errorResponseSchema } from '@modules/shared/schemas/api.schema';
 import { env } from '@shared/constants/env.constant';
-import ky, { type Options, type SearchParamsOption } from 'ky';
+import ky, { type Options, type SearchParamsOption, HTTPError } from 'ky';
 
 class Http {
   instance: typeof ky;
@@ -29,7 +30,7 @@ class Http {
    * Make Query Search
    */
 
-  _makeQuery(options: QueryOptions): SearchParamsOption {
+  _makeQuery(options: QueryOptions, isSelect = false): SearchParamsOption {
     const { filters = [], sorting = [], pageSize, page } = options;
     const searchParams: [string, string | number | boolean][] = [];
 
@@ -48,6 +49,10 @@ class Http {
     }
     if (page !== undefined) {
       searchParams.push(['page', page.toString()]);
+    }
+
+    if (isSelect) {
+      searchParams.push(['isSelect', 'true']);
     }
 
     return searchParams;
@@ -71,6 +76,15 @@ export const http = new Http({
         if (response.status === 401) {
           useAuthUserStore.getState().clearUser();
           navigate('/login');
+        }
+
+        if (!response.ok) {
+          const errorResponse = await response.json();
+          const parsedError = errorResponseSchema.safeParse(errorResponse);
+          if (!parsedError.success) {
+            throw new HTTPError(response, _request, _options);
+          }
+          throw parsedError.data;
         }
       },
     ],
