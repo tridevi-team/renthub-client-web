@@ -3,6 +3,17 @@ import { Footer } from '@shared/components/layout/footer';
 import { Sidebar } from '@shared/components/layout/sidebar';
 import { useStore } from '@shared/hooks/use-sidebar-store';
 import { useSidebarToggle } from '@shared/hooks/use-sidebar-toggle';
+import { useNavigation } from 'react-router-dom';
+import TopBarProgress from 'react-topbar-progress-indicator';
+
+TopBarProgress.config({
+  barColors: {
+    '0': '#3A72ED',
+    '1.0': '#3A72ED',
+  },
+  barThickness: 1.5,
+  shadowBlur: 2,
+});
 
 export default function AdminPanelLayout({
   children,
@@ -10,11 +21,13 @@ export default function AdminPanelLayout({
   children: React.ReactNode;
 }) {
   const sidebar = useStore(useSidebarToggle, (state) => state);
+  const navigation = useNavigation();
 
   if (!sidebar) return null;
 
   return (
     <>
+      {navigation.state === 'loading' ? <TopBarProgress /> : null}
       <Sidebar />
       <main
         className={cn(
