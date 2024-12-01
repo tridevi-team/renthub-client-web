@@ -5,6 +5,7 @@ import {
   notPermissionRoute,
 } from '@auth/routes';
 import { dashboardRoute } from '@modules/dashboard/routes';
+import { equipmentRoute } from '@modules/equipments/routes';
 import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { roleRoute } from '@modules/roles/routes';
@@ -23,6 +24,7 @@ export const browserRouter = createBrowserRouter(
     notFoundRoute,
     notPermissionRoute,
     userRoute,
+    equipmentRoute,
   ],
   {
     future: {
