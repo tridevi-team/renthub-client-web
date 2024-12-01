@@ -88,7 +88,7 @@ export function DataTable<TData, TValue>({
           moduleName={moduleName}
         />
       </DataTableAdvancedToolbar>
-      <ScrollableDiv className="max-h-[60vh] overflow-auto rounded-md border">
+      <ScrollableDiv className="max-h-[58vh] overflow-auto rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

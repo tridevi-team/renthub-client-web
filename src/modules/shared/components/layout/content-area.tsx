@@ -10,7 +10,7 @@ export default function ContentArea({
     <Card className="mt-4 rounded-lg border-none">
       <CardContent className="px-6 py-4">
         <div className="flex min-h-[calc(0vh)]">
-          <div className="h-full w-full">{children}</div>
+          <div className="w-full">{children}</div>
         </div>
       </CardContent>
     </Card>
