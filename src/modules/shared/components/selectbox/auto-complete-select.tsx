@@ -9,6 +9,7 @@ import {
 import { Skeleton } from '@shared/components/ui/skeleton';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { Command as CommandPrimitive } from 'cmdk';
+import { debounce } from 'lodash';
 import { Check, ChevronDown, X } from 'lucide-react';
 import {
   useCallback,
@@ -26,16 +27,20 @@ type AutoCompleteProps = {
   isLoading?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  onSearch?: (value: string) => Promise<Option[]>;
+  debounceTime?: number;
 };
 
 export const AutoComplete = ({
-  options,
+  options: initialOptions,
   placeholder,
   emptyMessage,
   value,
   onValueChange,
   disabled,
-  isLoading = false,
+  isLoading: externalLoading = false,
+  onSearch,
+  debounceTime = 300,
 }: AutoCompleteProps) => {
   const [t] = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +50,9 @@ export const AutoComplete = ({
     value,
   );
   const [searchValue, setSearchValue] = useState<string>('');
+  const [options, setOptions] = useState<Option[]>(initialOptions);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<Option | undefined>();
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
@@ -76,11 +84,12 @@ export const AutoComplete = ({
   }, [selected]);
 
   const handleSelectOption = useCallback(
-    (selectedOption: string | number | undefined) => {
-      setInputValue(selectedOption ?? '');
+    (selectedOpt: Option) => {
+      setInputValue(selectedOpt.value);
       setSearchValue('');
-      setSelected(selectedOption);
-      onValueChange?.(selectedOption ?? '');
+      setSelected(selectedOpt.value);
+      setSelectedOption(selectedOpt);
+      onValueChange?.(selectedOpt.value);
 
       setTimeout(() => {
         inputRef?.current?.blur();
@@ -89,23 +98,54 @@ export const AutoComplete = ({
     [onValueChange],
   );
 
-  const handleInputChange = (value: string) => {
+  const debouncedSearch = useCallback(
+    debounce(async (searchTerm: string) => {
+      if (!onSearch) return;
+
+      setIsSearching(true);
+      try {
+        const results = await onSearch(searchTerm);
+        if (results?.length > 0) {
+          setOptions(results);
+          setOpen(true); // Đảm bảo dropdown được mở khi có kết quả
+        }
+      } catch (error) {
+        setOptions([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, debounceTime),
+    [onSearch],
+  );
+
+  // Clear debounced search on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const handleInputChange = async (value: string) => {
     setSearchValue(value);
     if (!isOpen) {
       setOpen(true);
+    }
+
+    if (onSearch) {
+      debouncedSearch(value);
     }
   };
 
   const handleClear = (event: React.MouseEvent) => {
     event.stopPropagation();
     setSelected(undefined);
+    setSelectedOption(undefined);
     setInputValue(undefined);
     setSearchValue('');
     onValueChange?.(undefined);
     inputRef.current?.focus();
   };
 
-  // Safe string conversion for filtering
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const safeToString = (value: any): string => {
     if (value === null || value === undefined) return '';
@@ -114,42 +154,39 @@ export const AutoComplete = ({
     return String(value);
   };
 
-  const filteredOptions = searchValue
-    ? options.filter((option) => {
-        if (!option.label) return false;
-        const labelString = safeToString(option.label);
-        const searchString = safeToString(searchValue);
-        return labelString.toLowerCase().includes(searchString.toLowerCase());
-      })
-    : options;
+  const filteredOptions = onSearch
+    ? options
+    : searchValue
+      ? initialOptions.filter((option) => {
+          if (!option.label) return false;
+          const labelString = safeToString(option.label);
+          const searchString = safeToString(searchValue);
+          return labelString.toLowerCase().includes(searchString.toLowerCase());
+        })
+      : initialOptions;
 
   useEffect(() => {
-    if (!options.length) {
-      setSelected(undefined);
-      setInputValue(undefined);
-      setSearchValue('');
+    if (!onSearch) {
+      setOptions(initialOptions);
     }
-  }, [options]);
+  }, [initialOptions, onSearch]);
 
   useEffect(() => {
-    // Update selected value when value prop changes
     setSelected(value);
     setInputValue(value);
   }, [value]);
 
   return (
-    <CommandPrimitive onKeyDown={handleKeyDown}>
+    <CommandPrimitive onKeyDown={handleKeyDown} shouldFilter={!onSearch}>
       <div className="relative">
         <CommandInput
           ref={inputRef}
           value={
             isOpen
-              ? searchValue
-              : safeToString(
-                  options.find((opt) => opt.value === inputValue)?.label ?? '',
-                )
+              ? safeToString(searchValue)
+              : safeToString(selectedOption?.label) || ''
           }
-          onValueChange={isLoading ? undefined : handleInputChange}
+          onValueChange={externalLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
           onFocus={() => {
             setOpen(true);
@@ -180,14 +217,14 @@ export const AutoComplete = ({
           )}
         >
           <CommandList className="rounded-lg ring-1 ring-slate-200">
-            {isLoading ? (
+            {externalLoading || isSearching ? (
               <CommandPrimitive.Loading>
                 <div className="p-1">
                   <Skeleton className="h-8 w-full" />
                 </div>
               </CommandPrimitive.Loading>
             ) : null}
-            {filteredOptions.length > 0 && !isLoading ? (
+            {filteredOptions.length > 0 && !externalLoading && !isSearching ? (
               <CommandGroup>
                 {filteredOptions.map((option) => {
                   const isSelected = selected === option.value;
@@ -199,7 +236,7 @@ export const AutoComplete = ({
                         event.preventDefault();
                         event.stopPropagation();
                       }}
-                      onSelect={() => handleSelectOption(option.value)}
+                      onSelect={() => handleSelectOption(option)}
                       className={cn(
                         'flex w-full items-center gap-2',
                         !isSelected ? 'pl-8' : null,
@@ -212,7 +249,7 @@ export const AutoComplete = ({
                 })}
               </CommandGroup>
             ) : null}
-            {!isLoading ? (
+            {!externalLoading && !isSearching ? (
               <CommandPrimitive.Empty className="select-none rounded-sm px-2 py-3 text-center text-sm">
                 {emptyMessage ?? t('common_no_item')}
               </CommandPrimitive.Empty>
