@@ -1,3 +1,4 @@
+import { useHouseStore } from '@app/stores';
 import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
@@ -11,9 +12,10 @@ import {
 } from '@shared/components/data-table/select';
 import { Button } from '@shared/components/ui/button';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useResetState } from '@shared/hooks/use-reset-state.hook';
 import type { Table } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   pageSizeOptions?: number[];
@@ -26,14 +28,18 @@ export function DataTablePagination<TData>({
   loading = false,
 }: DataTablePaginationProps<TData>) {
   const [t] = useI18n();
-  const [prevPageCount, setPrevPageCount] = useState(table.getPageCount());
+  const { data: useHouseSelect } = useHouseStore();
+  const [prevPageCount, setPrevPageCount] = useResetState(table.getPageCount());
 
   useEffect(() => {
-    if (!loading && prevPageCount !== table.getPageCount()) {
-      table.setPageIndex(table.getPageCount() - 1);
+    if (!loading) {
       setPrevPageCount(table.getPageCount());
     }
   }, [loading, table]);
+
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [useHouseSelect?.id]);
 
   return (
     <div className="flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8">
