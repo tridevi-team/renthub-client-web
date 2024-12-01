@@ -148,7 +148,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </ScrollableDiv>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} loading={loading} />
     </div>
   );
 }
