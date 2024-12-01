@@ -25,6 +25,8 @@ export function Entry() {
       </AppQueryProvider>
       <Toaster
         richColors
+        expand
+        closeButton
         toastOptions={{
           style: {
             zIndex: 9999,
