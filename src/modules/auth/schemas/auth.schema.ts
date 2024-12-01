@@ -12,6 +12,7 @@ export const PERMISSION_KEY = [
   'payment',
   'notification',
   'issue',
+  'contract',
 ] as const;
 
 export type PermissionKeyType = (typeof PERMISSION_KEY)[number];

@@ -34,6 +34,7 @@ export const roleLocale = {
   role_payment: 'Quản lý thanh toán',
   role_notification: 'Quản lý thông báo',
   role_issue: 'Quản lý sự cố',
+  role_contract: 'Quản lý hợp đồng',
 
   // #region BUTTON
 
