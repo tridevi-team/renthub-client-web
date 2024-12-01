@@ -25,24 +25,19 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
     let currentPath = '';
 
     for (const segment of segments) {
-      // Tìm segment match chính xác trước
       let matchedSegment = Object.keys(currentConfig).find(
         (key) => key === `/${segment}`,
       );
 
-      // Nếu không có match chính xác, kiểm tra các pattern động
       if (!matchedSegment) {
         matchedSegment = Object.keys(currentConfig).find((key) => {
           if (!key.startsWith('/:')) return false;
 
-          // Lấy phần còn lại của path config (phần sau /:id)
           const remainingConfigPath = key.split('/').slice(2).join('/');
-          // Lấy phần còn lại của current path
           const remainingCurrentPath = segments
             .slice(segments.indexOf(segment) + 1)
             .join('/');
 
-          // So sánh phần còn lại để đảm bảo match đúng pattern
           return remainingConfigPath === remainingCurrentPath;
         });
       }
@@ -79,7 +74,9 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
           <BreadcrumbLink asChild>
             <Link href="/" className="flex items-center">
               <Home className="h-4 w-4" />
-              <BreadcrumbSeparator className="mt-0.5 ml-2" />
+              {breadcrumbs?.length > 0 && (
+                <BreadcrumbSeparator className="mt-0.5 ml-2" />
+              )}
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>

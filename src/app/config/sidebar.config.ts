@@ -84,9 +84,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes('/rooms'),
             },
             {
-              href: '/devices',
+              href: '/equipments',
               label: 'Quản lý Thiết bị',
-              active: pathname.includes('/devices'),
+              active: pathname.includes('/equipments'),
             },
             {
               href: '/services',

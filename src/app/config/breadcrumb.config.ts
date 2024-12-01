@@ -43,4 +43,19 @@ export const breadcrumbConfig: BreadcrumbConfig = {
       },
     },
   },
+  '/users': {
+    label: 'br_users',
+  },
+  '/equipments': {
+    label: 'br_equipments',
+    children: {
+      '/create': {
+        label: 'br_equipments_create',
+      },
+      '/:id/edit': {
+        label: 'br_equipments_edit',
+        dynamicSegments: [':id'],
+      },
+    },
+  },
 };
