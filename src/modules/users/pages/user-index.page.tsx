@@ -3,7 +3,7 @@ import { authPath } from '@auth/routes';
 import { userRepositories } from '@modules/users/apis/user.api';
 import {
   userKeys,
-  type UserDataSchema,
+  type UserIndexResponseSchema,
   type UserSchema,
 } from '@modules/users/schema/user.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
@@ -19,10 +19,12 @@ import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
+import to from 'await-to-js';
 import dayjs from 'dayjs';
 import { FileEdit } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -73,21 +75,24 @@ export function Element() {
       field: 'updatedAt',
       direction: 'asc',
     });
-
-    try {
-      const response = await userRepositories.index({ searchParams });
-      return response.data || null;
-    } catch (error) {
-      console.log('error:', error);
-      return Promise.reject(error);
+    const [err, resp]: AwaitToResult<UserIndexResponseSchema> = await to(
+      userRepositories.index({ searchParams }),
+    );
+    if (err) {
+      return {
+        results: [],
+        page: 1,
+        pageCount: 1,
+      };
     }
+    return resp?.data;
   }, []);
 
   const {
     data: userData,
     isLoading,
     isFetching,
-  } = useQuery<UserDataSchema>({
+  } = useQuery<any>({
     queryKey: userKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
