@@ -1,5 +1,6 @@
 import { cn } from '@app/lib/utils';
 import { useHouseStore } from '@app/stores';
+import logo from '@assets/logo/logo.png';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { authPath } from '@modules/auth/routes';
 import { dashboardPath } from '@modules/dashboard/routes';
@@ -20,10 +21,9 @@ import {
 import { BRAND_NAME } from '@shared/constants/general.constant';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useQueryClient } from '@tanstack/react-query';
-import { House, LogOut, MenuIcon } from 'lucide-react';
+import { LogOut, MenuIcon } from 'lucide-react';
 import { Link } from 'react-aria-components';
 import { useNavigate } from 'react-router-dom';
-
 export function SheetMenu() {
   const isOpen = true;
   const [t] = useI18n();
@@ -50,7 +50,15 @@ export function SheetMenu() {
               href={dashboardPath.index}
               className="flex items-center gap-2"
             >
-              <House className="mr-1 h-6 w-6" />
+              <img
+                src={logo}
+                alt={BRAND_NAME}
+                className={cn(
+                  'mr-2 w-5 transition-[transform,opacity,display] duration-300 ease-in-out',
+                )}
+                loading="lazy"
+                aria-label={BRAND_NAME}
+              />
               <h1 className="font-bold text-lg">{BRAND_NAME}</h1>
             </Link>
           </Button>
