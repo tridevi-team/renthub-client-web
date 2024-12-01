@@ -18,11 +18,14 @@ import { http } from '@shared/services/http.service';
 import { getHouseSelected } from '@shared/utils/helper.util';
 
 export const floorRepositories = {
-  index: async ({ searchParams }: { searchParams: QueryOptions }) => {
+  index: async ({
+    searchParams,
+    isSelect = false,
+  }: { searchParams: QueryOptions; isSelect?: boolean }) => {
     const houseId = getHouseSelected()?.id;
     const resp = await http.instance
       .get(`floors/${houseId}/list`, {
-        searchParams: http._makeQuery(searchParams),
+        searchParams: http._makeQuery(searchParams, isSelect),
       })
       .json<FloorIndexResponseSchema>();
 
