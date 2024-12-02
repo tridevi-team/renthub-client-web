@@ -80,7 +80,7 @@ export function getMenuList(pathname: string): Group[] {
             },
             {
               href: '/rooms',
-              label: 'Quản lý Phòng trọ',
+              label: 'Quản lý Phòng',
               active: pathname.includes('/rooms'),
             },
             {
@@ -92,6 +92,21 @@ export function getMenuList(pathname: string): Group[] {
               href: '/services',
               label: 'Quản lý Dịch vụ',
               active: pathname.includes('/services'),
+            },
+            {
+              href: '/bills',
+              label: 'Quản lý Hóa đơn',
+              active: pathname.includes('/bills'),
+            },
+            {
+              href: '/payments',
+              label: 'Quản lý Thanh toán',
+              active: pathname.includes('/payments'),
+            },
+            {
+              href: '/contract-templates',
+              label: 'Quản lý Mẫu hợp đồng',
+              active: pathname.includes('/contract-templates'),
             },
           ],
         },
