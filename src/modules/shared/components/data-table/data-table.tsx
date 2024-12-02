@@ -51,13 +51,16 @@ const ScrollableDiv = styled.div`
     width: 5px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #c1c1c1;
+    background-color: transparent;
     border-radius: 4px;
   }
-  &::-webkit-scrollbar-thumb:hover {
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+  }
+  &:hover::-webkit-scrollbar-thumb:hover {
     background-color: #a8a8a8;
   }
-  &::-webkit-scrollbar-thumb:active {
+  &:hover::-webkit-scrollbar-thumb:active {
     background-color: #8f8f8f;
   }
   &::-webkit-scrollbar-button {

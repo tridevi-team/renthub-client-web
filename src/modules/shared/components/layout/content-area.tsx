@@ -3,17 +3,20 @@ import type React from 'react';
 import styled from 'styled-components';
 
 const StyledCard = styled(Card)`
-  &::-webkit-scrollbar {
+ &::-webkit-scrollbar {
     width: 5px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #c1c1c1;
-    border-radius: 10px;
+    background-color: transparent;
+    border-radius: 4px;
   }
-  &::-webkit-scrollbar-thumb:hover {
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+  }
+  &:hover::-webkit-scrollbar-thumb:hover {
     background-color: #a8a8a8;
   }
-  &::-webkit-scrollbar-thumb:active {
+  &:hover::-webkit-scrollbar-thumb:active {
     background-color: #8f8f8f;
   }
   &::-webkit-scrollbar-button {
