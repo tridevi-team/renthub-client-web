@@ -18,6 +18,7 @@ import {
   useState,
   type KeyboardEvent,
 } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 
 type AutoCompleteProps = {
   options: Option[];
@@ -78,19 +79,22 @@ export const AutoComplete = ({
   );
 
   const handleBlur = useCallback(() => {
-    setOpen(false);
-    setInputValue(selected);
-    setSearchValue('');
+    unstable_batchedUpdates(() => {
+      setOpen(false);
+      setInputValue(selected);
+      setSearchValue('');
+    });
   }, [selected]);
 
   const handleSelectOption = useCallback(
     (selectedOpt: Option) => {
-      setInputValue(selectedOpt.value);
-      setSearchValue('');
-      setSelected(selectedOpt.value);
-      setSelectedOption(selectedOpt);
-      onValueChange?.(selectedOpt.value);
-
+      unstable_batchedUpdates(() => {
+        setInputValue(selectedOpt.value);
+        setSearchValue('');
+        setSelected(selectedOpt.value);
+        setSelectedOption(selectedOpt);
+        onValueChange?.(selectedOpt.value);
+      });
       setTimeout(() => {
         inputRef?.current?.blur();
       }, 0);
@@ -107,7 +111,6 @@ export const AutoComplete = ({
         const results = await onSearch(searchTerm);
         if (results?.length > 0) {
           setOptions(results);
-          setOpen(true); // Đảm bảo dropdown được mở khi có kết quả
         }
       } catch (error) {
         setOptions([]);
@@ -138,10 +141,12 @@ export const AutoComplete = ({
 
   const handleClear = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setSelected(undefined);
-    setSelectedOption(undefined);
-    setInputValue(undefined);
-    setSearchValue('');
+    unstable_batchedUpdates(() => {
+      setSelected(undefined);
+      setSelectedOption(undefined);
+      setInputValue(undefined);
+      setSearchValue('');
+    });
     onValueChange?.(undefined);
     inputRef.current?.focus();
   };
@@ -167,13 +172,23 @@ export const AutoComplete = ({
 
   useEffect(() => {
     if (!onSearch) {
-      setOptions(initialOptions);
+      unstable_batchedUpdates(() => {
+        setOptions(initialOptions);
+        setSelectedOption(
+          initialOptions.find((option) => option.value === value) || undefined,
+        );
+      });
     }
   }, [initialOptions, onSearch]);
 
   useEffect(() => {
-    setSelected(value);
-    setInputValue(value);
+    unstable_batchedUpdates(() => {
+      setSelected(value);
+      setInputValue(value);
+      setSelectedOption(
+        options.find((option) => option.value === value) || undefined,
+      );
+    });
   }, [value]);
 
   return (
@@ -189,8 +204,10 @@ export const AutoComplete = ({
           onValueChange={externalLoading ? undefined : handleInputChange}
           onBlur={handleBlur}
           onFocus={() => {
-            setOpen(true);
-            setSearchValue('');
+            unstable_batchedUpdates(() => {
+              setOpen(true);
+              setSearchValue('');
+            });
           }}
           placeholder={placeholder}
           disabled={disabled}
