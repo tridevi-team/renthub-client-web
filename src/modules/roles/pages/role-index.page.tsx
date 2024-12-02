@@ -1,7 +1,6 @@
 import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import { floorKeys } from '@modules/floors/schema/floor.schema';
 import { roleRepositories } from '@modules/roles/apis/role.api';
 import { rolePath } from '@modules/roles/routes';
 import {
@@ -18,10 +17,12 @@ import {
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
-import ErrorCard from '@shared/components/layout/error-section';
 import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
+import {
+  DEFAULT_DATE_FORMAT,
+  DEFAULT_RETURN_TABLE_DATA,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -82,14 +83,15 @@ export function Element() {
       field: 'updatedAt',
       direction: 'asc',
     });
-
-    try {
-      const response = await roleRepositories.index({ searchParams });
-      return response.data || null;
-    } catch (error) {
-      console.log('error:', error);
-      return Promise.reject(error);
+    const [err, result] = await to(
+      roleRepositories.index({
+        searchParams,
+      }),
+    );
+    if (err || !result?.data) {
+      return DEFAULT_RETURN_TABLE_DATA;
     }
+    return result.data;
   }, []);
 
   const onDelete = useCallback(
@@ -120,7 +122,6 @@ export function Element() {
   }, [navigate]);
 
   const {
-    isError,
     data: roleData,
     isLoading,
     isFetching,
@@ -269,14 +270,6 @@ export function Element() {
           filterableColumnCount={2}
           cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
           shrinkZero
-        />
-      ) : isError ? (
-        <ErrorCard
-          onRetry={() =>
-            queryClient.refetchQueries({
-              queryKey: floorKeys.list(queryParams),
-            })
-          }
         />
       ) : (
         <DataTable
