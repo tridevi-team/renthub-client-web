@@ -41,4 +41,6 @@ export const commonLocale = {
   common_ph_select: 'Chọn {field}',
   common_ph_search: 'Tìm kiếm {field}',
   common_ph_input: 'Nhập {field}',
+  common_show_all: 'Tất cả',
+  common_show_less: 'Thu gọn',
 } as const;
