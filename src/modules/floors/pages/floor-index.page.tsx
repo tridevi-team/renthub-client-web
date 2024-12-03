@@ -9,6 +9,7 @@ import {
   type FloorCreateResponseSchema,
   type FloorDataSchema,
   type FloorDeleteResponseSchema,
+  type FloorIndexResponseSchema,
   type FloorSchema,
 } from '@modules/floors/schema/floor.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
@@ -22,6 +23,7 @@ import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import {
   DEFAULT_DATE_FORMAT,
+  DEFAULT_RETURN_TABLE_DATA,
   PREFIX_FLOOR_NAME,
 } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
@@ -85,13 +87,11 @@ export function Element() {
       field: 'name',
       direction: 'asc',
     });
-
-    try {
-      const response = await floorRepositories.index({ searchParams });
-      return response.data || null;
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    const [err, resp]: AwaitToResult<FloorIndexResponseSchema> = await to(
+      floorRepositories.index({ searchParams }),
+    );
+    if (err) return DEFAULT_RETURN_TABLE_DATA;
+    return resp?.data || DEFAULT_RETURN_TABLE_DATA;
   }, []);
 
   const onDelete = useCallback(
@@ -177,7 +177,6 @@ export function Element() {
   );
 
   const {
-    isError,
     data: floorData,
     isLoading,
     isFetching,
@@ -241,6 +240,9 @@ export function Element() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('floor_description')} />
       ),
+      cell: ({ row }) => {
+        return <p className="line-clamp-1">{row.original.description}</p>;
+      },
     },
     {
       accessorKey: 'createdAt',
@@ -323,6 +325,7 @@ export function Element() {
             columns={columns}
             filterOptions={filterFields}
             loading={isFetching}
+            columnWidths={['2rem', '9rem', '27rem']}
             moduleName="floor"
           />
 
