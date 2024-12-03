@@ -15,9 +15,11 @@ import { userLocale } from '@shared/hooks/use-i18n/locales/vi/modules/user.local
 import { placeholderLocale } from '@shared/hooks/use-i18n/locales/vi/placeholder.locale';
 import { contractLocale } from '@shared/hooks/use-i18n/locales/vi/modules/contract.locale';
 import { roomLocale } from '@shared/hooks/use-i18n/locales/vi/modules/room.locale';
+import { serviceLocale } from '@shared/hooks/use-i18n/locales/vi/modules/service.locale';
 
 export type LocaleKeys =
   | keyof typeof authLocale
+  | keyof typeof serviceLocale
   | keyof typeof roomLocale
   | keyof typeof contractLocale
   | keyof typeof messageLocale
@@ -52,4 +54,5 @@ export const viLocale = {
   ...equipmentLocale,
   ...contractLocale,
   ...roomLocale,
+  ...serviceLocale,
 } as const;

@@ -30,3 +30,53 @@ export const EQUIPMENT_SHARED_TYPE = {
   HOUSE: 'HOUSE',
   ROOM: 'ROOM',
 };
+
+export const ROOM_STATUS = {
+  AVAILABLE: 'AVAILABLE',
+  RENTED: 'RENTED',
+  PENDING: 'PENDING',
+  MAINTENANCE: 'MAINTENANCE',
+  EXPIRED: 'EXPIRED',
+};
+
+export const DEFAULT_RETURN_TABLE_DATA = {
+  page: 0,
+  pageSize: 0,
+  pageCount: 0,
+  total: 0,
+  results: [],
+};
+
+export const SERVICE_TYPES = {
+  PEOPLE: 'PEOPLE',
+  ROOM: 'ROOM',
+  WATER_CONSUMPTION: 'WATER_CONSUMPTION',
+  ELECTRICITY_CONSUMPTION: 'ELECTRICITY_CONSUMPTION',
+  INDEX: 'INDEX',
+};
+
+export const SERVICE_MEAUSRE_UNITS = {
+  PEOPLE: 'Người',
+  ROOM: 'Phòng',
+  WATER_CONSUMPTION: 'm3',
+  ELECTRICITY_CONSUMPTION: 'kWh',
+  OTHER: 'Chỉ số',
+};
+
+export const TYPE_INDEX = {
+  ELECTRICITY_CONSUMPTION: 'ELECTRICITY_CONSUMPTION',
+  WATER_CONSUMPTION: 'WATER_CONSUMPTION',
+  OTHER: 'OTHER',
+};
+
+export const SERVICE_TYPE_OPTIONS = [
+  { label: 'Người', value: 'PEOPLE' },
+  { label: 'Phòng', value: 'ROOM' },
+  { label: 'Chỉ số', value: 'INDEX' },
+];
+
+export const TYPE_INDEX_OPTIONS = [
+  { label: 'Chỉ số điện', value: 'ELECTRICITY_CONSUMPTION' },
+  { label: 'Chỉ số nước', value: 'WATER_CONSUMPTION' },
+  // { label: 'Chỉ số khác', value: 'OTHER' },
+];

@@ -248,3 +248,24 @@ export const processSearchParams = (
 export const getHouseSelected = () => {
   return useHouseStore.getState().data;
 };
+
+export const compareFloorNames = (a: string, b: string) => {
+  const splitA = a.match(/(\d+|\D+)/g) || [];
+  const splitB = b.match(/(\d+|\D+)/g) || [];
+
+  const len = Math.min(splitA.length, splitB.length);
+
+  for (let i = 0; i < len; i++) {
+    const aIsNum = !Number.isNaN(Number(splitA[i]));
+    const bIsNum = !Number.isNaN(Number(splitB[i]));
+
+    if (aIsNum && bIsNum) {
+      const diff = Number(splitA[i]) - Number(splitB[i]);
+      if (diff !== 0) return diff;
+    } else {
+      const diff = splitA[i].localeCompare(splitB[i]);
+      if (diff !== 0) return diff;
+    }
+  }
+  return splitA.length - splitB.length;
+};
