@@ -27,6 +27,7 @@ import {
   PopoverTrigger,
 } from '@shared/components/ui/popover';
 import { Separator } from '@shared/components/ui/separator';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -131,11 +132,11 @@ export const MultiSelect = React.forwardRef<
     },
     ref,
   ) => {
+    const [t] = useI18n();
     const [selectedValues, setSelectedValues] =
       React.useState<(number | string)[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
-
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>,
     ) => {
@@ -301,7 +302,7 @@ export const MultiSelect = React.forwardRef<
                   >
                     <CheckIcon className="h-4 w-4" />
                   </div>
-                  <span>(Select All)</span>
+                  <span>({t('bt_select_all')})</span>
                 </CommandItem>
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value);

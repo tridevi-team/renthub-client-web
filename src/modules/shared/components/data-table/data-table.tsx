@@ -3,6 +3,7 @@ import type { PermissionKeyType } from '@modules/auth/schemas/auth.schema';
 import { DataTablePagination } from '@shared/components/data-table/data-table-pagination';
 import { TableToolbarActions } from '@shared/components/data-table/data-toolbar-action';
 import { DataTableAdvancedToolbar } from '@shared/components/data-table/filters/data-table-advanced-toolbar';
+import { ScrollableDiv } from '@shared/components/extensions/scrollable-div';
 import { Skeleton } from '@shared/components/ui/skeleton';
 import {
   Table,
@@ -18,8 +19,6 @@ import {
   type ColumnDef,
   type Table as TanstackTable,
 } from '@tanstack/react-table';
-import styled from 'styled-components';
-
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
   columns: ColumnDef<TData, TValue>[];
@@ -45,28 +44,6 @@ const TableRowSkeleton = ({ columns }: { columns: number }) => (
     ))}
   </TableRow>
 );
-
-const ScrollableDiv = styled.div`
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: transparent;
-    border-radius: 4px;
-  }
-  &:hover::-webkit-scrollbar-thumb {
-    background-color: #c1c1c1;
-  }
-  &:hover::-webkit-scrollbar-thumb:hover {
-    background-color: #a8a8a8;
-  }
-  &:hover::-webkit-scrollbar-thumb:active {
-    background-color: #8f8f8f;
-  }
-  &::-webkit-scrollbar-button {
-    display: none;
-  }
-`;
 
 export function DataTable<TData, TValue>({
   table,
