@@ -1,15 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
-import { PERMISSION_KEY } from '@modules/auth/schemas/auth.schema';
-import { roleRepositories } from '@modules/roles/apis/role.api';
-import { RoleForm } from '@modules/roles/components/role-form';
-import { rolePath } from '@modules/roles/routes';
+import { roomRepositories } from '@modules/rooms/apis/room.api';
+import { RoomForm } from '@modules/rooms/components/room-form';
+import { roomPath } from '@modules/rooms/routes';
 import {
-  type RoleCreateRequestSchema,
-  roleCreateRequestSchema,
-  type RoleCreateResponseSchema,
-} from '@modules/roles/schema/role.schema';
+  type RoomCreateResponseSchema,
+  type RoomFormRequestSchema,
+  roomFormRequestSchema,
+} from '@modules/rooms/schemas/room.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { ROOM_STATUS } from '@shared/constants/general.constant';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
@@ -27,7 +27,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'role',
+    module: 'room',
     action: 'create',
   });
   if (!authed) {
@@ -43,33 +43,24 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const form = useForm<RoleCreateRequestSchema>({
-    mode: 'onChange',
-    resolver: zodResolver(roleCreateRequestSchema),
-    defaultValues: {
-      permissions: Object.fromEntries(
-        Object.values(PERMISSION_KEY).map((key) => [
-          key,
-          {
-            read: false,
-            create: false,
-            update: false,
-            delete: false,
-          },
-        ]),
-      ),
-    },
-  });
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (values: RoleCreateRequestSchema) => {
+  const form = useForm<RoomFormRequestSchema>({
+    mode: 'onChange',
+    resolver: zodResolver(roomFormRequestSchema),
+    defaultValues: {
+      status: ROOM_STATUS.AVAILABLE,
+    },
+  });
+
+  const onSubmit = async (values: any) => {
     setLoading(true);
-    const [err, _]: AwaitToResult<RoleCreateResponseSchema> = await to(
-      roleRepositories.create({
-        role: values,
+    const [err, _]: AwaitToResult<RoomCreateResponseSchema> = await to(
+      roomRepositories.create({
+        data: values,
       }),
     );
     setLoading(false);
@@ -81,14 +72,14 @@ export function Element() {
       }
       return;
     }
-    toast.success(t('ms_create_role_success'));
-    navigate(`${rolePath.root}`);
+    toast.success(t('ms_create_room_success'));
+    navigate(`${roomPath.root}`);
     return _;
   };
 
   return (
-    <ContentLayout title={t('role_create_title')} pathname={pathname}>
-      <RoleForm form={form} onSubmit={onSubmit} loading={loading} />
+    <ContentLayout title={t('room_create_title')} pathname={pathname}>
+      <RoomForm form={form} onSubmit={onSubmit} loading={loading} />
     </ContentLayout>
   );
 }

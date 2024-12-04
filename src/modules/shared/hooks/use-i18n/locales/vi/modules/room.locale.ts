@@ -7,6 +7,7 @@ export const roomLocale = {
 
   // #region FORM + TABLE
   room_name: 'Tên phòng',
+  room_floor: 'Tầng',
   room_description: 'Mô tả',
   room_status: 'Trạng thái',
   room_s_available: 'Còn trống',
@@ -19,6 +20,8 @@ export const roomLocale = {
   room_area: 'Diện tích',
   room_created_at: 'Tạo ngày',
   room_updated_at: 'Cập nhật ngày',
+  room_services: 'Dịch vụ',
+  room_images: 'Hình ảnh',
   // #endregion FORM + TABLE
 
   // #region BUTTON

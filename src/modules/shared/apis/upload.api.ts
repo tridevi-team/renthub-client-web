@@ -1,11 +1,15 @@
 import { http } from '@shared/services/http.service';
 
 export type FileUploadResponse = {
+  success: boolean;
+  code: string;
   message: string;
-  files: {
-    url: string;
-    file: string;
-  }[];
+  data: {
+    files: {
+      url: string;
+      file: string;
+    }[];
+  };
 };
 
 export const fileRepositories = {

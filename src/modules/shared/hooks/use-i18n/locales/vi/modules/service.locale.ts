@@ -6,6 +6,7 @@ export const serviceLocale = {
   // #endregion TITLE + META
 
   // #region FORM + TABLE
+  service_index: 'STT',
   service_name: 'Tên dịch vụ',
   service_type: 'Loại',
   service_cal_by: 'Tính theo',
@@ -19,6 +20,7 @@ export const serviceLocale = {
   service_type_people: 'Người',
   service_type_room: 'Phòng',
   service_type_index: 'Chỉ số',
+  service_start_index: 'Chỉ số đầu',
   // #endregion FORM + TABLE
 
   // #region BUTTON

@@ -137,6 +137,10 @@ export const errorLocale = {
 
   // #region File
   FILE_UPLOAD_FAILED: 'Tải tập tin lên thất bại',
+  FILE_TOO_LARGE: 'Tập tin quá lớn.',
+  FILE_TOO_LARGE_MAX_SIZE: 'Tập tin quá lớn. Kích thước tối đa là {maxSize}MB',
+  FILE_TYPE_NOT_ALLOWED: 'Loại tập tin không được phép',
+  FILE_LIMIT_EXCEEDED: 'Số lượng tập tin vượt quá giới hạn',
   // #endregion
 
   // #region Generic

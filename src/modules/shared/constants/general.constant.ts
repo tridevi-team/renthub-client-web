@@ -39,6 +39,14 @@ export const ROOM_STATUS = {
   EXPIRED: 'EXPIRED',
 };
 
+export const ROOM_STATUS_OPTIONS = [
+  { label: 'Còn trống', value: 'AVAILABLE' },
+  { label: 'Đã thuê', value: 'RENTED' },
+  { label: 'Đang chờ', value: 'PENDING' },
+  { label: 'Bảo trì', value: 'MAINTENANCE' },
+  { label: 'Tạm dừng', value: 'EXPIRED' },
+];
+
 export const DEFAULT_RETURN_TABLE_DATA = {
   page: 0,
   pageSize: 0,
