@@ -26,7 +26,10 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useUpdateEffect } from '@shared/hooks/use-update-effect.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
-import { processSearchParams } from '@shared/utils/helper.util';
+import {
+  compareFloorNames,
+  processSearchParams,
+} from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
@@ -56,31 +59,6 @@ export const loader: LoaderFunction = () => {
   }
 
   return null;
-};
-
-// Thêm hàm compareFloorNames ở ngoài component
-const compareFloorNames = (a: string, b: string) => {
-  // Tách số và chữ
-  const splitA = a.match(/(\d+|\D+)/g) || [];
-  const splitB = b.match(/(\d+|\D+)/g) || [];
-
-  const len = Math.min(splitA.length, splitB.length);
-
-  for (let i = 0; i < len; i++) {
-    const aIsNum = !Number.isNaN(Number(splitA[i]));
-    const bIsNum = !Number.isNaN(Number(splitB[i]));
-
-    if (aIsNum && bIsNum) {
-      // So sánh như số nếu cả hai là số
-      const diff = Number(splitA[i]) - Number(splitB[i]);
-      if (diff !== 0) return diff;
-    } else {
-      // So sánh như chuỗi trong các trường hợp khác
-      const diff = splitA[i].localeCompare(splitB[i]);
-      if (diff !== 0) return diff;
-    }
-  }
-  return splitA.length - splitB.length;
 };
 
 export function Element() {
@@ -162,6 +140,7 @@ export function Element() {
       floorRepositories.index({
         searchParams: {
           pageSize: -1,
+          page: -1,
         },
       }),
     );

@@ -70,6 +70,7 @@ const AssignRoleDialog = ({
       roleRepositories.index({
         searchParams: {
           pageSize: -1,
+          page: -1,
         },
       }),
     );
