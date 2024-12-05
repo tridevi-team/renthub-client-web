@@ -4,6 +4,7 @@ import {
   notFoundRoute,
   notPermissionRoute,
 } from '@auth/routes';
+import { contractTemplateRoute } from '@modules/contract-templates/routes';
 import { dashboardRoute } from '@modules/dashboard/routes';
 import { equipmentRoute } from '@modules/equipments/routes';
 import { floorRoute } from '@modules/floors/routes';
@@ -29,6 +30,7 @@ export const browserRouter = createBrowserRouter(
     equipmentRoute,
     roomRoute,
     serviceRoute,
+    contractTemplateRoute,
   ],
   {
     future: {

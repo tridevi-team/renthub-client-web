@@ -1,5 +1,3 @@
-'use client';
-
 import { CalloutPlugin } from '@udecode/plate-callout/react';
 import { DatePlugin } from '@udecode/plate-date/react';
 import { DocxPlugin } from '@udecode/plate-docx';
@@ -10,6 +8,7 @@ import {
 } from '@udecode/plate-font/react';
 import { HighlightPlugin } from '@udecode/plate-highlight/react';
 import { HorizontalRulePlugin } from '@udecode/plate-horizontal-rule/react';
+import { HtmlReactPlugin } from '@udecode/plate-html/react';
 import { JuicePlugin } from '@udecode/plate-juice';
 import { MarkdownPlugin } from '@udecode/plate-markdown';
 import { TogglePlugin } from '@udecode/plate-toggle/react';
@@ -17,6 +16,7 @@ import { TogglePlugin } from '@udecode/plate-toggle/react';
 import { FixedToolbarPlugin } from '@shared/components/editor/plugins/fixed-toolbar-plugin';
 
 import { autoformatPlugin } from '@shared/components/editor/plugins/autoformat-plugin';
+import { BasicMarksPlugin } from '@udecode/plate-basic-marks/react';
 import { SlashPlugin } from '@udecode/plate-slash-command/react';
 import { alignPlugin } from './align-plugin';
 import { basicNodesPlugins } from './basic-nodes-plugins';
@@ -41,6 +41,7 @@ export const viewPlugins = [
   CalloutPlugin,
 
   // Marks
+  BasicMarksPlugin,
   FontColorPlugin,
   FontBackgroundColorPlugin,
   FontSizePlugin,
@@ -66,6 +67,7 @@ export const editorPlugins = [
   softBreakPlugin,
 
   // Deserialization
+  HtmlReactPlugin,
   DocxPlugin,
   MarkdownPlugin.configure({ options: { indentList: true } }),
   JuicePlugin,
