@@ -275,7 +275,7 @@ export function RoomForm({
               )}
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={4}>
             <FormField
               control={form.control}
               name="maxRenters"
@@ -299,7 +299,7 @@ export function RoomForm({
               )}
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={4}>
             <FormField
               control={form.control}
               name="roomArea"
@@ -319,6 +319,30 @@ export function RoomForm({
                     />
                   </FormControl>
 
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Col>
+          <Col xs={12} md={4}>
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('room_price')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      inputMode="numeric"
+                      value={field.value || 0}
+                      placeholder={t('common_ph_input', {
+                        field: t('room_price').toLowerCase(),
+                      })}
+                      suffixElement={t('meas_vnd')}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
