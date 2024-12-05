@@ -5,6 +5,7 @@ export const envSchema = z.object({
   VITE_API_BASE_URL: z.string().url(),
   VITE_NODE_ENV: z.string(),
   VITE_API_PROVINCE_URL: z.string().url(),
+  VITE_API_BASE_UPLOAD_URL: z.string().url(),
 });
 
 export const env = (() => {
@@ -13,6 +14,9 @@ export const env = (() => {
   );
   const apiBaseUrl = envSchema.shape.VITE_API_BASE_URL.parse(
     import.meta.env.VITE_API_BASE_URL,
+  );
+  const apiBaseUploadUrl = envSchema.shape.VITE_API_BASE_UPLOAD_URL.parse(
+    import.meta.env.VITE_API_BASE_UPLOAD_URL,
   );
   const apiProvinceUrl = envSchema.shape.VITE_API_PROVINCE_URL.parse(
     import.meta.env.VITE_API_PROVINCE_URL,
@@ -24,6 +28,7 @@ export const env = (() => {
   return {
     appTitle,
     apiBaseUrl,
+    apiBaseUploadUrl,
     apiProvinceUrl,
     VITE_NODE_ENV,
   };

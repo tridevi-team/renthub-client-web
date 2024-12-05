@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: string | undefined;
   readonly VITE_NODE_ENV: 'development' | 'production' | 'test';
   readonly VITE_API_PROVINCE_URL: string | undefined;
+  readonly VITE_API_BASE_UPLOAD_URL: string | undefined;
 }
 
 interface ImportMeta {

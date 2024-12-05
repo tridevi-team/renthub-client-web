@@ -1,4 +1,8 @@
-import { http } from '@shared/services/http.service';
+import { navigate } from '@app/providers/router/navigation';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
+import { errorResponseSchema } from '@modules/shared/schemas/api.schema';
+import { env } from '@shared/constants/env.constant';
+import ky, { HTTPError } from 'ky';
 
 export type FileUploadResponse = {
   success: boolean;
@@ -14,8 +18,38 @@ export type FileUploadResponse = {
 
 export const fileRepositories = {
   upload: async (data: FormData) => {
-    const resp = http.instance
-      .post('uploads', { body: data })
+    const resp = ky
+      .post(env.apiBaseUploadUrl, {
+        body: data,
+        hooks: {
+          beforeRequest: [
+            async (request) => {
+              const accessToken = useAuthUserStore.getState().user?.accessToken;
+              if (accessToken) {
+                request.headers.set('Authorization', `Bearer ${accessToken}`);
+              }
+            },
+          ],
+          afterResponse: [
+            async (_request, _options, response) => {
+              if (response.status === 401) {
+                useAuthUserStore.getState().clearUser();
+                navigate('/login');
+              }
+
+              if (!response.ok) {
+                const errorResponse = await response.json();
+                const parsedError =
+                  errorResponseSchema.safeParse(errorResponse);
+                if (!parsedError.success) {
+                  throw new HTTPError(response, _request, _options);
+                }
+                throw parsedError.data;
+              }
+            },
+          ],
+        },
+      })
       .json<FileUploadResponse>();
 
     return resp;
