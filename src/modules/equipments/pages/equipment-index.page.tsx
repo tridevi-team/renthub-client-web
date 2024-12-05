@@ -17,6 +17,7 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -81,10 +82,7 @@ export function Element() {
       equipmentRepositories.index({ searchParams }),
     );
     if (err) {
-      return {
-        results: [],
-        pageCount: 0,
-      };
+      return DEFAULT_RETURN_TABLE_DATA;
     }
     return result?.data;
   }, []);

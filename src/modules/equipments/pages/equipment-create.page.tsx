@@ -61,7 +61,6 @@ export function Element() {
   const pathname = location.pathname;
 
   const onSubmit = async (values: any) => {
-    console.log('values:', values);
     setLoading(true);
     const [err, _]: AwaitToResult<EquipmentCreateResponseSchema> = await to(
       equipmentRepositories.create({
