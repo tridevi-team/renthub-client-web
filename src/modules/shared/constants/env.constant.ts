@@ -6,6 +6,7 @@ export const envSchema = z.object({
   VITE_NODE_ENV: z.string(),
   VITE_API_PROVINCE_URL: z.string().url(),
   VITE_API_BASE_UPLOAD_URL: z.string().url(),
+  VITE_CKEDITOR_LICENSE_KEY: z.string().optional(),
 });
 
 export const env = (() => {
@@ -24,6 +25,9 @@ export const env = (() => {
   const VITE_NODE_ENV = envSchema.shape.VITE_NODE_ENV.parse(
     import.meta.env.VITE_NODE_ENV,
   );
+  const ckeditorLicenseKey = envSchema.shape.VITE_CKEDITOR_LICENSE_KEY.parse(
+    import.meta.env.VITE_CKEDITOR_LICENSE_KEY,
+  );
 
   return {
     appTitle,
@@ -31,5 +35,6 @@ export const env = (() => {
     apiBaseUploadUrl,
     apiProvinceUrl,
     VITE_NODE_ENV,
+    ckeditorLicenseKey,
   };
 })();
