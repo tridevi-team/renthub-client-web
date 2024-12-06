@@ -1,5 +1,7 @@
 import notFound from '@assets/images/NotFound.png';
 import { useAuthUserStore } from '@auth/hooks/use-auth-user-store.hook';
+import { authPath } from '@modules/auth/routes';
+import { dashboardPath } from '@modules/dashboard/routes';
 import { Button } from '@shared/components/ui/button';
 import { useColorMode } from '@shared/hooks/use-color-mode.hook';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -22,11 +24,9 @@ export function Element() {
         aria-label="404 not found"
       />
       <Button variant="outline" className="mt-5 h-10 justify-center">
-        <Link onPress={() => navigate(-1)}>
+        <Link href={userStore.user ? dashboardPath.root : authPath.login}>
           {t('common_back_to', {
-            target: userStore.user
-              ? t('common_previous_page')
-              : t('auth_login'),
+            target: userStore.user ? t('dashboard_title') : t('auth_login'),
           })}
         </Link>
       </Button>

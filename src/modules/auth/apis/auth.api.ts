@@ -69,7 +69,12 @@ export const authRepositories = {
   },
   register: async ({ json }: { json: AuthRegisterRequestSchema }) => {
     const resp = await http.instance
-      .post('auth/signup', { json })
+      .post('auth/signup', {
+        json: {
+          ...json,
+          address: {},
+        },
+      })
       .json<AuthRegisterResponseSchema>();
 
     return authRegisterResponseSchema.parse(resp);

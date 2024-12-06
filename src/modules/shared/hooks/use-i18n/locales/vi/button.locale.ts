@@ -17,4 +17,6 @@ export const buttonLocale = {
   bt_retry: 'Thử lại',
   bt_preview: 'Xem trước',
   bt_view_detail: 'Xem chi tiết',
+  bt_select_all: 'Chọn tất cả',
+  bt_remove_item: 'Xóa mục',
 } as const;

@@ -3,10 +3,9 @@ import { z } from '@app/lib/vi-zod';
 export const user = z.object({
   id: z.string(),
   email: z.string(),
-  password: z.string(),
-  fullName: z.string(),
-  gender: z.string(),
   phoneNumber: z.string(),
+  gender: z.string(),
+  fullName: z.string(),
   address: z
     .object({
       city: z.string().nullable(),
@@ -15,12 +14,8 @@ export const user = z.object({
       street: z.string().nullable(),
     })
     .nullable(),
-  birthday: z.string(),
+  birthday: z.string().nullable(),
   role: z.string(),
-  type: z.string(),
-  status: z.number(),
-  updatedBy: z.string().nullable(),
-  updatedAt: z.string(),
 });
 
 export const userData = z

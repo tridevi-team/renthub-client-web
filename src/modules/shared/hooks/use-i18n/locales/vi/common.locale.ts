@@ -41,4 +41,9 @@ export const commonLocale = {
   common_ph_select: 'Chọn {field}',
   common_ph_search: 'Tìm kiếm {field}',
   common_ph_input: 'Nhập {field}',
+  common_show_all: 'Tất cả',
+  common_show_less: 'Thu gọn',
+  common_file_type_not_supported: 'Loại tập tin không được hỗ trợ',
+  common_upload_image: 'Tải ảnh lên',
+  common_count_uploaded_image: '{count} ảnh đã được tải lên',
 } as const;

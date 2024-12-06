@@ -1,9 +1,13 @@
+import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
+import { roleRepositories } from '@modules/roles/apis/role.api';
+import type { RoleAssignRequestSchema } from '@modules/roles/schema/role.schema';
 import { userRepositories } from '@modules/users/apis/user.api';
+import AssignRoleDialog from '@modules/users/components/assign-role-dialog';
 import {
   userKeys,
-  type UserDataSchema,
+  type UserIndexResponseSchema,
   type UserSchema,
 } from '@modules/users/schema/user.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
@@ -14,17 +18,20 @@ import {
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
+import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { FileEdit } from 'lucide-react';
+import { FileEdit, UserRoundCog } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -58,6 +65,7 @@ export function Element() {
   const [searchParams] = useSearchParams();
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -73,24 +81,61 @@ export function Element() {
       field: 'updatedAt',
       direction: 'asc',
     });
-
-    try {
-      const response = await userRepositories.index({ searchParams });
-      return response.data || null;
-    } catch (error) {
-      console.log('error:', error);
-      return Promise.reject(error);
+    const [err, resp]: AwaitToResult<UserIndexResponseSchema> = await to(
+      userRepositories.index({ searchParams }),
+    );
+    if (err) {
+      return {
+        results: [],
+        page: 1,
+        pageCount: 1,
+      };
     }
+    return resp?.data;
   }, []);
+
+  const onAssignRole = async (data: RoleAssignRequestSchema) => {
+    setSubmitting(true);
+    const [err]: AwaitToResult<any> = await to(
+      roleRepositories.assignRole(data),
+    );
+    setSubmitting(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    toast.success(t('ms_assign_role_success'));
+    setShowDetailDialog(false);
+    await queryClient.invalidateQueries();
+  };
 
   const {
     data: userData,
     isLoading,
     isFetching,
-  } = useQuery<UserDataSchema>({
+  } = useQuery<any>({
     queryKey: userKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
+
+  const AdditionalActionButtons = () => {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          setShowDetailDialog(true);
+        }}
+      >
+        <UserRoundCog className="mr-2 h-4 w-4" />
+        {t('user_assign_role')}
+      </Button>
+    );
+  };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -237,6 +282,7 @@ export function Element() {
       ) : (
         <DataTable
           actions={{}}
+          additionalActionButtons={AdditionalActionButtons}
           table={table}
           columns={columns}
           filterOptions={filterFields}
@@ -244,6 +290,13 @@ export function Element() {
           moduleName="role"
         />
       )}
+
+      <AssignRoleDialog
+        isOpen={showDetailDialog}
+        isSubmitting={submitting}
+        onSubmit={onAssignRole}
+        onClose={() => setShowDetailDialog(false)}
+      />
     </ContentLayout>
   );
 }

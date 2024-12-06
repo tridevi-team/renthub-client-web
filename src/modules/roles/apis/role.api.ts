@@ -1,5 +1,6 @@
 import type { QueryOptions } from '@app/types';
 import {
+  type RoleAssignRequestSchema,
   type RoleCreateRequestSchema,
   roleCreateResponseSchema,
   type RoleCreateResponseSchema,
@@ -79,5 +80,15 @@ export const roleRepositories = {
       .json<RoleDeleteResponseSchema>();
 
     return roleDeleteResponseSchema.parse(resp);
+  },
+  assignRole: async (data: RoleAssignRequestSchema) => {
+    const houseId = getHouseSelected()?.id;
+    const resp = await http.instance
+      .post(`roles/${houseId}/assign-role`, {
+        json: data,
+      })
+      .json<any>();
+
+    return resp;
   },
 };

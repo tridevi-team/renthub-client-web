@@ -67,6 +67,7 @@ export function EquipmentForm({
       floorRepositories.index({
         searchParams: {
           pageSize: -1,
+          page: -1,
           sorting: [
             {
               field: 'floors.name',
@@ -95,6 +96,7 @@ export function EquipmentForm({
         floorId,
         searchParams: {
           pageSize: -1,
+          page: -1,
           sorting: [
             {
               field: 'rooms.name',

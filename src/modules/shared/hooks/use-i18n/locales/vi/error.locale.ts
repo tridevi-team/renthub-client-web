@@ -109,6 +109,43 @@ export const errorLocale = {
   NOT_FOUND: 'Không tìm thấy dữ liệu',
   NOT_PERMISSION: 'Bạn không có quyền truy cập',
   // #endregion
+
+  // #region Contract
+  TEMPLATE_NOT_FOUND: 'Không tìm thấy mẫu hợp đồng',
+  NO_TEMPLATES_FOUND: 'Không tìm thấy mẫu hợp đồng',
+  TEMPLATE_ALREADY_EXISTS: 'Mẫu hợp đồng đã tồn tại',
+  CONTRACT_NOT_FOUND: 'Không tìm thấy hợp đồng',
+  NO_CONTRACTS_FOUND: 'Không tìm thấy hợp đồng',
+  CONTRACT_STATUS_PENDING_OR_ACTIVE_ONLY:
+    'Chỉ có thể cập nhật hoặc xóa hợp đồng ở trạng thái chờ duyệt hoặc đang hoạt động',
+  CONTRACT_STATUS_PENDING_ONLY:
+    'Chỉ có thể xóa hoặc cập nhật hợp đồng ở trạng thái chờ duyệt',
+  RENTER_APPROVED_ONLY:
+    'Người thuê phải được chấp thuận trước khi cập nhật hợp đồng',
+  CONTRACT_ALREADY_EXISTS: 'Hợp đồng đã tồn tại',
+  CONTRACT_STATUS_UPDATED_FAILED: 'Cập nhật trạng thái hợp đồng thất bại',
+  // #endregion
+
+  // #region Statistical
+
+  // #endregion
+
+  // #region Parse
+  PARSE_ERROR: 'Lỗi xử lý dữ liệu',
+  INVALID_COLUMN: 'Cột không hợp lệ',
+  // #endregion
+
+  // #region File
+  FILE_UPLOAD_FAILED: 'Tải tập tin lên thất bại',
+  FILE_TOO_LARGE: 'Tập tin quá lớn.',
+  FILE_TOO_LARGE_MAX_SIZE: 'Tập tin quá lớn. Kích thước tối đa là {maxSize}MB',
+  FILE_TYPE_NOT_ALLOWED: 'Loại tập tin không được phép',
+  FILE_LIMIT_EXCEEDED: 'Số lượng tập tin vượt quá giới hạn',
+  // #endregion
+
+  // #region Generic
+  PERMISSION_DENIED: 'Quyền truy cập bị từ chối',
+  // #endregion
 } as const;
 
 export type ErrorLocale = keyof typeof errorLocale;

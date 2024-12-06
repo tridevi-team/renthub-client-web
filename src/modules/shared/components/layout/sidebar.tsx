@@ -48,7 +48,7 @@ export function Sidebar() {
           asChild
         >
           <Link
-            className="flex items-center gap-2"
+            className="flex cursor-pointer items-center gap-2"
             onPress={() => {
               navigate('/');
             }}
@@ -69,6 +69,7 @@ export function Sidebar() {
                 sidebar?.isOpen === false
                   ? '-translate-x-96 hidden opacity-0'
                   : 'translate-x-0 opacity-100',
+                'cursor-pointer',
               )}
               aria-label={BRAND_NAME}
             >

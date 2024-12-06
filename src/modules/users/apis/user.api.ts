@@ -19,4 +19,13 @@ export const userRepositories = {
 
     return userIndexResponseSchema.parse(resp);
   },
+  search: async (search: string) => {
+    const resp = await http.instance
+      .get('users/search', {
+        searchParams: { q: search },
+      })
+      .json<any>();
+
+    return resp;
+  },
 };

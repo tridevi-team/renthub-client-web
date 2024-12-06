@@ -39,6 +39,10 @@ export const breadcrumbLocale = {
   br_payments_create: 'Thêm mới thanh toán',
   br_payments_edit: 'Chỉnh sửa thanh toán',
 
+  br_contract_template: 'Quản lý Mẫu hợp đồng',
+  br_contract_template_create: 'Thêm mới mẫu hợp đồng',
+  br_contract_template_edit: 'Chỉnh sửa mẫu hợp đồng',
+
   br_contracts: 'Quản lý Hợp đồng',
   br_contracts_create: 'Thêm mới hợp đồng',
   br_contracts_edit: 'Chỉnh sửa hợp đồng',

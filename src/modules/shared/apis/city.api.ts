@@ -1,5 +1,6 @@
 import { z } from '@app/lib/vi-zod';
 import type { Option } from '@app/types';
+import { env } from '@shared/constants/env.constant';
 import ky from 'ky';
 
 const cityResponseSchema = z.array(
@@ -38,7 +39,7 @@ type GetDistrictByCodeResponseSchema = z.infer<
 export const provinceRepositories = {
   city: async () => {
     let resp = await ky
-      .get('https://provinces.tmquang.com/api/p')
+      .get(`${env.apiProvinceUrl}/api/p`)
       .json<CityResponseSchema>();
     resp = cityResponseSchema.parse(resp);
 
@@ -53,7 +54,7 @@ export const provinceRepositories = {
   },
   district: async (selectedCityCode: string | number | undefined) => {
     let resp = await ky
-      .get(`https://provinces.tmquang.com/api/p/${selectedCityCode}?depth=2`)
+      .get(`${env.apiProvinceUrl}/api/p/${selectedCityCode}?depth=2`)
       .json<GetCityByCodeResponseSchema>();
     resp = getCityByCodeResponseSchema.parse(resp);
 
@@ -69,9 +70,7 @@ export const provinceRepositories = {
   },
   ward: async (selectedDistrictCode: string | number | undefined) => {
     let resp = await ky
-      .get(
-        `https://provinces.tmquang.com/api/d/${selectedDistrictCode}?depth=2`,
-      )
+      .get(`${env.apiProvinceUrl}/api/d/${selectedDistrictCode}?depth=2`)
       .json<GetDistrictByCodeResponseSchema>();
     resp = getDistrictByCodeResponseSchema.parse(resp);
 
