@@ -88,3 +88,13 @@ export const TYPE_INDEX_OPTIONS = [
   { label: 'Chỉ số nước', value: 'WATER_CONSUMPTION' },
   // { label: 'Chỉ số khác', value: 'OTHER' },
 ];
+
+export const CONTRACT_TEMPLATE_STATUS = {
+  ACTIVE: true,
+  INACTIVE: false,
+};
+
+export const CONTRACT_TEMPLATE_STATUS_OPTIONS = [
+  { label: 'Đang sử dụng', value: 'ACTIVE' },
+  { label: 'Ngừng sử dụng', value: 'INACTIVE' },
+];

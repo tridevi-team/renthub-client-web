@@ -17,7 +17,15 @@ import {
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
+import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@shared/components/ui/dialog';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -28,6 +36,8 @@ import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
+import dayjs from 'dayjs';
+import DOMPurify from 'dompurify';
 import { FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -174,6 +184,56 @@ export function Element() {
     },
   ];
 
+  const ContentModal = ({ content }: { content: string }) => {
+    const sanitizedContent = DOMPurify.sanitize(content, {
+      ALLOWED_TAGS: [
+        'p',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'span',
+        'br',
+        'strong',
+        'em',
+        'ul',
+        'ol',
+        'li',
+        'table',
+        'tr',
+        'td',
+        'th',
+        'thead',
+        'tbody',
+      ],
+      ALLOWED_ATTR: ['class', 'style'],
+    });
+
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="link" className="p-0 text-left">
+            {t('bt_view_detail')}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{t('contract_t_content')}</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto px-4 md:px-0">
+            <div
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+              dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+              className="prose dark:prose-invert max-w-none"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   const columns: ColumnDef<ContractTemplateSchema>[] = [
     {
       id: 'select',
@@ -218,6 +278,53 @@ export function Element() {
         );
       },
       enableSorting: true,
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('contract_t_created_at')}
+        />
+      ),
+      cell: ({ row }) => {
+        return dayjs(row.original.createdAt).format('DD/MM/YYYY');
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: 'updatedAt',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('contract_t_updated_at')}
+        />
+      ),
+      cell: ({ row }) => {
+        return dayjs(row.original.updatedAt).format('DD/MM/YYYY');
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: 'content',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('contract_t_content')}
+        />
+      ),
+      cell: ({ row }) => {
+        return <ContentModal content={row.original.content} />;
+      },
+    },
+    {
+      id: 'actions',
+      header: () => null,
+      cell: ({ row }) => (
+        <DataTableRowActions row={row} actions={actionColumn} />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'actions',
