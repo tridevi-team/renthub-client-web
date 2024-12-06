@@ -54,7 +54,6 @@ export default function HouseForm({ form, onSubmit, loading }: HouseFormProps) {
         setWards([]);
         form.resetField('district');
         form.resetField('ward');
-        console.log(form.getValues());
         return;
       }
       const city = provinces?.find((item) => item.value === selectedCity);

@@ -87,7 +87,6 @@ export function Element() {
       const response = await roleRepositories.index({ searchParams });
       return response.data || null;
     } catch (error) {
-      console.log('error:', error);
       return Promise.reject(error);
     }
   }, []);
