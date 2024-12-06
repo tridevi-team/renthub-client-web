@@ -1,8 +1,7 @@
 import {
   BarChart2,
-  DollarSign,
   Home,
-  Settings,
+  MessageSquareDot,
   UserCircle,
   Users,
   type LucideIcon,
@@ -131,25 +130,13 @@ export function getMenuList(pathname: string): Group[] {
               label: 'Quản lý Phản ánh',
               active: pathname.includes('/feedback'),
             },
-            {
-              href: '/notifications',
-              label: 'Quản lý Thông báo',
-              active: pathname.includes('/notifications'),
-            },
           ],
         },
       ],
     },
     {
-      groupLabel: 'Tài chính & Thống kê',
+      groupLabel: 'Thống kê',
       menus: [
-        {
-          href: '/finance',
-          label: 'Quản lý Tài chính',
-          active: pathname.includes('/finance'),
-          icon: DollarSign,
-          submenus: [],
-        },
         {
           href: '/statistics',
           label: 'Thống kê',
@@ -158,7 +145,7 @@ export function getMenuList(pathname: string): Group[] {
           submenus: [
             {
               href: '/stats-contracts',
-              label: 'Tình trạng hợp đồng',
+              label: 'Hợp đồng',
               active: pathname.includes('/stats-contracts'),
             },
             {
@@ -167,9 +154,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes('/stats-renters'),
             },
             {
-              href: '/stats-devices',
+              href: '/stats-equipments',
               label: 'Thiết bị',
-              active: pathname.includes('/stats-devices'),
+              active: pathname.includes('/stats-equipments'),
             },
           ],
         },
@@ -179,10 +166,10 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: 'Khác',
       menus: [
         {
-          href: '/settings',
-          label: 'Cài đặt',
-          active: pathname.includes('/settings'),
-          icon: Settings,
+          href: '/notifications',
+          label: 'Quản lý Thông báo',
+          active: pathname.includes('/notifications'),
+          icon: MessageSquareDot,
           submenus: [],
         },
       ],
