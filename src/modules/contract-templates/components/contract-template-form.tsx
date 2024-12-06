@@ -21,7 +21,6 @@ import {
 } from '@shared/components/ui/form';
 import { Input } from '@shared/components/ui/input';
 import {
-  CONTRACT_TEMPLATE_STATUS,
   CONTRACT_TEMPLATE_STATUS_OPTIONS,
   GENDER_OPTIONS,
 } from '@shared/constants/general.constant';
@@ -32,6 +31,7 @@ import { useRef } from 'react';
 import { Col, Row } from 'react-grid-system';
 import type { UseFormReturn } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import useSWR from 'swr';
 
 type ContractTemplateFormProps = {
@@ -63,13 +63,17 @@ export function ContractTemplateForm({
   );
 
   const onSumbitClick = async (values: any) => {
+    console.log('values:', values);
     const htmlContent = editorRef.current?.getHTMLContent();
+    console.log('htmlContent:', htmlContent);
     if (htmlContent) {
       values.content = htmlContent as string;
+    } else {
+      return toast.error(t('CONTRACT_T_CONTENT_REQUIRED'));
     }
     onSubmit({
       ...values,
-      isActive: values.isActive === CONTRACT_TEMPLATE_STATUS.ACTIVE,
+      isActive: values.isActive === 'ACTIVE',
     });
   };
 
@@ -78,7 +82,9 @@ export function ContractTemplateForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSumbitClick)}
+        onSubmit={form.handleSubmit(onSumbitClick, () => {
+          console.log(form.formState.errors);
+        })}
         className="space-y-4 px-2"
       >
         <Row className="gap-y-3 px-48">
@@ -112,11 +118,7 @@ export function ContractTemplateForm({
                   <FormControl>
                     <AutoComplete
                       options={CONTRACT_TEMPLATE_STATUS_OPTIONS}
-                      value={
-                        field.value
-                          ? CONTRACT_TEMPLATE_STATUS_OPTIONS[0].value
-                          : CONTRACT_TEMPLATE_STATUS_OPTIONS[1].value
-                      }
+                      value={field.value === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
                       onValueChange={field.onChange}
                       placeholder={t('common_ph_select', {
                         field: t('contract_t_isActive').toLowerCase(),

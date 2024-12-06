@@ -1,15 +1,27 @@
-import { Plate } from '@udecode/plate-common/react';
-import { debounce } from 'lodash';
-import { forwardRef, useEffect, useImperativeHandle } from 'react';
-
-import { SettingsProvider } from '@shared/components/editor/settings';
-import { useCreateEditor } from '@shared/components/editor/use-create-editor';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
 import { ScrollableDiv } from '@shared/components/extensions/scrollable-div';
-import { Editor, EditorContainer } from '@shared/components/plate-ui/editor';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
+import { env } from '@shared/constants/env.constant';
 import { useResetState } from '@shared/hooks/use-reset-state.hook';
-import { useMemo } from 'react';
+import {
+  Alignment,
+  Bold,
+  ClassicEditor,
+  Essentials,
+  Heading,
+  Indent,
+  IndentBlock,
+  Italic,
+  Link,
+  List,
+  Paragraph,
+  Table,
+  Undo,
+} from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
+import { debounce } from 'lodash';
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { Col, Row } from 'react-grid-system';
 
 type ContractEditorProps = {
@@ -24,34 +36,21 @@ export type ContractEditorRef = {
 
 const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
   ({ isEdit, keyReplaces, initialContent }, ref) => {
-    const editor = useCreateEditor({
-      value: [],
-    });
-
-    const debouncedOnChange = useMemo(
-      () =>
-        debounce(({ value }) => {
-          localStorage.setItem('contract-editor-value', JSON.stringify(value));
-        }, 300),
-      [],
-    );
-    const getHTMLContent = () => {
-      const html = editor.api.htmlReact.serialize({
-        nodes: editor.children,
-        stripDataAttributes: true,
-        stripWhitespace: true,
-        convertNewLinesToHtmlBr: true,
-      });
-      return html;
-    };
+    const [editor, setEditor] = useState<any>(null);
 
     useImperativeHandle(ref, () => ({
-      getHTMLContent,
+      getHTMLContent: () => {
+        return editor?.getData();
+      },
     }));
 
     const insertKey = (key: string) => {
       if (editor) {
-        editor.insertText(key);
+        const content = `{{${key}}}`;
+        const viewFragment = editor.data.processor.toView(content);
+        const modelFragment = editor.data.toModel(viewFragment);
+        editor.model.insertContent(modelFragment);
+        editor.editing.view.focus();
       }
     };
 
@@ -85,26 +84,59 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
       [],
     );
 
-    useEffect(() => {
-      if (initialContent && isEdit) {
-        const values = editor.api.html.deserialize({
-          element: initialContent,
-        }) as any;
-        console.log('values:', values);
-        editor.children = values;
-      }
+    const configEditor = useMemo(() => {
+      return {
+        licenseKey: env.ckeditorLicenseKey,
+        toolbar: [
+          'undo',
+          'redo',
+          '|',
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          '|',
+          'link',
+          'insertTable',
+          'alignment',
+          '|',
+          'bulletedList',
+          'numberedList',
+          'indent',
+          'outdent',
+        ],
+        plugins: [
+          Bold,
+          Essentials,
+          Heading,
+          Indent,
+          IndentBlock,
+          Italic,
+          Link,
+          List,
+          Alignment,
+          Paragraph,
+          Table,
+          Undo,
+        ],
+        initialData: initialContent || '',
+      };
     }, [initialContent]);
+
+    if (isEdit && !initialContent) {
+      return null;
+    }
 
     return (
       <Row className="gap-y-4">
         <Col xs={12}>
-          <SettingsProvider>
-            <Plate editor={editor} onChange={debouncedOnChange}>
-              <EditorContainer>
-                <Editor variant="fullWidth" />
-              </EditorContainer>
-            </Plate>
-          </SettingsProvider>
+          <CKEditor
+            editor={ClassicEditor}
+            config={configEditor}
+            onReady={(editor) => {
+              setEditor(editor);
+            }}
+          />
         </Col>
         <Col xs={12} md={2}>
           <Input

@@ -2,10 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
 import { contractTemplateRepositories } from '@modules/contract-templates/api/contract-template.api';
 import { ContractTemplateForm } from '@modules/contract-templates/components/contract-template-form';
+import { contractTemplatePath } from '@modules/contract-templates/routes';
 import {
   type ContractTemplateDetailResponseSchema,
   contractTemplateUpdateRequestSchema,
   type ContractTemplateUpdateRequestSchema,
+  type ContractTemplateUpdateResponseSchema,
 } from '@modules/contract-templates/schemas/contract-template.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -65,7 +67,7 @@ export function Element() {
     setInitialContent(resp?.data?.content || '');
     form.reset({
       ...resp?.data,
-      isActive: resp?.data?.isActive ? 'ACTIVE' : 'INACTIVE',
+      isActive: resp?.data?.isActive === 1 ? 'ACTIVE' : 'INACTIVE',
     });
   };
 
@@ -74,27 +76,26 @@ export function Element() {
   }, []);
 
   const onSubmit = async (values: any) => {
-    return;
-    // setLoading(true);
-    // const [err, _]: AwaitToResult<ContractTemplateUpdateResponseSchema> =
-    //   await to(
-    //     contractTemplateRepositories.update({
-    //       id,
-    //       contractTemplate: values,
-    //     }),
-    //   );
-    // setLoading(false);
-    // if (err) {
-    //   if ('code' in err) {
-    //     toast.error(t(err.code));
-    //   } else {
-    //     toast.error(t('UNKNOWN_ERROR'));
-    //   }
-    //   return;
-    // }
-    // toast.success(t('ms_update_contract_template_success'));
-    // navigate(`${contractTemplatePath.root}`);
-    // return _;
+    setLoading(true);
+    const [err, _]: AwaitToResult<ContractTemplateUpdateResponseSchema> =
+      await to(
+        contractTemplateRepositories.update({
+          id,
+          contractTemplate: values,
+        }),
+      );
+    setLoading(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    toast.success(t('ms_update_contract_template_success'));
+    navigate(`${contractTemplatePath.root}`);
+    return _;
   };
 
   return (
