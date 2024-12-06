@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_NODE_ENV: 'development' | 'production' | 'test';
   readonly VITE_API_PROVINCE_URL: string | undefined;
   readonly VITE_API_BASE_UPLOAD_URL: string | undefined;
+  readonly VITE_CKEDITOR_LICENSE_KEY: string | undefined;
 }
 
 interface ImportMeta {
