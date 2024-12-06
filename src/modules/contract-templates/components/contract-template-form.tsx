@@ -21,6 +21,7 @@ import {
 } from '@shared/components/ui/form';
 import { Input } from '@shared/components/ui/input';
 import {
+  CONTRACT_TEMPLATE_STATUS,
   CONTRACT_TEMPLATE_STATUS_OPTIONS,
   GENDER_OPTIONS,
 } from '@shared/constants/general.constant';
@@ -42,6 +43,7 @@ type ContractTemplateFormProps = {
   >;
   loading?: boolean;
   onSubmit: (values: any) => void;
+  initialContent?: string;
   isEdit?: boolean;
 };
 
@@ -49,6 +51,7 @@ export function ContractTemplateForm({
   form,
   loading,
   onSubmit,
+  initialContent,
   isEdit = false,
 }: ContractTemplateFormProps) {
   const [t] = useI18n();
@@ -64,7 +67,10 @@ export function ContractTemplateForm({
     if (htmlContent) {
       values.content = htmlContent as string;
     }
-    onSubmit(values);
+    onSubmit({
+      ...values,
+      isActive: values.isActive === CONTRACT_TEMPLATE_STATUS.ACTIVE,
+    });
   };
 
   if (!keyReplaces) return null;
@@ -260,7 +266,7 @@ export function ContractTemplateForm({
               )}
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={4}>
             <FormField
               control={form.control}
               name="landlord.phoneNumber"
@@ -281,7 +287,25 @@ export function ContractTemplateForm({
               )}
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={4}>
+            <FormField
+              control={form.control}
+              name="landlord.birthday"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('contract_t_ll_birthday')}</FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      value={new Date(dayjs(field.value).toDate())}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Col>
+          <Col xs={12} md={4}>
             <FormField
               control={form.control}
               name="landlord.email"
@@ -374,6 +398,8 @@ export function ContractTemplateForm({
             <ContractEditor
               keyReplaces={keyReplaces || []}
               ref={editorRef as React.MutableRefObject<ContractEditorRef>}
+              isEdit={isEdit}
+              initialContent={initialContent}
             />
           </Col>
           <Col xs={24}>

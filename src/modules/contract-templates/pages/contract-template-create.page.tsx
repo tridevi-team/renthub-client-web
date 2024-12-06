@@ -9,6 +9,7 @@ import {
   type ContractTemplateCreateResponseSchema,
 } from '@modules/contract-templates/schemas/contract-template.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { GENDER_OPTIONS } from '@shared/constants/general.constant';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
@@ -47,6 +48,11 @@ export function Element() {
     resolver: zodResolver(contractTemplateCreateRequestSchema),
     defaultValues: {
       isActive: true,
+      landlord: {
+        gender: GENDER_OPTIONS[0].value,
+        dateOfIssue: new Date(),
+        birthday: new Date(),
+      },
     },
   });
   const navigate = useNavigate();

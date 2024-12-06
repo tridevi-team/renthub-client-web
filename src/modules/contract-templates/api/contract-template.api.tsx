@@ -3,6 +3,7 @@ import type {
   ContractTemplateCreateRequestSchema,
   ContractTemplateCreateResponseSchema,
   ContractTemplateDeleteResponseSchema,
+  ContractTemplateDetailResponseSchema,
   ContractTemplateIndexResponseSchema,
   ContractTemplateUpdateRequestSchema,
   ContractTemplateUpdateResponseSchema,
@@ -38,7 +39,7 @@ export const contractTemplateRepositories = {
     id,
   }: { contractTemplate: ContractTemplateUpdateRequestSchema; id: string }) => {
     const resp = await http.instance
-      .patch(`contracts/${id}/update-contract-templates`, {
+      .patch(`contracts/${id}/update-contract-template`, {
         json: contractTemplate,
       })
       .json<ContractTemplateUpdateResponseSchema>();
@@ -58,5 +59,12 @@ export const contractTemplateRepositories = {
     }>();
 
     return resp?.data;
+  },
+  detail: async ({ id }: { id: string }) => {
+    const resp = await http.instance
+      .get(`contracts/${id}/template-details`)
+      .json<ContractTemplateDetailResponseSchema>();
+
+    return resp;
   },
 };

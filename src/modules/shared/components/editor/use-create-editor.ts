@@ -6,6 +6,7 @@ import {
 } from '@udecode/plate-basic-marks/react';
 import { CodeLinePlugin } from '@udecode/plate-code-block/react';
 import {
+  type CreatePlateEditorOptions,
   ParagraphPlugin,
   PlateLeaf,
   usePlateEditor,
@@ -47,7 +48,11 @@ import { TocElement } from '@shared/components/plate-ui/toc-element';
 import { ToggleElement } from '@shared/components/plate-ui/toggle-element';
 import { SlashInputPlugin } from '@udecode/plate-slash-command/react';
 
-export const useCreateEditor = () => {
+export const useCreateEditor = ({
+  value,
+}: {
+  value?: CreatePlateEditorOptions['value'];
+}) => {
   return usePlateEditor({
     override: {
       components: withPlaceholders({
@@ -77,6 +82,6 @@ export const useCreateEditor = () => {
       }),
     },
     plugins: [...editorPlugins, FixedToolbarPlugin, FloatingToolbarPlugin],
-    value: [],
+    value: value || [],
   });
 };

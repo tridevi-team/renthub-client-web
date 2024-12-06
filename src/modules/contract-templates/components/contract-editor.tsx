@@ -1,6 +1,6 @@
 import { Plate } from '@udecode/plate-common/react';
 import { debounce } from 'lodash';
-import { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useEffect, useImperativeHandle } from 'react';
 
 import { SettingsProvider } from '@shared/components/editor/settings';
 import { useCreateEditor } from '@shared/components/editor/use-create-editor';
@@ -14,6 +14,8 @@ import { Col, Row } from 'react-grid-system';
 
 type ContractEditorProps = {
   keyReplaces: { key: string; label: string }[];
+  initialContent?: string;
+  isEdit?: boolean;
 };
 
 export type ContractEditorRef = {
@@ -21,8 +23,10 @@ export type ContractEditorRef = {
 };
 
 const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
-  ({ keyReplaces }, ref) => {
-    const editor = useCreateEditor();
+  ({ isEdit, keyReplaces, initialContent }, ref) => {
+    const editor = useCreateEditor({
+      value: [],
+    });
 
     const debouncedOnChange = useMemo(
       () =>
@@ -31,9 +35,14 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
         }, 300),
       [],
     );
-
     const getHTMLContent = () => {
-      return editor.api.htmlReact.serialize({ nodes: editor.children });
+      const html = editor.api.htmlReact.serialize({
+        nodes: editor.children,
+        stripDataAttributes: true,
+        stripWhitespace: true,
+        convertNewLinesToHtmlBr: true,
+      });
+      return html;
     };
 
     useImperativeHandle(ref, () => ({
@@ -75,6 +84,16 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
         }, 300),
       [],
     );
+
+    useEffect(() => {
+      if (initialContent && isEdit) {
+        const values = editor.api.html.deserialize({
+          element: initialContent,
+        }) as any;
+        console.log('values:', values);
+        editor.children = values;
+      }
+    }, [initialContent]);
 
     return (
       <Row className="gap-y-4">

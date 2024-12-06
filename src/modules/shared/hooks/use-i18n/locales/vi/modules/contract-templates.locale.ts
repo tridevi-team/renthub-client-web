@@ -26,6 +26,7 @@ export const contractTemplatesLocale = {
   contract_t_ll_citizen_id_date: 'Ngày cấp',
   contract_t_ll_citizen_id_place: 'Nơi cấp',
   contract_t_ll_gender: 'Giới tính',
+  contract_t_ll_birthday: 'Ngày sinh',
   contract_t_template: 'Nội dung mẫu hợp đồng',
   // #endregion FORM + TABLE
 

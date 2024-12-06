@@ -26,7 +26,7 @@ export const contractTemplate = z.object({
       email: z.string().nullable().optional(),
     })
     .nullable(),
-  isActive: z.boolean().or(z.number()).nullable(),
+  isActive: z.boolean().or(z.number()).or(z.string()).nullable(),
   createdBy: z.string().nullable(),
   createdAt: z.string().nullable(),
   updatedBy: z.string().nullable(),
@@ -62,7 +62,7 @@ export const contractTemplateDetailResponseSchema = z.object({
 export const contractTemplateCreateRequestSchema = z.object({
   name: z.string().trim().min(1),
   content: z.string().trim().nullable().optional(),
-  isActive: z.boolean().nullable().optional(),
+  isActive: z.boolean().or(z.number()).or(z.string()).nullable().optional(),
   landlord: z
     .object({
       fullName: z.string().nullable().optional(),
@@ -77,8 +77,8 @@ export const contractTemplateCreateRequestSchema = z.object({
         .nullable()
         .optional(),
       phoneNumber: z.string().nullable().optional(),
-      birthday: z.string().nullable().optional(),
-      dateOfIssue: z.string().nullable().optional(),
+      birthday: z.string().or(z.date()).nullable().optional(),
+      dateOfIssue: z.string().or(z.date()).nullable().optional(),
       placeOfIssue: z.string().nullable().optional(),
       gender: z.string().nullable().optional(),
       email: z.string().nullable().optional(),
@@ -96,8 +96,8 @@ export const contractTemplateCreateResponseSchema = z.object({
 
 export const contractTemplateUpdateRequestSchema = z.object({
   name: z.string().trim().min(1),
-  content: z.string().trim().min(1),
-  isActive: z.boolean().nullable().optional(),
+  content: z.string().trim().nullable().optional(),
+  isActive: z.boolean().or(z.number()).or(z.string()).nullable().optional(),
   landlord: z
     .object({
       fullName: z.string().nullable().optional(),
@@ -112,8 +112,8 @@ export const contractTemplateUpdateRequestSchema = z.object({
         .nullable()
         .optional(),
       phoneNumber: z.string().nullable().optional(),
-      birthday: z.string().nullable().optional(),
-      dateOfIssue: z.string().nullable().optional(),
+      birthday: z.string().or(z.date()).nullable().optional(),
+      dateOfIssue: z.string().or(z.date()).nullable().optional(),
       placeOfIssue: z.string().nullable().optional(),
       gender: z.string().nullable().optional(),
       email: z.string().nullable().optional(),

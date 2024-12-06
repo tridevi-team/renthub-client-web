@@ -45,9 +45,28 @@ const contractTemplateCreateRoute = {
   },
 } satisfies RouteObject;
 
+const contractTemplateEditRoute = {
+  id: contractTemplateId.edit,
+  index: true,
+  path: contractTemplatePath.edit,
+  lazy: async () => {
+    const edit = await import('./pages/contract-template-edit.page');
+
+    return {
+      loader: edit.loader,
+      element: <edit.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} satisfies RouteObject;
+
 export const contractTemplateRoute = {
   id: contractTemplateId.root,
   path: contractTemplatePath.root,
   element: <PageWrapper />,
-  children: [contractTemplateIndexRoute, contractTemplateCreateRoute],
+  children: [
+    contractTemplateIndexRoute,
+    contractTemplateCreateRoute,
+    contractTemplateEditRoute,
+  ],
 } satisfies RouteObject;
