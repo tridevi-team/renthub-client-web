@@ -4,8 +4,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@shared/components/ui/card';
-import { formatCurrency } from '@shared/utils/helper.util';
 import type { LucideIcon } from 'lucide-react';
+import AnimatedNumbers from 'react-animated-numbers';
 
 type CountStatsCardProps = {
   titleCard: string;
@@ -30,7 +30,16 @@ export const CountStatsCard = ({
       </CardHeader>
       <CardContent>
         <div className="font-bold text-2xl">
-          {isCurrency ? formatCurrency(amount) : amount}
+          <AnimatedNumbers
+            includeComma
+            transitions={(index) => ({
+              type: 'spring',
+              duration: index + 0.3,
+            })}
+            locale="vi-VN"
+            animateToNumber={amount}
+          />
+          {isCurrency && 'đ'}
         </div>
         {description && (
           <p className="mt-2 text-muted-foreground text-xs">{description}</p>
