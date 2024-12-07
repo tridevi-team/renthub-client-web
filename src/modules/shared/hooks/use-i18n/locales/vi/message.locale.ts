@@ -94,6 +94,11 @@ export const messageLocale = {
   ms_delete_renter_success: 'Xóa người thuê thành công',
   // #endregion
 
+  // #region Issue
+  ms_update_issue_success: 'Cập nhật phản ánh thành công',
+  ms_delete_issue_success: 'Xóa phản ánh thành công',
+  // #endregion
+
   // #region Error
   ms_error: 'Có lỗi xảy ra, vui lòng thử lại sau',
   ms_invalid_form: 'Vui lòng kiểm tra lại thông tin',

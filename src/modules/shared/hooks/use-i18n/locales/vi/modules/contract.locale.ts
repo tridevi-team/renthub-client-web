@@ -7,6 +7,7 @@ export const contractLocale = {
 
   // #region FORM + TABLE
   contract_name: 'Tên mẫu',
+  contract_room: 'Phòng',
   constract_status: 'Trạng thái',
   contract_created_at: 'Ngày tạo',
   contract_updated_at: 'Ngày cập nhật',
