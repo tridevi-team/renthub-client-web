@@ -91,12 +91,12 @@ export default defineConfig({
     },
   },
   plugins: [
+    replace(replaceOptions) as unknown as PluginOption,
     tsconfigPaths({ loose: true }),
-    react({ plugins: [['@swc/plugin-styled-components', {}]] }),
+    react(),
     visualizer({
       filename: 'html/visualizer-stats.html',
     }) as unknown as PluginOption,
     VitePWA(pwaOptions),
-    replace(replaceOptions) as unknown as PluginOption,
   ],
 });
