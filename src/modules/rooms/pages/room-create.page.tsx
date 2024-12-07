@@ -7,7 +7,7 @@ import {
   type RoomCreateResponseSchema,
   type RoomFormRequestSchema,
   roomFormRequestSchema,
-} from '@modules/rooms/schemas/room.schema';
+} from '@modules/rooms/schema/room.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { ROOM_STATUS } from '@shared/constants/general.constant';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';

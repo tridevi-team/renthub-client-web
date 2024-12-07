@@ -3,7 +3,7 @@ import {
   serviceCreateRequestSchema,
   type ServiceCreateRequestSchema,
   type ServiceUpdateRequestSchema,
-} from '@modules/services/schemas/service.schema';
+} from '@modules/services/schema/service.schema';
 import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
 import { Button } from '@shared/components/ui/button';
 import {

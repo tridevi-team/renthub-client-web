@@ -5,7 +5,7 @@ import { authPath } from '@auth/routes';
 import { floorRepositories } from '@modules/floors/apis/floor.api';
 import { roomRepositories } from '@modules/rooms/apis/room.api';
 import { roomPath } from '@modules/rooms/routes';
-import { roomKeys } from '@modules/rooms/schemas/room.schema';
+import { roomKeys } from '@modules/rooms/schema/room.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
