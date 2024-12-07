@@ -9,9 +9,11 @@ import { dashboardRoute } from '@modules/dashboard/routes';
 import { equipmentRoute } from '@modules/equipments/routes';
 import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
+import { renterRoute } from '@modules/renters/routes';
 import { roleRoute } from '@modules/roles/routes';
 import { roomRoute } from '@modules/rooms/routes';
 import { serviceRoute } from '@modules/services/routes';
+import { statsRoute } from '@modules/stats/routes';
 import { userRoute } from '@modules/users/routes';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -31,6 +33,8 @@ export const browserRouter = createBrowserRouter(
     roomRoute,
     serviceRoute,
     contractTemplateRoute,
+    statsRoute,
+    renterRoute,
   ],
   {
     future: {
