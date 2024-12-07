@@ -144,7 +144,7 @@ export function Element() {
           .filter((stat) => !['CANCELLED', 'OVERDUE'].includes(stat.status))
           .map((stat) => {
             return (
-              <Col xs={12} md={3} key={stat.status}>
+              <Col xs={12} sm={6} md={3} key={stat.status}>
                 <CountStatsCard
                   icon={FileChartColumnIncreasing}
                   amount={stat.count}
