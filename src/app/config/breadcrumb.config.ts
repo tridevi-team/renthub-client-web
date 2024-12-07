@@ -166,4 +166,7 @@ export const breadcrumbConfig: BreadcrumbConfig = {
       },
     },
   },
+  '/stats-bills': {
+    label: 'br_stats_bill',
+  },
 };

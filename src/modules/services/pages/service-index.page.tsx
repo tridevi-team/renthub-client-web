@@ -10,8 +10,8 @@ import type {
   ServiceDeleteResponseSchema,
   ServiceSchema,
   ServiceUpdateRequestSchema,
-} from '@modules/services/schemas/service.schema';
-import { serviceKeys } from '@modules/services/schemas/service.schema';
+} from '@modules/services/schema/service.schema';
+import { serviceKeys } from '@modules/services/schema/service.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {

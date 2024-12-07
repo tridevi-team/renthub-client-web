@@ -71,7 +71,6 @@ export function Element() {
   const [chartData, setChartData] = React.useState<
     { date: string; revenue: number; occupancy: number }[]
   >([]);
-  console.log('chartData', chartData);
   function generateChartData(timeRange: string) {
     const data = [];
     const today = new Date();

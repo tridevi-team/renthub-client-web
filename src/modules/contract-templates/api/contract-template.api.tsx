@@ -48,7 +48,7 @@ export const contractTemplateRepositories = {
   },
   delete: async ({ id }: { id: string }) => {
     const resp = await http.instance
-      .delete(`contracts/${id}/delete-contract-templates`)
+      .delete(`contracts/${id}/delete-contract-template`)
       .json<ContractTemplateDeleteResponseSchema>();
 
     return resp;

@@ -1,3 +1,5 @@
+import { ConfigProvider } from 'antd';
+import vi_VN from 'antd/lib/locale/vi_VN';
 import { StrictMode } from 'react';
 import { Toaster } from 'sonner';
 import { Devtools } from './devtools';
@@ -10,19 +12,21 @@ import { ReloadPromptSw } from './reload-prompt-sw';
 export function Entry() {
   return (
     <StrictMode>
-      <AppQueryProvider>
-        <AppI18nProvider>
-          <AppToastProvider>
-            {/* router entry point */}
-            <AppRouterProvider />
+      <ConfigProvider locale={vi_VN}>
+        <AppQueryProvider>
+          <AppI18nProvider>
+            <AppToastProvider>
+              {/* router entry point */}
+              <AppRouterProvider />
 
-            {/* PWA */}
-            <ReloadPromptSw />
+              {/* PWA */}
+              <ReloadPromptSw />
 
-            <Devtools />
-          </AppToastProvider>
-        </AppI18nProvider>
-      </AppQueryProvider>
+              <Devtools />
+            </AppToastProvider>
+          </AppI18nProvider>
+        </AppQueryProvider>
+      </ConfigProvider>
       <Toaster
         richColors
         expand

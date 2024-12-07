@@ -88,6 +88,12 @@ export const messageLocale = {
   ms_delete_contract_success: 'Xóa hợp đồng thành công',
   // #endregion
 
+  // #region Renter
+  ms_create_renter_success: 'Tạo người thuê mới thành công',
+  ms_update_renter_success: 'Cập nhật thông tin người thuê thành công',
+  ms_delete_renter_success: 'Xóa người thuê thành công',
+  // #endregion
+
   // #region Error
   ms_error: 'Có lỗi xảy ra, vui lòng thử lại sau',
   ms_invalid_form: 'Vui lòng kiểm tra lại thông tin',

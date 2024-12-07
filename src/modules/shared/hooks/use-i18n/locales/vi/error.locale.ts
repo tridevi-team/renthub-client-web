@@ -111,6 +111,7 @@ export const errorLocale = {
   // #endregion
 
   // #region Contract
+  CONTRACT_T_CONTENT_REQUIRED: 'Nội dung hợp đồng không được để trống',
   TEMPLATE_NOT_FOUND: 'Không tìm thấy mẫu hợp đồng',
   NO_TEMPLATES_FOUND: 'Không tìm thấy mẫu hợp đồng',
   TEMPLATE_ALREADY_EXISTS: 'Mẫu hợp đồng đã tồn tại',

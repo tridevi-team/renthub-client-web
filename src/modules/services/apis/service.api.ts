@@ -13,7 +13,7 @@ import type {
   ServiceRemoveServiceFromRoomResponseSchema,
   ServiceUpdateRequestSchema,
   ServiceUpdateResponseSchema,
-} from '@modules/services/schemas/service.schema';
+} from '@modules/services/schema/service.schema';
 import { SERVICE_TYPES, TYPE_INDEX } from '@shared/constants/general.constant';
 import { http } from '@shared/services/http.service';
 import { getHouseSelected } from '@shared/utils/helper.util';

@@ -89,7 +89,6 @@ export function Element() {
 
   const deleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      console.log('ids:', ids);
       await new Promise((resolve) => setTimeout(resolve, 3000));
     },
     onSuccess: () => {

@@ -63,9 +63,7 @@ export function ContractTemplateForm({
   );
 
   const onSumbitClick = async (values: any) => {
-    console.log('values:', values);
     const htmlContent = editorRef.current?.getHTMLContent();
-    console.log('htmlContent:', htmlContent);
     if (htmlContent) {
       values.content = htmlContent as string;
     } else {
@@ -82,9 +80,7 @@ export function ContractTemplateForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSumbitClick, () => {
-          console.log(form.formState.errors);
-        })}
+        onSubmit={form.handleSubmit(onSumbitClick)}
         className="space-y-4 px-2"
       >
         <Row className="gap-y-3 px-48">

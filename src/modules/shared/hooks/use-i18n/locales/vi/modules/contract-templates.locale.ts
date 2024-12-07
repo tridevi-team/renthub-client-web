@@ -8,6 +8,7 @@ export const contractTemplatesLocale = {
   // #region FORM + TABLE
   contract_t_name: 'Tên mẫu hợp đồng',
   contract_t_description: 'Mô tả',
+  contract_t_content: 'Nội dung',
   contract_t_created_at: 'Ngày tạo',
   contract_t_updated_at: 'Cập nhật ngày',
   contract_t_isActive: 'Trạng thái',

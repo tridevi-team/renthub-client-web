@@ -6,10 +6,15 @@ import { env } from '@shared/constants/env.constant';
 import { useResetState } from '@shared/hooks/use-reset-state.hook';
 import {
   Alignment,
+  Autoformat,
   Bold,
   ClassicEditor,
   Essentials,
+  FontColor,
+  FontFamily,
+  FontSize,
   Heading,
+  HorizontalLine,
   Indent,
   IndentBlock,
   Italic,
@@ -17,8 +22,14 @@ import {
   List,
   Paragraph,
   Table,
+  TableCaption,
+  TableCellProperties,
+  TableColumnResize,
+  TableProperties,
+  TableToolbar,
   Undo,
 } from 'ckeditor5';
+import 'ckeditor5-premium-features/ckeditor5-premium-features.css';
 import 'ckeditor5/ckeditor5.css';
 import { debounce } from 'lodash';
 import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
@@ -88,13 +99,20 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
       return {
         licenseKey: env.ckeditorLicenseKey,
         toolbar: [
+          'exportWord',
+          '|',
           'undo',
           'redo',
           '|',
           'heading',
+          'fontSize',
+          'fontFamily',
+          'fontColor',
+          'fontBackgroundColor',
           '|',
           'bold',
           'italic',
+          'underline',
           '|',
           'link',
           'insertTable',
@@ -118,6 +136,16 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
           Paragraph,
           Table,
           Undo,
+          Autoformat,
+          FontColor,
+          FontFamily,
+          FontSize,
+          HorizontalLine,
+          TableCellProperties,
+          TableColumnResize,
+          TableProperties,
+          TableToolbar,
+          TableCaption,
         ],
         initialData: initialContent || '',
       };

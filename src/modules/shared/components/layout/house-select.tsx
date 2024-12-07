@@ -30,13 +30,14 @@ export function HouseSelect() {
 
   const houses = user?.houses || [];
 
-  const onSelectHouse = (house: any) => {
+  const onSelectHouse = async (house: any) => {
     if (selectedHouse?.id === house.id) {
       return;
     }
     setSelectedHouse(house);
-    queryClient.invalidateQueries();
+    await queryClient.invalidateQueries();
     setOpen(false);
+    window.location.reload();
   };
 
   useEffect(() => {

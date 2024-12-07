@@ -1,13 +1,12 @@
 import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import { contractTemplateRepositories } from '@modules/contract-templates/api/contract-template.api';
-import { contractTemplatePath } from '@modules/contract-templates/routes';
+import { renterRepositories } from '@modules/renters/apis/renter.api';
+import { renterPath } from '@modules/renters/routes';
 import {
-  contractTemplateKeys,
-  type ContractTemplateDeleteResponseSchema,
-  type ContractTemplateSchema,
-} from '@modules/contract-templates/schemas/contract-template.schema';
+  renterKeys,
+  type RenterSchema,
+} from '@modules/renters/schema/renter.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
@@ -16,16 +15,7 @@ import {
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
-import { Badge } from '@shared/components/ui/badge';
-import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@shared/components/ui/dialog';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -35,10 +25,10 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
+import { Tag, Tooltip } from 'antd';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import DOMPurify from 'dompurify';
-import { FileEdit, Trash } from 'lucide-react';
+import { Check, FileEdit, KeyRound, Trash, UserRoundX } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -52,7 +42,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'contract',
+    module: 'renter',
     action: 'read',
   });
   if (!authed) {
@@ -84,13 +74,13 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params, 'contract_template', {
+    const searchParams = processSearchParams(params, 'renters', {
       field: 'updatedAt',
       direction: 'desc',
     });
 
     const [err, result] = await to(
-      contractTemplateRepositories.index({ searchParams }),
+      renterRepositories.listByHouse({ searchParams }),
     );
     if (err) {
       return DEFAULT_RETURN_TABLE_DATA;
@@ -99,15 +89,14 @@ export function Element() {
   }, []);
 
   const onDelete = useCallback(
-    async (selectedItems: ContractTemplateSchema[]) => {
-      const [err, _]: AwaitToResult<ContractTemplateDeleteResponseSchema[]> =
-        await to(
-          Promise.all(
-            selectedItems.map((item) =>
-              contractTemplateRepositories.delete({ id: item.id }),
-            ),
+    async (selectedItems: RenterSchema[]) => {
+      const [err, _]: AwaitToResult<any[]> = await to(
+        Promise.all(
+          selectedItems.map((item) =>
+            renterRepositories.delete({ id: item.id }),
           ),
-        );
+        ),
+      );
       if (err) {
         if ('code' in err) {
           toast.error(t(err.code));
@@ -117,9 +106,9 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: contractTemplateKeys.list(queryParams),
+        queryKey: renterKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_contract_template_success'));
+      toast.success(t('ms_delete_renter_success'));
       return;
     },
     [t, queryParams],
@@ -127,8 +116,9 @@ export function Element() {
 
   const onDestroy = useCallback(
     async (id: string) => {
-      const [err, _]: AwaitToResult<ContractTemplateDeleteResponseSchema> =
-        await to(contractTemplateRepositories.delete({ id }));
+      const [err, _]: AwaitToResult<any> = await to(
+        renterRepositories.delete({ id }),
+      );
       if (err) {
         if ('code' in err) {
           toast.error(t(err.code));
@@ -138,24 +128,24 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: contractTemplateKeys.list(queryParams),
+        queryKey: renterKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_contract_template_success'));
-      return;
+      toast.success(t('ms_delete_renter_success'));
+      return _;
     },
     [t, queryParams],
   );
 
   const onCreate = useCallback(() => {
-    navigate(`${contractTemplatePath.root}/${contractTemplatePath.create}`);
+    navigate(`${renterPath.root}/${renterPath.create}`);
   }, [navigate]);
 
   const {
-    data: contractTemplateData,
+    data: renterData,
     isLoading,
     isFetching,
   } = useQuery<any>({
-    queryKey: contractTemplateKeys.list(queryParams),
+    queryKey: renterKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
 
@@ -166,13 +156,13 @@ export function Element() {
     }
   }, [isLoading]);
 
-  const actionColumn: Action<ContractTemplateSchema>[] = [
+  const actionColumn: Action<RenterSchema>[] = [
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<ContractTemplateSchema>) => {
+      onClick: async (row: Row<RenterSchema>) => {
         navigate(
-          `${contractTemplatePath.root}/${contractTemplatePath.edit.replace(':id', row.original.id)}`,
+          `${renterPath.root}/${renterPath.edit.replace(':id', row.original.id)}`,
         );
       },
     },
@@ -180,61 +170,20 @@ export function Element() {
       label: t('bt_delete'),
       icon: <Trash className="mr-2 h-4 w-4" />,
       isDanger: true,
-      onClick: (row: Row<ContractTemplateSchema>) => onDestroy(row.original.id),
+      onClick: (row: Row<RenterSchema>) => onDestroy(row.original.id),
     },
   ];
 
-  const ContentModal = ({ content }: { content: string }) => {
-    const sanitizedContent = DOMPurify.sanitize(content, {
-      ALLOWED_TAGS: [
-        'p',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'span',
-        'br',
-        'strong',
-        'em',
-        'ul',
-        'ol',
-        'li',
-        'table',
-        'tr',
-        'td',
-        'th',
-        'thead',
-        'tbody',
-      ],
-      ALLOWED_ATTR: ['class', 'style'],
-    });
+  const genderToPresetTag = useMemo(
+    () => ({
+      male: 'geekblue',
+      female: 'magenta',
+      other: '',
+    }),
+    [],
+  );
 
-    return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="link" className="p-0 text-left">
-            {t('bt_view_detail')}
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{t('contract_t_content')}</DialogTitle>
-          </DialogHeader>
-          <div className="max-h-[60vh] overflow-y-auto px-4 md:px-0">
-            <div
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-              dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-              className="prose dark:prose-invert max-w-none"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  };
-
-  const columns: ColumnDef<ContractTemplateSchema>[] = [
+  const columns: ColumnDef<RenterSchema>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -255,76 +204,113 @@ export function Element() {
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'renterName',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('contract_t_name')} />
-      ),
-    },
-    {
-      accessorKey: 'isActive',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('contract_t_isActive')}
-        />
+        <DataTableColumnHeader column={column} title={t('renter_name')} />
       ),
       cell: ({ row }) => {
+        const name = row.original.renterName || row.original.name || '';
+        const gender = row.original.gender as 'male' | 'female' | 'other';
+        const genderString = t(`renter_${gender}`);
         return (
-          <Badge variant={row.original.isActive ? 'success' : 'destructive'}>
-            {row.original.isActive
-              ? t('contract_t_isActive_true')
-              : t('contract_t_isActive_false')}
-          </Badge>
+          <p className="flex items-center">
+            {name}{' '}
+            <Tag
+              bordered={false}
+              color={genderToPresetTag[gender]}
+              className="ml-2"
+            >
+              {genderString}
+            </Tag>
+          </p>
+        );
+      },
+    },
+    {
+      accessorKey: 'birthday',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('renter_birthday')} />
+      ),
+      cell: ({ row }) => {
+        const date = row.original.birthday;
+        if (!date) return '';
+        return dayjs(date).format('DD/MM/YYYY');
+      },
+    },
+    {
+      accessorKey: 'renter_temp_reg',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('renter_temp_reg')} />
+      ),
+      cell: ({ row }) => {
+        const isTempReg = row.original.tempReg;
+        return (
+          <Tooltip
+            title={
+              isTempReg ? t('renter_temp_reg_yes') : t('renter_temp_reg_no')
+            }
+            arrow={false}
+            className="ml-5"
+          >
+            {isTempReg ? (
+              <Check className="h-5" />
+            ) : (
+              <UserRoundX className="h-5" />
+            )}
+          </Tooltip>
+        );
+      },
+    },
+    {
+      accessorKey: 'floorName',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('renter_floor')} />
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: 'roomName',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('renter_room')} />
+      ),
+      cell: ({ row }) => {
+        const isRepresent = row.original.represent;
+        const roomName = row.original.roomName || '';
+        return (
+          <p className="flex items-center">
+            {roomName}{' '}
+            {isRepresent ? (
+              <Tooltip title={t('renter_represent')} arrow={false}>
+                <KeyRound className="h-3" />
+              </Tooltip>
+            ) : null}
+          </p>
         );
       },
       enableSorting: true,
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: 'phoneNumber',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('contract_t_created_at')}
+          title={t('renter_phone_number')}
         />
       ),
-      cell: ({ row }) => {
-        return dayjs(row.original.createdAt).format('DD/MM/YYYY');
-      },
-      enableSorting: true,
     },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: 'moveInDate',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('contract_t_updated_at')}
+          title={t('renter_move_in_date')}
         />
       ),
       cell: ({ row }) => {
-        return dayjs(row.original.updatedAt).format('DD/MM/YYYY');
+        const date = row.original.moveInDate;
+        if (!date) return '';
+        return dayjs(date).format('DD/MM/YYYY');
       },
-      enableSorting: true,
-    },
-    {
-      accessorKey: 'content',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('contract_t_content')}
-        />
-      ),
-      cell: ({ row }) => {
-        return <ContentModal content={row.original.content} />;
-      },
-    },
-    {
-      id: 'actions',
-      header: () => null,
-      cell: ({ row }) => (
-        <DataTableRowActions row={row} actions={actionColumn} />
-      ),
-      enableSorting: false,
-      enableHiding: false,
     },
     {
       id: 'actions',
@@ -337,20 +323,20 @@ export function Element() {
     },
   ];
 
-  const filterFields: DataTableFilterField<ContractTemplateSchema>[] = [
+  const filterFields: DataTableFilterField<RenterSchema>[] = [
     {
-      label: t('contract_t_name'),
-      value: 'name',
+      label: t('renter_name'),
+      value: 'renterName',
       placeholder: t('common_ph_input', {
-        field: t('contract_t_name').toLowerCase(),
+        field: t('renter_name').toLowerCase(),
       }),
     },
   ];
 
   const { table } = useDataTable({
-    data: contractTemplateData?.results || [],
+    data: renterData?.results || [],
     columns,
-    pageCount: contractTemplateData?.pageCount || 0,
+    pageCount: renterData?.pageCount || 0,
     filterFields,
     initialState: {
       columnPinning: { right: ['actions'], left: ['select', 'name'] },
@@ -359,7 +345,7 @@ export function Element() {
   });
 
   return (
-    <ContentLayout title={t('contract_t_index_title')} pathname={pathname}>
+    <ContentLayout title={t('equipment_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
@@ -377,7 +363,7 @@ export function Element() {
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          moduleName="contract"
+          moduleName="renter"
         />
       )}
     </ContentLayout>
