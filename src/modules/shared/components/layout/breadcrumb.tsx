@@ -4,8 +4,10 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbSeparator,
 } from '@shared/components/ui/breadcrumbs';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { Home } from 'lucide-react'; // Add this import
 import type React from 'react';
 import { Link } from 'react-aria-components';
 
@@ -17,36 +19,47 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
   const [t] = useI18n();
 
   const getBreadcrumbs = (path: string) => {
-    const parts = path.split('/').filter(Boolean);
+    const segments = path === '/' ? [''] : path.split('/').filter(Boolean);
     const breadcrumbs = [];
+    let currentConfig = breadcrumbConfig;
     let currentPath = '';
 
-    if (parts.length === 0) {
-      breadcrumbs.push({
-        path: currentPath,
-        label: t(breadcrumbConfig['/'].label),
-        isLast: true,
-      });
-    }
+    for (const segment of segments) {
+      let matchedSegment = Object.keys(currentConfig).find(
+        (key) => key === `/${segment}`,
+      );
 
-    for (let i = 0; i < parts.length; i++) {
-      currentPath += `/${parts[i]}`;
-      let configKey = currentPath;
+      if (!matchedSegment) {
+        matchedSegment = Object.keys(currentConfig).find((key) => {
+          if (!key.startsWith('/:')) return false;
 
-      // Check if the current part is likely a dynamic segment (e.g., an ID)
-      if (/^\d+$/.test(parts[i])) {
-        configKey = currentPath.replace(/\/\d+/, '/:id');
-      }
+          const remainingConfigPath = key.split('/').slice(2).join('/');
+          const remainingCurrentPath = segments
+            .slice(segments.indexOf(segment) + 1)
+            .join('/');
 
-      const config = breadcrumbConfig[configKey];
-
-      if (config) {
-        breadcrumbs.push({
-          path: currentPath,
-          label: t(config.label),
-          isLast: i === parts.length - 1,
+          return remainingConfigPath === remainingCurrentPath;
         });
       }
+
+      if (!matchedSegment && segment !== '') {
+        break;
+      }
+
+      const actualPath = matchedSegment || '';
+      currentPath += actualPath.replace(/\/:(\w+)/g, `/${segment}`);
+      const { label, children } = currentConfig[actualPath];
+      breadcrumbs.push({
+        path: currentPath || '/',
+        label: t(label),
+        isLast: false,
+      });
+
+      currentConfig = children || {};
+    }
+
+    if (breadcrumbs.length > 0) {
+      breadcrumbs[breadcrumbs.length - 1].isLast = true;
     }
 
     return breadcrumbs;
@@ -57,13 +70,26 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ pathname }) => {
   return (
     <Breadcrumb>
       <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href="/" className="flex items-center">
+              <Home className="h-4 w-4" />
+              {breadcrumbs?.length > 0 && (
+                <BreadcrumbSeparator className="mt-0.5 ml-2" />
+              )}
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
         {breadcrumbs.map((crumb, _) => (
           <BreadcrumbItem key={crumb.path}>
             <BreadcrumbLink asChild>
               {crumb.isLast ? (
-                <span>{crumb.label}</span>
+                <b>{crumb.label}</b>
               ) : (
-                <Link href={crumb.path}>{crumb.label}</Link>
+                <Link href={crumb.path} className="flex items-center">
+                  {crumb.label}
+                  <BreadcrumbSeparator className="mt-0.5 ml-2" />
+                </Link>
               )}
             </BreadcrumbLink>
           </BreadcrumbItem>

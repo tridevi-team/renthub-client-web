@@ -1,114 +1,65 @@
-import { Button } from '@shared/components/ui/button';
-import { Popover } from '@shared/components/ui/popover';
-import { Icon } from '@iconify/react';
-import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
+import { format } from 'date-fns';
+import { useEffect, useRef, useState } from 'react';
+
+import { Calendar } from '@shared/components/ui/calendar';
+import { Input } from '@shared/components/ui/input';
 import {
-  DatePicker,
-  DateRangePicker,
-  Dialog,
-  Group,
-  type DateRangePickerProps,
-  type DateValue,
-  type DialogProps,
-  type GroupProps,
-  type PopoverProps,
-} from 'react-aria-components';
-import { twMerge } from 'tailwind-merge';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@shared/components/ui/popover';
+import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { vi } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
 
-const _DatePicker = DatePicker;
+export default function DatePicker({
+  value,
+  onChange,
+}: {
+  value?: Date;
+  onChange?: (date?: Date) => void;
+}) {
+  const [t] = useI18n();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputWidth, setInputWidth] = useState<number>(0);
 
-const _DateRangePicker = DateRangePicker;
-
-export interface _DatePickerButtonProps extends GroupProps {
-  date?: DateValue;
-}
-
-const _DatePickerButton = ({ date, ...props }: _DatePickerButtonProps) => (
-  <Group {...props}>
-    <Button
-      variant="outline"
-      className={twMerge(
-        'w-[280px] justify-start text-left font-normal',
-        !date && 'text-muted-foreground',
-      )}
-    >
-      <Icon icon="lucide:calendar" className="mr-2 h-4 w-4" />
-
-      {date ? (
-        new DateFormatter(getLocalTimeZone(), { dateStyle: 'long' }).format(
-          date.toDate(getLocalTimeZone()),
-        )
-      ) : (
-        <span>Pick a date</span>
-      )}
-    </Button>
-  </Group>
-);
-
-export interface _DateRangePickerButtonProps extends GroupProps {
-  date?: DateRangePickerProps<DateValue>['value'];
-}
-
-const _DateRangePickerButton = ({
-  date,
-  ...props
-}: _DateRangePickerButtonProps) => (
-  <Group {...props}>
-    <Button
-      variant="outline"
-      className={twMerge(
-        'w-[280px] justify-start text-left font-normal',
-        !date && 'text-muted-foreground',
-      )}
-    >
-      <Icon icon="lucide:calendar" className="mr-2 h-4 w-4" />
-
-      {date?.end ? (
-        <>
-          {`${new DateFormatter(getLocalTimeZone(), {
-            dateStyle: 'medium',
-          }).format(
-            date.start.toDate(getLocalTimeZone()),
-          )} - ${new DateFormatter(getLocalTimeZone(), {
-            dateStyle: 'medium',
-          }).format(date.end.toDate(getLocalTimeZone()))}`}
-        </>
-      ) : (
-        <span>Pick a date</span>
-      )}
-    </Button>
-  </Group>
-);
-
-const _DatePickerContent = ({
-  className,
-  popoverClassName,
-  ...props
-}: DialogProps & { popoverClassName?: PopoverProps['className'] }) => (
-  <Popover
-    className={(values) =>
-      twMerge(
-        'w-auto p-3',
-        typeof popoverClassName === 'function'
-          ? popoverClassName(values)
-          : popoverClassName,
-      )
+  useEffect(() => {
+    if (inputRef.current) {
+      setInputWidth(inputRef.current.offsetWidth);
     }
-  >
-    <Dialog
-      className={twMerge(
-        'flex w-full flex-col space-y-4 outline-none sm:flex-row sm:space-x-4 sm:space-y-0',
-        className,
-      )}
-      {...props}
-    />
-  </Popover>
-);
+  }, []);
 
-export {
-  _DatePicker as DatePicker,
-  _DatePickerButton as DatePickerButton,
-  _DatePickerContent as DatePickerContent,
-  _DateRangePicker as DateRangePicker,
-  _DateRangePickerButton as DateRangePickerButton,
-};
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Input
+          readOnly
+          className="cursor-pointer text-left"
+          prefixElement={<CalendarIcon className="mr-2 h-4 w-4" />}
+          value={
+            value
+              ? format(value, 'P', {
+                  locale: vi,
+                })
+              : ''
+          }
+          placeholder={t('ph_select_date')}
+          ref={inputRef}
+        />
+      </PopoverTrigger>
+      <PopoverContent
+        className="p-0"
+        align="start"
+        style={{ width: inputWidth }}
+      >
+        <Calendar
+          mode="single"
+          selected={value}
+          defaultMonth={value}
+          onSelect={onChange}
+          autoFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}

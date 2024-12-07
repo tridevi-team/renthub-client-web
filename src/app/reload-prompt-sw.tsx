@@ -42,20 +42,25 @@ export function ReloadPromptSw() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (offlineReady || needRefresh) {
-      toast(offlineReady ? t('appReady') : t('newContentAvailable'), {
-        closeButton: true,
-        duration: 60 * 1_000,
-        onDismiss: () => {
-          setOfflineReady(false);
-          setNeedRefresh(false);
-        },
-        ...(needRefresh && {
-          action: {
-            label: t('reload'),
-            onClick: () => updateServiceWorker(true),
+      toast(
+        offlineReady
+          ? t('common_app_ready')
+          : t('common_new_content_available'),
+        {
+          closeButton: true,
+          duration: 60 * 1_000,
+          onDismiss: () => {
+            setOfflineReady(false);
+            setNeedRefresh(false);
           },
-        }),
-      });
+          ...(needRefresh && {
+            action: {
+              label: t('common_reload'),
+              onClick: () => updateServiceWorker(true),
+            },
+          }),
+        },
+      );
     }
   }, [offlineReady, needRefresh]);
 

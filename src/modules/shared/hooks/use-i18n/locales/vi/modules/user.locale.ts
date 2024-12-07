@@ -1,4 +1,8 @@
 export const userLocale = {
+  // #region TITLE + META
+  user_index_title: 'Danh sách tài khoản',
+  // #endregion TITLE + META
+
   // #region FORM + TABLE
   user_username: 'Tên đăng nhập',
   user_fullname: 'Họ và tên',
@@ -9,8 +13,12 @@ export const userLocale = {
   user_role: 'Vai trò',
   user_status: 'Trạng thái',
   // #endregion FORM + TABLE
-
+  user_male: 'Nam',
+  user_female: 'Nữ',
+  user_assign_role_title: 'Phân quyền cho tài khoản',
+  user_assign_account: 'Tài khoản',
   // #region BUTTON
+  user_assign_role: 'Phân quyền',
 
   // #endregion BUTTON
 

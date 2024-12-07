@@ -1,14 +1,24 @@
+import * as LabelPrimitive from '@radix-ui/react-label';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Label, type LabelProps } from 'react-aria-components';
-import { twMerge } from 'tailwind-merge';
+import * as React from 'react';
+
+import { cn } from '@app/lib/utils';
 
 const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-70',
-);
-export type LabelVariantProps = VariantProps<typeof labelVariants>;
-
-const _Label = ({ className, ...props }: LabelProps) => (
-  <Label className={twMerge(labelVariants(), className)} {...props} />
+  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
 );
 
-export { _Label as Label, labelVariants };
+const Label = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+    VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <LabelPrimitive.Root
+    ref={ref}
+    className={cn(labelVariants(), className)}
+    {...props}
+  />
+));
+Label.displayName = LabelPrimitive.Root.displayName;
+
+export { Label };

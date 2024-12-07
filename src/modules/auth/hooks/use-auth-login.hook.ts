@@ -1,8 +1,5 @@
-import {
-  authKeys,
-  authRepositories,
-  type AuthLoginRequestSchema,
-} from '@auth/apis/auth.api';
+import { authKeys, authRepositories } from '@auth/apis/auth.api';
+import type { AuthLoginRequestSchema } from '@modules/auth/schemas/login.schema';
 import type { ErrorResponseSchema } from '@shared/schemas/api.schema';
 import {
   useMutation,

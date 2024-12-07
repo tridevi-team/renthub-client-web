@@ -1,5 +1,20 @@
 import type { ReactNode } from 'react';
 
+/**
+ * A simple component to map over an array and render a list of items.
+ * @param props.each The array to map over.
+ * @param props.children The render function.
+ * @param props.fallback The fallback to render when the array is empty.
+ * @example
+ * ```tsx
+ * <For each={items} fallback={<p>No items found</p>}>
+ *  {(item, index) => (
+ *   <div key={index}>{item}</div>
+ * )}
+ * </For>
+ * ```
+ */
+
 interface Props<T> {
   each: T[];
   children: (item: T, index: number) => ReactNode;

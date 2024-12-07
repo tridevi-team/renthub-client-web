@@ -15,12 +15,17 @@ export function ContentLayout({
 }: ContentLayoutProps) {
   return (
     <div>
-      <Navbar title={title} />
-      <div className="pt-8 pb-8 px-4 sm:px-8 2xl:px-10">
-        <div className="flex justify-end">
-          <Breadcrumbs pathname={pathname} />
+      <Navbar />
+      <div className="h-[20vh] bg-gradient-to-r from-[#2A519D] via-teal-600/50 to-emerald-200/25">
+        <div className="overflow-hidden px-4 py-4 sm:px-8 2xl:px-10">
+          <div className="flex items-center justify-between">
+            <p className="font-semibold text-white text-xl">
+              {title?.toUpperCase()}
+            </p>
+            <Breadcrumbs pathname={pathname} />
+          </div>
+          <ContentArea>{children}</ContentArea>
         </div>
-        <ContentArea>{children}</ContentArea>
       </div>
     </div>
   );

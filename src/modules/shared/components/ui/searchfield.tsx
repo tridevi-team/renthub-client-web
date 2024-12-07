@@ -13,7 +13,7 @@ function SearchFieldInput({ className, ...props }: InputProps) {
     <Input
       className={(values) =>
         twMerge(
-          'min-w-0  flex-1 bg-background px-2 py-1.5 outline outline-0 [&::-webkit-search-cancel-button]:hidden',
+          'min-w-0 flex-1 bg-background px-2 py-1.5 outline outline-0 [&::-webkit-search-cancel-button]:hidden',
           typeof className === 'function' ? className(values) : className,
         )
       }
@@ -27,7 +27,7 @@ function SearchField({ className, ...props }: SearchFieldProps) {
     <_SearchField
       className={(values) =>
         twMerge(
-          'group flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 group-data-[disabled]:opacity-50',
+          'group flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-1 focus-within:ring-ring focus-within:ring-offset-0 group-data-[disabled]:opacity-50',
           typeof className === 'function' ? className(values) : className,
         )
       }

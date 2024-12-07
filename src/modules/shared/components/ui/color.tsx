@@ -123,7 +123,7 @@ function ColorSwatchPickerItem({
     <_ColorSwatchPickerItem
       className={(values) =>
         twMerge(
-          'size-8 overflow-hidden rounded-md border-2 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring  data-[disabled]:pointer-events-none data-[selected]:border-white data-[disabled]:opacity-50',
+          'size-8 overflow-hidden rounded-md border-2 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[disabled]:pointer-events-none data-[selected]:border-white data-[disabled]:opacity-50',
           typeof className === 'function' ? className(values) : className,
         )
       }

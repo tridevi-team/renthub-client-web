@@ -16,7 +16,7 @@ i18next.init({
     },
   },
 });
-z.setErrorMap(makeZodI18nMap({ ns: ['custom'] }));
+z.setErrorMap(makeZodI18nMap({ ns: ['zod', 'custom'] }));
 
 // export configured zod instance
 export { z };

@@ -1,109 +1,109 @@
 {
   "errors": {
-    "invalid_type": "Expected {{expected}}, received {{received}}",
-    "invalid_type_received_undefined": "Required",
-    "invalid_type_received_null": "Required",
-    "invalid_literal": "Invalid literal value, expected {{expected}}",
-    "unrecognized_keys": "Unrecognized key(s) in object: {{- keys}}",
-    "invalid_union": "Invalid input",
-    "invalid_union_discriminator": "Invalid discriminator value. Expected {{- options}}",
-    "invalid_enum_value": "Invalid enum value. Expected {{- options}}, received '{{received}}'",
-    "invalid_arguments": "Invalid function arguments",
-    "invalid_return_type": "Invalid function return type",
-    "invalid_date": "Invalid date",
-    "custom": "Invalid input",
-    "invalid_intersection_types": "Intersection results could not be merged",
-    "not_multiple_of": "Number must be a multiple of {{multipleOf}}",
-    "not_finite": "Number must be finite",
+    "invalid_type": "Mong đợi {{expected}}, nhận được {{received}}",
+    "invalid_type_received_undefined": "Bắt buộc",
+    "invalid_type_received_null": "Bắt buộc",
+    "invalid_literal": "Giá trị không hợp lệ, mong đợi {{expected}}",
+    "unrecognized_keys": "Không nhận ra (các) khóa trong đối tượng: {{- keys}}",
+    "invalid_union": "Đầu vào không hợp lệ",
+    "invalid_union_discriminator": "Giá trị phân biệt không hợp lệ. Mong đợi {{- options}}",
+    "invalid_enum_value": "Giá trị enum không hợp lệ. Mong đợi {{- options}}, nhận được '{{received}}'",
+    "invalid_arguments": "Đối số hàm không hợp lệ",
+    "invalid_return_type": "Kiểu trả về của hàm không hợp lệ",
+    "invalid_date": "Ngày không hợp lệ",
+    "custom": "Đầu vào không hợp lệ",
+    "invalid_intersection_types": "Không thể kết hợp các kết quả giao nhau",
+    "not_multiple_of": "Số phải là bội số của {{multipleOf}}",
+    "not_finite": "Số phải là hữu hạn",
     "invalid_string": {
-      "email": "Invalid {{validation}}",
-      "url": "Invalid {{validation}}",
-      "uuid": "Invalid {{validation}}",
-      "cuid": "Invalid {{validation}}",
-      "regex": "Invalid",
-      "datetime": "Invalid {{validation}}",
-      "startsWith": "Invalid input: must start with \"{{startsWith}}\"",
-      "endsWith": "Invalid input: must end with \"{{endsWith}}\""
+      "email": "{{validation}} không hợp lệ",
+      "url": "{{validation}} không hợp lệ",
+      "uuid": "{{validation}} không hợp lệ",
+      "cuid": "{{validation}} không hợp lệ",
+      "regex": "Không hợp lệ",
+      "datetime": "{{validation}} không hợp lệ",
+      "startsWith": "Đầu vào không hợp lệ: phải bắt đầu bằng \"{{startsWith}}\"",
+      "endsWith": "Đầu vào không hợp lệ: phải kết thúc bằng \"{{endsWith}}\""
     },
     "too_small": {
       "array": {
-        "exact": "Array must contain exactly {{minimum}} element(s)",
-        "inclusive": "Array must contain at least {{minimum}} element(s)",
-        "not_inclusive": "Array must contain more than {{minimum}} element(s)"
+        "exact": "Mảng phải chứa đúng {{minimum}} phần tử",
+        "inclusive": "Mảng phải chứa ít nhất {{minimum}} phần tử",
+        "not_inclusive": "Mảng phải chứa nhiều hơn {{minimum}} phần tử"
       },
       "string": {
-        "exact": "String must contain exactly {{minimum}} character(s)",
-        "inclusive": "String must contain at least {{minimum}} character(s)",
-        "not_inclusive": "String must contain over {{minimum}} character(s)"
+        "exact": "Chuỗ phải dài đúng {{minimum}} ký tự",
+        "inclusive": "Chuỗi cần dài ít nhất {{minimum}} ký tự",
+        "not_inclusive": "Chuỗi phải dài hơn {{minimum}} ký tự"
       },
       "number": {
-        "exact": "Number must be exactly {{minimum}}",
-        "inclusive": "Number must be greater than or equal to {{minimum}}",
-        "not_inclusive": "Number must be greater than {{minimum}}"
+        "exact": "Số phải đúng bằng {{minimum}}",
+        "inclusive": "Số phải lớn hơn hoặc bằng {{minimum}}",
+        "not_inclusive": "Số phải lớn hơn {{minimum}}"
       },
       "set": {
-        "exact": "Invalid input",
-        "inclusive": "Invalid input",
-        "not_inclusive": "Invalid input"
+        "exact": "Đầu vào không hợp lệ",
+        "inclusive": "Đầu vào không hợp lệ",
+        "not_inclusive": "Đầu vào không hợp lệ"
       },
       "date": {
-        "exact": "Date must be exactly {{- minimum, datetime}}",
-        "inclusive": "Date must be greater than or equal to {{- minimum, datetime}}",
-        "not_inclusive": "Date must be greater than {{- minimum, datetime}}"
+        "exact": "Ngày phải đúng bằng {{- minimum, datetime}}",
+        "inclusive": "Ngày phải lớn hơn hoặc bằng {{- minimum, datetime}}",
+        "not_inclusive": "Ngày phải lớn hơn {{- minimum, datetime}}"
       }
     },
     "too_big": {
       "array": {
-        "exact": "Array must contain exactly {{maximum}} element(s)",
-        "inclusive": "Array must contain at most {{maximum}} element(s)",
-        "not_inclusive": "Array must contain less than {{maximum}} element(s)"
+        "exact": "Mảng phải chứa đúng {{maximum}} phần tử",
+        "inclusive": "Mảng phải chứa nhiều nhất {{maximum}} phần tử",
+        "not_inclusive": "Mảng phải chứa ít hơn {{maximum}} phần tử"
       },
       "string": {
-        "exact": "String must contain exactly {{maximum}} character(s)",
-        "inclusive": "String must contain at most {{maximum}} character(s)",
-        "not_inclusive": "String must contain under {{maximum}} character(s)"
+        "exact": "Chuỗi phải dài đúng {{maximum}} ký tự",
+        "inclusive": "Chuỗi không được dài hơn {{maximum}} ký tự",
+        "not_inclusive": "Chuỗi phải dài hơn {{maximum}} ký tự"
       },
       "number": {
-        "exact": "Number must be exactly {{maximum}}",
-        "inclusive": "Number must be less than or equal to {{maximum}}",
-        "not_inclusive": "Number must be less than {{maximum}}"
+        "exact": "Số phải đúng bằng {{maximum}}",
+        "inclusive": "Số phải nhỏ hơn hoặc bằng {{maximum}}",
+        "not_inclusive": "Số phải nhỏ hơn {{maximum}}"
       },
       "set": {
-        "exact": "Invalid input",
-        "inclusive": "Invalid input",
-        "not_inclusive": "Invalid input"
+        "exact": "Đầu vào không hợp lệ",
+        "inclusive": "Đầu vào không hợp lệ",
+        "not_inclusive": "Đầu vào không hợp lệ"
       },
       "date": {
-        "exact": "Date must be exactly {{- maximum, datetime}}",
-        "inclusive": "Date must be smaller than or equal to {{- maximum, datetime}}",
-        "not_inclusive": "Date must be smaller than {{- maximum, datetime}}"
+        "exact": "Ngày phải đúng bằng {{- maximum, datetime}}",
+        "inclusive": "Ngày phải nhỏ hơn hoặc bằng {{- maximum, datetime}}",
+        "not_inclusive": "Ngày phải nhỏ hơn {{- maximum, datetime}}"
       }
     }
   },
   "validations": {
-    "email": "email",
-    "url": "url",
-    "uuid": "uuid",
-    "cuid": "cuid",
-    "regex": "regex",
-    "datetime": "datetime"
+    "email": "Email",
+    "url": "Url",
+    "uuid": "Uuid",
+    "cuid": "Cuid",
+    "regex": "Regex",
+    "datetime": "Ngày giờ"
   },
   "types": {
-    "function": "function",
-    "number": "number",
-    "string": "string",
-    "nan": "nan",
-    "integer": "integer",
-    "float": "float",
+    "function": "hàm",
+    "number": "số",
+    "string": "chuỗi",
+    "nan": "NaN",
+    "integer": "số nguyên",
+    "float": "số thực",
     "boolean": "boolean",
-    "date": "date",
-    "bigint": "bigint",
-    "undefined": "undefined",
-    "symbol": "symbol",
+    "date": "ngày",
+    "bigint": "số nguyên lớn",
+    "undefined": "không xác định",
+    "symbol": "ký hiệu",
     "null": "null",
-    "array": "array",
-    "object": "object",
-    "unknown": "unknown",
+    "array": "mảng",
+    "object": "đối tượng",
+    "unknown": "không xác định",
     "promise": "promise",
     "void": "void",
     "never": "never",

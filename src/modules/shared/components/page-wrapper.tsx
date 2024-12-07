@@ -1,3 +1,5 @@
+import AdminPanelLayout from '@shared/components/layout/admin-panel-layout';
+import { TailwindIndicator } from '@shared/components/tailwind-indicator';
 import { RouterProvider as RACRouterProvider } from 'react-aria-components';
 import {
   Outlet,
@@ -5,7 +7,6 @@ import {
   useNavigate,
   type NavigateOptions,
 } from 'react-router-dom';
-import AdminPanelLayout from './layout/admin-panel-layout';
 
 declare module 'react-aria-components' {
   interface RouterConfig {
@@ -26,6 +27,7 @@ export function PageWrapper() {
     <RACRouterProvider navigate={navigate} useHref={useHref}>
       <AdminPanelLayout>
         <Outlet />
+        <TailwindIndicator />
       </AdminPanelLayout>
     </RACRouterProvider>
   );
