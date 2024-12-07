@@ -104,6 +104,7 @@
     "dayjs": "^1.11.12",
     "depcheck": "^1.4.7",
     "dompurify": "^3.2.2",
+    "firebase": "^11.0.2",
     "fs": "^0.0.1-security",
     "html-to-docx": "^1.8.0",
     "html-to-image": "^1.11.11",
