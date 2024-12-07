@@ -144,20 +144,20 @@ export function getMenuList(pathname: string): Group[] {
           icon: BarChart2,
           submenus: [
             {
-              href: '/stats-contracts',
-              label: 'Hợp đồng',
-              active: pathname.includes('/stats-contracts'),
+              href: '/stats-bills',
+              label: 'Hóa đơn',
+              active: pathname.includes('/stats-bills'),
             },
-            {
-              href: '/stats-renters',
-              label: 'Khách thuê',
-              active: pathname.includes('/stats-renters'),
-            },
-            {
-              href: '/stats-equipments',
-              label: 'Thiết bị',
-              active: pathname.includes('/stats-equipments'),
-            },
+            // {
+            //   href: '/stats-contracts',
+            //   label: 'Hợp đồng',
+            //   active: pathname.includes('/stats-contracts'),
+            // },
+            // {
+            //   href: '/stats-equipments',
+            //   label: 'Thiết bị',
+            //   active: pathname.includes('/stats-equipments'),
+            // },
           ],
         },
       ],
