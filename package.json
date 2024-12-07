@@ -48,7 +48,7 @@
     "start:sw-reloadsw": "run-s bun build:sw-reloadsw serve",
     "start:sw-claims": "run-s bun build:sw-claims serve",
     "start:sw-reloadsw-claims": "run-s bun build:sw-reloadsw-claims serve",
-    "start:destroy": "run-s bun build:destroy serve",
+    "start:destroy": "run-s build:destroy serve",
     "start:reloadsw-destroy": "run-s bun build:reloadsw-destroy serve",
     "start:claims-destroy": "run-s bun build:claims-destroy serve",
     "start:reloadsw-claims-destroy": "run-s bun build:reloadsw-claims-destroy serve",
@@ -57,7 +57,7 @@
     "start:sw-claims-destroy": "run-s bun build:sw-claims-destroy serve",
     "start:sw-reloadsw-claims-destroy": "run-s build:sw-reloadsw-claims-destroy serve",
     "preview": "vite preview",
-    "build-and-preview": "run-s build:sw preview",
+    "build-and-preview": "run-s build preview",
     "create:locale": "tsx scripts/create-locale.ts"
   },
   "dependencies": {
