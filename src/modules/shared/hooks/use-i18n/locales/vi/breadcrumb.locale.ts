@@ -55,4 +55,6 @@ export const breadcrumbLocale = {
   br_issues_process: 'Xử lý phản ánh',
 
   br_settings: 'Cài đặt',
+
+  br_stats_bill: 'Thống kê hóa đơn',
 } as const;
