@@ -46,6 +46,7 @@ export const appUserStoreSchema = z
     status: z.number(),
     verify: z.number(),
     accessToken: z.string(),
+    refreshToken: z.string().nullable(),
     houses: z.array(houseInStoreSchema),
   })
   .nullable();

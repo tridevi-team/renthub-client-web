@@ -1,5 +1,6 @@
 import { navigate } from '@app/providers/router/navigation';
 import type { QueryOptions } from '@app/types';
+import { authRepositories } from '@modules/auth/apis/auth.api';
 import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { errorResponseSchema } from '@modules/shared/schemas/api.schema';
 import { env } from '@shared/constants/env.constant';
@@ -74,8 +75,31 @@ export const http = new Http({
     afterResponse: [
       async (_request, _options, response) => {
         if (response.status === 401) {
-          useAuthUserStore.getState().clearUser();
-          navigate('/login');
+          try {
+            const refreshToken = await authRepositories.refreshToken();
+            if (!refreshToken) {
+              throw new HTTPError(response, _request, _options);
+            }
+            useAuthUserStore.getState().updateAccessToken(refreshToken);
+
+            const newRequest = _request.clone();
+            newRequest.headers.set('Authorization', `Bearer ${refreshToken}`);
+            const retryResponse = await fetch(newRequest);
+
+            if (!retryResponse.ok) {
+              const errorResponse = await retryResponse.json();
+              const parsedError = errorResponseSchema.safeParse(errorResponse);
+              if (!parsedError.success) {
+                throw new HTTPError(retryResponse, _request, _options);
+              }
+              throw parsedError.data;
+            }
+
+            return retryResponse;
+          } catch {
+            useAuthUserStore.getState().clearUser();
+            navigate('/login');
+          }
         }
 
         if (!response.ok) {
