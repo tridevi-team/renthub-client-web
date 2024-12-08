@@ -1,4 +1,5 @@
 import { useHouseStore } from '@app/stores';
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import { deepReadObject } from '@rifandani/nxact-yutiriti';
 import React from 'react';
 import { extendTailwindMerge } from 'tailwind-merge';
@@ -247,6 +248,10 @@ export const processSearchParams = (
 
 export const getHouseSelected = () => {
   return useHouseStore.getState().data;
+};
+
+export const getUserAppStore = () => {
+  return useAuthUserStore.getState().user;
 };
 
 export const compareFloorNames = (a: string, b: string) => {

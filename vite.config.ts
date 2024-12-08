@@ -84,6 +84,19 @@ export default defineConfig({
   },
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        'firebase-messaging-sw': './src/firebase-messaging-sw.js',
+      },
+      output: {
+        entryFileNames: (chunkInfo) => {
+          return chunkInfo.name === 'firebase-messaging-sw'
+            ? '[name].js' // Output service worker in root
+            : 'assets/[name]-[hash].js'; // Others in `assets/`
+        },
+      },
+    },
   },
   css: {
     postcss: {
