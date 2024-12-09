@@ -15,7 +15,7 @@ export const contractTemplatesLocale = {
   contract_t_isActive_true: 'Đang sử dụng',
   contract_t_isActive_false: 'Ngừng sử dụng',
   contract_t_landlord: 'Thông tin bên cho thuê',
-  contract_t_ll_name: 'Tên bên cho thuê',
+  contract_t_ll_name: 'Họ và tên',
   contract_t_ll_address: 'Địa chỉ',
   contract_t_ll_city: 'Thành phố',
   contract_t_ll_district: 'Quận/Huyện',

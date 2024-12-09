@@ -19,4 +19,7 @@ export const buttonLocale = {
   bt_view_detail: 'Xem chi tiết',
   bt_select_all: 'Chọn tất cả',
   bt_remove_item: 'Xóa mục',
+  bt_next: 'Tiếp theo',
+  bt_previous: 'Trước',
+  bt_finish: 'Hoàn thành',
 } as const;

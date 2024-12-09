@@ -3,10 +3,10 @@ import { RouteErrorBoundary } from '@shared/components/route-error-boundary';
 import type { RouteObject } from 'react-router-dom';
 
 export const contractId = {
-  root: 'contract',
-  index: 'contract:index',
-  create: 'contract:create',
-  edit: 'contract:edit',
+  root: 'contracts',
+  index: 'contracts:index',
+  create: 'contracts:create',
+  edit: 'contracts:edit',
 } as const;
 
 export const contractPath = {
@@ -30,9 +30,24 @@ const contractIndexRoute = {
   },
 } satisfies RouteObject;
 
+const contractCreateRoute = {
+  id: contractId.create,
+  path: contractPath.create,
+  index: true,
+  lazy: async () => {
+    const create = await import('./pages/contract-create.page');
+
+    return {
+      loader: create.loader,
+      element: <create.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} satisfies RouteObject;
+
 export const contractRoute = {
   id: contractId.root,
   path: contractPath.root,
   element: <PageWrapper />,
-  children: [contractIndexRoute],
+  children: [contractIndexRoute, contractCreateRoute],
 } satisfies RouteObject;

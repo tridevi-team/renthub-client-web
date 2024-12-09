@@ -86,6 +86,7 @@ export const messageLocale = {
   ms_create_contract_success: 'Tạo hợp đồng mới thành công',
   ms_update_contract_success: 'Cập nhật hợp đồng thành công',
   ms_delete_contract_success: 'Xóa hợp đồng thành công',
+  ms_select_room_first: 'Vui lòng chọn phòng trước',
   // #endregion
 
   // #region Renter

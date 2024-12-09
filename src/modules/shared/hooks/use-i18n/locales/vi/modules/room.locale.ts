@@ -6,7 +6,7 @@ export const roomLocale = {
   // #endregion TITLE + META
 
   // #region FORM + TABLE
-  room_name: 'Tên phòng',
+  room_name: 'Tên',
   room_floor: 'Tầng',
   room_description: 'Mô tả',
   room_status: 'Trạng thái',
