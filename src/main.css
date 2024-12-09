@@ -116,3 +116,8 @@
 body {
   @apply overflow-y-hidden;
 }
+
+.ck-editor__editable {
+  @apply bg-background text-foreground;
+  min-height: 250px;
+}
