@@ -1,4 +1,6 @@
+import { generateToken, messaging } from '@app/firebase';
 import { cn } from '@app/lib/utils';
+import { notificationRepositories } from '@shared/apis/notification.api';
 import { Button } from '@shared/components/ui/button';
 import {
   Popover,
@@ -7,8 +9,16 @@ import {
 } from '@shared/components/ui/popover';
 import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import to from 'await-to-js';
+import dayjs from 'dayjs';
+import 'dayjs/locale/vi';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { onMessage } from 'firebase/messaging';
 import { Bell } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-aria-components';
+import { toast } from 'sonner';
+dayjs.extend(relativeTime);
 
 interface Notification {
   id: string;
@@ -20,56 +30,73 @@ interface Notification {
 
 export function NotificationPopover() {
   const [t] = useI18n();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const notifications: Notification[] = [
-    {
-      id: '1',
-      title: 'Thanh toán tiền thuê nhà tháng 11',
-      description: 'Vui lòng thanh toán tiền thuê nhà trước ngày 05/11/2023',
-      time: '5 phút trước',
-      read: false,
-    },
-    {
-      id: '2',
-      title: 'Thông báo bảo trì điện nước',
-      description:
-        'Chúng tôi sẽ bảo trì hệ thống điện nước vào ngày 02/11/2023',
-      time: '1 giờ trước',
-      read: true,
-    },
-    {
-      id: '3',
-      title: 'Yêu cầu sửa chữa đã được xác nhận',
-      description: 'Yêu cầu sửa chữa máy lạnh của bạn đã được chấp nhận',
-      time: '2 giờ trước',
-      read: false,
-    },
-    {
-      id: '4',
-      title: 'Nhắc nhở đóng cửa ra vào',
-      description: 'Vui lòng đóng cửa ra vào sau 22h để đảm bảo an ninh',
-      time: '1 ngày trước',
-      read: true,
-    },
-    {
-      id: '5',
-      title: 'Hóa đơn điện tháng 10',
-      description: 'Hóa đơn điện tháng 10 của bạn đã được cập nhật',
-      time: '2 ngày trước',
-      read: true,
-    },
-    {
-      id: '6',
-      title: 'Thông báo vệ sinh chung cư',
-      description: 'Lịch vệ sinh chung cư định kỳ vào Chủ nhật tuần này',
-      time: '3 ngày trước',
-      read: false,
-    },
-  ];
+  const fetchNotifications = async () => {
+    const [err, resp]: any[] = await to(
+      notificationRepositories.list({
+        searchParams: {
+          page: 1,
+          pageSize: 20,
+          sorting: [{ field: 'createdAt', direction: 'desc' }],
+        },
+      }),
+    );
+    if (err) return;
+    const data = resp?.data?.results || [];
+    const mappedData = data.map((item: any) => {
+      const { title, content, createdAt, status } = item;
+      return {
+        id: item.id,
+        title,
+        description: content,
+        time:
+          dayjs().diff(dayjs(createdAt), 'day') < 1
+            ? dayjs(createdAt).locale('vi').fromNow()
+            : dayjs(createdAt).locale('vi').toNow(),
+        read: status === 'read',
+      };
+    });
+    setNotifications(mappedData);
+    setUnreadCount(
+      (mappedData || []).filter((n: Notification) => !n.read).length,
+    );
+  };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const handleOnNewNotification = ({
+    title,
+    body,
+  }: { title: string; body?: string }) => {
+    toast.info(title, {
+      description: body ?? '',
+      important: true,
+      duration: 10000,
+    });
+    fetchNotifications();
+  };
 
-  const handleMarkAllAsRead = () => {};
+  const handleMarkAllAsRead = async () => {
+    setNotifications((prev) =>
+      prev.map((n) => ({
+        ...n,
+        read: true,
+      })),
+    );
+    const ids = (notifications || []).map((n) => n.id);
+    const [err] = await to(notificationRepositories.updateStatus({ ids }));
+    if (err) return;
+    setUnreadCount(0);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    generateToken();
+    onMessage(messaging, (payload) => {
+      const { title, body } = payload.notification ?? {};
+      if (title) handleOnNewNotification({ title, body });
+    });
+  }, []);
 
   return (
     <Popover>

@@ -46,4 +46,5 @@ export const commonLocale = {
   common_file_type_not_supported: 'Loại tập tin không được hỗ trợ',
   common_upload_image: 'Tải ảnh lên',
   common_count_uploaded_image: '{count} ảnh đã được tải lên',
+  common_no: 'Không',
 } as const;

@@ -1,39 +1,42 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
-import { getMessaging, getToken } from "firebase/messaging";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { env } from '@shared/constants/env.constant';
+import { getUserAppStore } from '@shared/utils/helper.util';
+import { getFingerprint } from '@thumbmarkjs/thumbmarkjs';
+import { initializeApp } from 'firebase/app';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import { getMessaging, getToken } from 'firebase/messaging';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-
+  apiKey: env.firebaseApiKey,
+  authDomain: env.firebaseAuthDomain,
+  projectId: env.firebaseProjectId,
+  storageBucket: env.firebaseStorageBucket,
+  messagingSenderId: env.firebaseMessagingSenderId,
+  appId: env.firebaseAppId,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-
 export const messaging = getMessaging(app);
 
 export const generateToken = async () => {
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-        console.error("Notification permission not granted.");
-        return null;
-    }
-    try {
-        const token = await getToken(messaging, {
-            vapidKey: "...",
-        });
-        console.log("FCM Token:", token);
-        const tokenRef = doc(db, "users", "<userId>", "devices", Math.random().toString(36).substring(7));
-        await setDoc(tokenRef, { FCM: token }, {merge: true});
-        return token;
-    } catch (error) {
-        console.error("Error retrieving FCM token:", error);
-    }
+  const permission = await Notification.requestPermission();
+  if (permission !== 'granted') {
+    console.error('Notification permission not granted.');
+    return null;
+  }
+  const userId = getUserAppStore()?.id;
+  if (!userId) return null;
+  const deviceId = await getFingerprint();
+  try {
+    const token = await getToken(messaging, {
+      vapidKey: env.firebaseVapidKey,
+    });
+    const tokenRef = doc(db, 'users', userId, 'devices', deviceId);
+    await setDoc(tokenRef, { FCM: token }, { merge: true });
+    return token;
+  } catch (error) {
+    console.error('Error retrieving FCM token:', error);
+  }
 };

@@ -126,9 +126,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes('/contracts'),
             },
             {
-              href: '/feedback',
+              href: '/issues',
               label: 'Quản lý Phản ánh',
-              active: pathname.includes('/feedback'),
+              active: pathname.includes('/issues'),
             },
           ],
         },

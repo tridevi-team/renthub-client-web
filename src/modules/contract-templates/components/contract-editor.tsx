@@ -57,7 +57,7 @@ const ContractEditor = forwardRef<ContractEditorRef, ContractEditorProps>(
 
     const insertKey = (key: string) => {
       if (editor) {
-        const content = `{{${key}}}`;
+        const content = `${key}`;
         const viewFragment = editor.data.processor.toView(content);
         const modelFragment = editor.data.toModel(viewFragment);
         editor.model.insertContent(modelFragment);

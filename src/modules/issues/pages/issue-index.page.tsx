@@ -1,12 +1,13 @@
 import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import { renterRepositories } from '@modules/renters/apis/renter.api';
-import { renterPath } from '@modules/renters/routes';
+import { issueRepositories } from '@modules/issues/apis/issue.api';
 import {
-  renterKeys,
-  type RenterSchema,
-} from '@modules/renters/schema/renter.schema';
+  issueKeys,
+  type IssueDeleteManyResponseSchema,
+  type IssueDeleteResponseSchema,
+  type IssueSchema,
+} from '@modules/issues/schema/issue.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
@@ -25,10 +26,8 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { Tag, Tooltip } from 'antd';
 import to from 'await-to-js';
-import dayjs from 'dayjs';
-import { Check, FileEdit, KeyRound, Trash, UserRoundX } from 'lucide-react';
+import { FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -42,7 +41,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'renter',
+    module: 'issue',
     action: 'read',
   });
   if (!authed) {
@@ -74,28 +73,22 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params, 'renters', {
+    const searchParams = processSearchParams(params, 'issues', {
       field: 'updatedAt',
       direction: 'desc',
     });
 
-    const [err, result] = await to(
-      renterRepositories.listByHouse({ searchParams }),
-    );
+    const [err, result] = await to(issueRepositories.index({ searchParams }));
     if (err) {
       return DEFAULT_RETURN_TABLE_DATA;
     }
     return result?.data;
   }, []);
 
-  const onDelete = useCallback(
-    async (selectedItems: RenterSchema[]) => {
-      const [err, _]: AwaitToResult<any[]> = await to(
-        Promise.all(
-          selectedItems.map((item) =>
-            renterRepositories.delete({ id: item.id }),
-          ),
-        ),
+  const onDestroy = useCallback(
+    async (id: string) => {
+      const [err, _]: AwaitToResult<IssueDeleteResponseSchema> = await to(
+        issueRepositories.delete({ id }),
       );
       if (err) {
         if ('code' in err) {
@@ -106,18 +99,20 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: renterKeys.list(queryParams),
+        queryKey: issueKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_renter_success'));
+      toast.success(t('ms_delete_issue_success'));
       return;
     },
     [t, queryParams],
   );
 
-  const onDestroy = useCallback(
-    async (id: string) => {
-      const [err, _]: AwaitToResult<any> = await to(
-        renterRepositories.delete({ id }),
+  const onDelete = useCallback(
+    async (selectedItems: IssueSchema[]) => {
+      const [err, _]: AwaitToResult<IssueDeleteManyResponseSchema> = await to(
+        issueRepositories.deleteMany({
+          ids: selectedItems.map((item) => item.id),
+        }),
       );
       if (err) {
         if ('code' in err) {
@@ -128,24 +123,20 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: renterKeys.list(queryParams),
+        queryKey: issueKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_renter_success'));
-      return _;
+      toast.success(t('ms_delete_issue_success'));
+      return;
     },
     [t, queryParams],
   );
 
-  const onCreate = useCallback(() => {
-    navigate(`${renterPath.root}/${renterPath.create}`);
-  }, [navigate]);
-
   const {
-    data: renterData,
+    data: issueData,
     isLoading,
     isFetching,
   } = useQuery<any>({
-    queryKey: renterKeys.list(queryParams),
+    queryKey: issueKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
 
@@ -156,34 +147,23 @@ export function Element() {
     }
   }, [isLoading]);
 
-  const actionColumn: Action<RenterSchema>[] = [
+  const actionColumn: Action<IssueSchema>[] = [
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<RenterSchema>) => {
-        navigate(
-          `${renterPath.root}/${renterPath.edit.replace(':id', row.original.id)}`,
-        );
+      onClick: async (row: Row<IssueSchema>) => {
+        // #TODO: Mở modal sửa trạng thái
       },
     },
     {
       label: t('bt_delete'),
       icon: <Trash className="mr-2 h-4 w-4" />,
       isDanger: true,
-      onClick: (row: Row<RenterSchema>) => onDestroy(row.original.id),
+      onClick: (row: Row<IssueSchema>) => onDestroy(row.original.id),
     },
   ];
 
-  const genderToPresetTag = useMemo(
-    () => ({
-      male: 'geekblue',
-      female: 'magenta',
-      other: '',
-    }),
-    [],
-  );
-
-  const columns: ColumnDef<RenterSchema>[] = [
+  const columns: ColumnDef<IssueSchema>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -204,64 +184,6 @@ export function Element() {
       enableHiding: false,
     },
     {
-      accessorKey: 'renterName',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('renter_name')} />
-      ),
-      cell: ({ row }) => {
-        const name = row.original.renterName || row.original.name || '';
-        const gender = row.original.gender as 'male' | 'female' | 'other';
-        const genderString = t(`renter_${gender}`);
-        return (
-          <div className="flex items-center">
-            {name}{' '}
-            <Tag
-              bordered={false}
-              color={genderToPresetTag[gender]}
-              className="ml-2"
-            >
-              {genderString}
-            </Tag>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: 'birthday',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('renter_birthday')} />
-      ),
-      cell: ({ row }) => {
-        const date = row.original.birthday;
-        if (!date) return '';
-        return dayjs(date).format('DD/MM/YYYY');
-      },
-    },
-    {
-      accessorKey: 'renter_temp_reg',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('renter_temp_reg')} />
-      ),
-      cell: ({ row }) => {
-        const isTempReg = row.original.tempReg;
-        return (
-          <Tooltip
-            title={
-              isTempReg ? t('renter_temp_reg_yes') : t('renter_temp_reg_no')
-            }
-            arrow={false}
-            className="ml-5"
-          >
-            {isTempReg ? (
-              <Check className="h-5" />
-            ) : (
-              <UserRoundX className="h-5" />
-            )}
-          </Tooltip>
-        );
-      },
-    },
-    {
       accessorKey: 'floorName',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('renter_floor')} />
@@ -273,44 +195,7 @@ export function Element() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('renter_room')} />
       ),
-      cell: ({ row }) => {
-        const isRepresent = row.original.represent;
-        const roomName = row.original.roomName || '';
-        return (
-          <p className="flex items-center">
-            {roomName}{' '}
-            {isRepresent ? (
-              <Tooltip title={t('renter_represent')} arrow={false}>
-                <KeyRound className="h-3" />
-              </Tooltip>
-            ) : null}
-          </p>
-        );
-      },
       enableSorting: true,
-    },
-    {
-      accessorKey: 'phoneNumber',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('renter_phone_number')}
-        />
-      ),
-    },
-    {
-      accessorKey: 'moveInDate',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('renter_move_in_date')}
-        />
-      ),
-      cell: ({ row }) => {
-        const date = row.original.moveInDate;
-        if (!date) return '';
-        return dayjs(date).format('DD/MM/YYYY');
-      },
     },
     {
       id: 'actions',
@@ -323,29 +208,29 @@ export function Element() {
     },
   ];
 
-  const filterFields: DataTableFilterField<RenterSchema>[] = [
+  const filterFields: DataTableFilterField<IssueSchema>[] = [
     {
-      label: t('renter_name'),
-      value: 'renterName',
+      label: t('issue_title'),
+      value: 'title',
       placeholder: t('common_ph_input', {
-        field: t('renter_name').toLowerCase(),
+        field: t('issue_title').toLowerCase(),
       }),
     },
   ];
 
   const { table } = useDataTable({
-    data: renterData?.results || [],
+    data: issueData?.results || [],
     columns,
-    pageCount: renterData?.pageCount || 0,
+    pageCount: issueData?.pageCount || 0,
     filterFields,
     initialState: {
-      columnPinning: { right: ['actions'], left: ['select', 'name'] },
+      columnPinning: { right: ['actions'], left: ['select', 'title'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
 
   return (
-    <ContentLayout title={t('renter_index_title')} pathname={pathname}>
+    <ContentLayout title={t('issue_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
@@ -357,13 +242,12 @@ export function Element() {
         <DataTable
           actions={{
             onDelete,
-            onCreate,
           }}
           table={table}
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          moduleName="renter"
+          moduleName="issue"
         />
       )}
     </ContentLayout>
