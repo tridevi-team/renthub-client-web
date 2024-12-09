@@ -15,6 +15,7 @@ import {
   type Action,
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
+import { ScrollableDiv } from '@shared/components/extensions/scrollable-div';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
 import { Button } from '@shared/components/ui/button';
@@ -26,7 +27,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@shared/components/ui/dialog';
-import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
+import {
+  DEFAULT_RETURN_TABLE_DATA,
+  DOM_PURIFY_ALLOWED_ATTR,
+  DOM_PURIFY_ALLOWED_TAGS,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -186,29 +191,8 @@ export function Element() {
 
   const ContentModal = ({ content }: { content: string }) => {
     const sanitizedContent = DOMPurify.sanitize(content, {
-      ALLOWED_TAGS: [
-        'p',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'span',
-        'br',
-        'strong',
-        'em',
-        'ul',
-        'ol',
-        'li',
-        'table',
-        'tr',
-        'td',
-        'th',
-        'thead',
-        'tbody',
-      ],
-      ALLOWED_ATTR: ['class', 'style'],
+      ALLOWED_TAGS: DOM_PURIFY_ALLOWED_TAGS,
+      ALLOWED_ATTR: DOM_PURIFY_ALLOWED_ATTR,
     });
 
     return (
@@ -222,13 +206,13 @@ export function Element() {
           <DialogHeader>
             <DialogTitle>{t('contract_t_content')}</DialogTitle>
           </DialogHeader>
-          <div className="max-h-[60vh] overflow-y-auto px-4 md:px-0">
+          <ScrollableDiv className="max-h-[60vh] overflow-y-auto px-4 md:px-0">
             <div
               // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
               dangerouslySetInnerHTML={{ __html: sanitizedContent }}
               className="prose dark:prose-invert max-w-none"
             />
-          </div>
+          </ScrollableDiv>
         </DialogContent>
       </Dialog>
     );

@@ -158,3 +158,28 @@ export const APPROVAL_STATUS_OPTIONS = [
   { label: 'Đã duyệt', value: 'APPROVED' },
   { label: 'Đã từ chối', value: 'REJECTED' },
 ];
+
+export const DOM_PURIFY_ALLOWED_TAGS = [
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'span',
+  'br',
+  'strong',
+  'em',
+  'ul',
+  'ol',
+  'li',
+  'table',
+  'tr',
+  'td',
+  'th',
+  'thead',
+  'tbody',
+];
+
+export const DOM_PURIFY_ALLOWED_ATTR = ['class', 'style'];
