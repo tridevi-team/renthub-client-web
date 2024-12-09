@@ -15,6 +15,7 @@ export const userLocale = {
   // #endregion FORM + TABLE
   user_male: 'Nam',
   user_female: 'Nữ',
+  user_other: 'Khác',
   user_assign_role_title: 'Phân quyền cho tài khoản',
   user_assign_account: 'Tài khoản',
   // #region BUTTON

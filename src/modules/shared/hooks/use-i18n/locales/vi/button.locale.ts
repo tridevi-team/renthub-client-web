@@ -22,4 +22,5 @@ export const buttonLocale = {
   bt_next: 'Tiếp theo',
   bt_previous: 'Trước',
   bt_finish: 'Hoàn thành',
+  bt_export_word: 'Xuất file Word',
 } as const;
