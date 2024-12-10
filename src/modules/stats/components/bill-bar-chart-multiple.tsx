@@ -71,7 +71,7 @@ export function BillBarChartMultipe({
                 cursor={false}
                 content={<ChartTooltipContent indicator="dashed" />}
               />
-              {Object.keys(data[0])
+              {Object.keys(data[0] || {})
                 .filter((key) => key !== 'month')
                 .map((key) => (
                   <Bar
