@@ -211,7 +211,7 @@ export function Element() {
       cell: ({ row }) => {
         const name = row.original.renterName || row.original.name || '';
         const gender = row.original.gender as 'male' | 'female' | 'other';
-        const genderString = t(`renter_${gender}`);
+        const genderString = t(`renter_${gender ?? 'other'}`);
         return (
           <div className="flex items-center">
             {name}{' '}

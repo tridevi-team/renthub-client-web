@@ -122,7 +122,10 @@ export const contractDetailResponseSchema = z.object({
   success: z.boolean(),
   code: z.string(),
   message: z.string(),
-  data: contract,
+  data: z.object({
+    contract: contract,
+    keys: z.record(z.union([z.string(), z.number(), z.array(z.any())])),
+  }),
 });
 
 export const contractDeleteRequestSchema = z.string();

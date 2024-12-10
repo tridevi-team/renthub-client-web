@@ -7,6 +7,7 @@ import {
   contractKeys,
   type ContractDataSchema,
   type ContractDeleteResponseSchema,
+  type ContractDetailResponseSchema,
   type ContractIndexResponseSchema,
   type ContractSchema,
 } from '@modules/contracts/schemas/contract.schema';
@@ -34,7 +35,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { FileEdit, Trash } from 'lucide-react';
+import { Download, FileEdit, Trash } from 'lucide-react';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -125,6 +127,33 @@ export function Element() {
     navigate(`${contractPath.root}/${contractPath.create}`);
   }, [navigate]);
 
+  const onExport = async (id: string) => {
+    const [err, resp]: AwaitToResult<ContractDetailResponseSchema> = await to(
+      contractRepositories.detail({ id }),
+    );
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    const data = resp?.data;
+    if (!data) {
+      return;
+    }
+    const { contract, keys } = data || {};
+    const fileName = `Hop_dong_${contract?.room?.name || ''}_${contract?.renter?.fullName || ''}.pdf`;
+    const htmlContent = contract?.content || '';
+    const replacedHtmlContent = Object.entries(keys).reduce(
+      (acc, [key, value]) => {
+        return acc.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
+      },
+      htmlContent,
+    );
+  };
+
   const {
     data: contractData,
     isLoading,
@@ -142,6 +171,13 @@ export function Element() {
   }, [isLoading]);
 
   const actionColumn: Action<ContractSchema>[] = [
+    {
+      label: t('bt_download'),
+      icon: <Download className="mr-2 h-4 w-4" />,
+      onClick: async (row: Row<ContractSchema>) => {
+        onExport(row.original.id);
+      },
+    },
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
@@ -184,6 +220,7 @@ export function Element() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('contract_room')} />
       ),
+      cell: ({ row }) => row.original.room?.name,
     },
     {
       accessorKey: 'renter',
@@ -196,15 +233,29 @@ export function Element() {
       cell: ({ row }) => row.original.renter?.fullName,
     },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: 'rentalStartDate',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('contract_updated_at')}
+          title={t('contract_rental_start_date')}
         />
       ),
       cell: ({ row }) => {
-        const date = dayjs(row.original.updatedAt);
+        const date = dayjs(row.original.rentalStartDate);
+        if (!date.isValid()) return null;
+        return date.format(DEFAULT_DATE_FORMAT);
+      },
+    },
+    {
+      accessorKey: 'rentalEndDate',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('contract_rental_end_date')}
+        />
+      ),
+      cell: ({ row }) => {
+        const date = dayjs(row.original.rentalEndDate);
         if (!date.isValid()) return null;
         return date.format(DEFAULT_DATE_FORMAT);
       },
@@ -222,7 +273,7 @@ export function Element() {
           | 'cancelled'
           | 'terminated'
           | 'hold';
-        return <Badge title={t(`contract_s_${status}`)} />;
+        return <Badge>{t(`contract_s_${status}`)}</Badge>;
       },
       enableSorting: true,
     },
@@ -239,7 +290,19 @@ export function Element() {
           | 'pending'
           | 'approved'
           | 'rejected';
-        return <Badge title={t(`contract_approval_${status}`)} />;
+        return (
+          <Badge
+            variant={
+              status === 'pending'
+                ? 'warning'
+                : status === 'approved'
+                  ? 'success'
+                  : 'destructive'
+            }
+          >
+            {t(`contract_approval_${status}`)}
+          </Badge>
+        );
       },
       enableSorting: true,
     },
@@ -258,7 +321,19 @@ export function Element() {
           | 'refunded'
           | 'deducted'
           | 'cancelled';
-        return <Badge title={t(`contract_deposit_${status}`)} />;
+        return (
+          <Badge
+            variant={
+              status === 'pending'
+                ? 'warning'
+                : status === 'paid'
+                  ? 'success'
+                  : 'destructive'
+            }
+          >
+            {t(`contract_deposit_${status}`)}
+          </Badge>
+        );
       },
     },
     {

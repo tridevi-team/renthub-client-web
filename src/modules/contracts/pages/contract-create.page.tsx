@@ -81,6 +81,7 @@ export function Element() {
           filters: [
             { field: 'rooms.status', operator: 'eq', value: 'AVAILABLE' },
           ],
+          sorting: [{ field: 'rooms.name', direction: 'asc' }],
         },
         isSelect: false,
       }),
@@ -187,6 +188,11 @@ export function Element() {
     if (currentStep === 2) return null; // Skip button group in step 3
     return (
       <Space direction="horizontal">
+        {currentStep === 0 && (
+          <Button variant="outline" onClick={() => navigate(contractPath.root)}>
+            {t('bt_back')}
+          </Button>
+        )}
         {currentStep > 0 && <Button onClick={prev}>{t('bt_previous')}</Button>}
         {currentStep === steps.length - 1 && (
           <Button onClick={() => onSubmit(restContractInfo)} loading={loading}>
