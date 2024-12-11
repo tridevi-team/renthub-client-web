@@ -1,4 +1,4 @@
-export const BRAND_NAME = 'RentHub';
+export const BRAND_NAME = 'Trọ đây!';
 export const PREFIX_FLOOR_NAME = 'Tầng';
 export const GENDER_OPTIONS = [
   { label: 'Nam', value: 'male' },

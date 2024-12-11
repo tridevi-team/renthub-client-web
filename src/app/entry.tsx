@@ -2,7 +2,6 @@ import { ConfigProvider } from 'antd';
 import vi_VN from 'antd/lib/locale/vi_VN';
 import { StrictMode } from 'react';
 import { Toaster } from 'sonner';
-import { Devtools } from './devtools';
 import { AppI18nProvider } from './providers/i18n/provider';
 import { AppQueryProvider } from './providers/query/provider';
 import { AppRouterProvider } from './providers/router/provider';
@@ -21,8 +20,6 @@ export function Entry() {
 
               {/* PWA */}
               <ReloadPromptSw />
-
-              <Devtools />
             </AppToastProvider>
           </AppI18nProvider>
         </AppQueryProvider>

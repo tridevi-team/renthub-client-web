@@ -1,5 +1,6 @@
 import loginBg from '@assets/images/login_bg.jpg';
-import logoNgang from '@assets/logo/logo-ngang.png';
+import logo from '@assets/logo/logo.png';
+import { BRAND_NAME } from '@shared/constants/general.constant';
 
 export default function LoginLayout({
   children,
@@ -24,7 +25,8 @@ export default function LoginLayout({
       {/* form */}
       <section className="flex min-h-screen w-full flex-col justify-center px-10 md:w-1/2 xl:px-20">
         <div className="mb-2 flex items-center justify-center gap-2 text-blue-600">
-          <img src={logoNgang} alt="Logo" className="h-28" />
+          <img src={logo} alt="Logo" className="h-20" />
+          <h1 className="font-bold text-3xl">{BRAND_NAME}</h1>
         </div>
         {children}
       </section>
