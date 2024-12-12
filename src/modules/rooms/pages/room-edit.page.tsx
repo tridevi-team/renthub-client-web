@@ -29,7 +29,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'role',
+    module: 'room',
     action: 'update',
   });
   if (!authed) {
