@@ -183,3 +183,21 @@ export const DOM_PURIFY_ALLOWED_TAGS = [
 ];
 
 export const DOM_PURIFY_ALLOWED_ATTR = ['class', 'style'];
+
+export const BILL_TITLE_PREFIX = 'Hóa đơn tháng';
+
+export const BILL_STATUS = {
+  PAID: 'PAID',
+  UNPAID: 'UNPAID',
+  CANCELLED: 'CANCELLED',
+  IN_DEBT: 'IN_DEBT',
+  OVERDUE: 'OVERDUE',
+};
+
+export const BILL_STATUS_OPTIONS = [
+  { label: 'Đã thanh toán', value: 'PAID' },
+  { label: 'Chưa thanh toán', value: 'UNPAID' },
+  { label: 'Đã hủy', value: 'CANCELLED' },
+  { label: 'Nợ', value: 'IN_DEBT' },
+  { label: 'Quá hạn', value: 'OVERDUE' },
+];
