@@ -175,6 +175,7 @@ export function Element() {
 
   const onUpdate = useCallback(
     async (value: PaymentMethodUpdateRequestSchema) => {
+      console.log('selectedItem', selectedItem);
       if (!selectedItem) return;
       setIsSubmitting(true);
       const [err, resp]: AwaitToResult<PaymentMethodUpdateResponseSchema> =
@@ -204,7 +205,7 @@ export function Element() {
       toast.success(t('ms_update_payment_success'));
       return resp;
     },
-    [t, queryParams],
+    [t, queryParams, selectedItem],
   );
 
   const onClickCreateButton = useCallback(() => {
@@ -232,10 +233,8 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: async (row: Row<PaymentMethodSchema>) => {
-        unstable_batchedUpdates(() => {
-          setIsShowPaymentDialog(true);
-          setSelectedItem(row.original);
-        });
+        setSelectedItem(row.original);
+        setIsShowPaymentDialog(true);
       },
     },
     {
@@ -313,6 +312,26 @@ export function Element() {
             : t('payment_not_using')}
         </Badge>
       ),
+    },
+    {
+      accessorKey: 'isDefault',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('payment_is_default')}
+        />
+      ),
+      cell: ({ row }) => {
+        const isDefault = row.original.isDefault;
+        return isDefault ? (
+          <Tooltip
+            title={isDefault ? t('common_yes') : t('common_no')}
+            arrow={false}
+          >
+            <Check />
+          </Tooltip>
+        ) : null;
+      },
     },
     {
       accessorKey: 'payosClientId',

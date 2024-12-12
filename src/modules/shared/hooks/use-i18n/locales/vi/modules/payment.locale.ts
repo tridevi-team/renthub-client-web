@@ -9,7 +9,7 @@ export const paymentLocale = {
   payment_name: 'Tên',
   payment_account_number: 'Số tài khoản',
   payment_bank_name: 'Ngân hàng',
-  payment_bank_logo: 'Logo ngân hàng',
+  payment_bank_logo: 'Ngân hàng',
   payment_status: 'Trạng thái',
   payment_description: 'Mô tả',
   payment_is_default: 'Mặc định',
@@ -25,6 +25,7 @@ export const paymentLocale = {
   payment_auto_payment: 'Xác thực thanh toán tự động',
   payment_payos_description:
     'Vui lòng cung cấp thông tin dưới để sử dụng tính năng xác thực thanh toán tự động',
+  payment_default: 'Mặc định',
   // #endregion FORM + TABLE
 
   // #region BUTTON
