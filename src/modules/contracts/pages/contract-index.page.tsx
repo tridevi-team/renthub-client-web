@@ -266,13 +266,14 @@ export function Element() {
         <DataTableColumnHeader column={column} title={t('contract_status')} />
       ),
       cell: ({ row }) => {
-        const status = row.original.status?.toLowerCase() as
-          | 'pending'
-          | 'active'
-          | 'expired'
-          | 'cancelled'
-          | 'terminated'
-          | 'hold';
+        const status =
+          (row.original.status?.toLowerCase() as
+            | 'pending'
+            | 'active'
+            | 'expired'
+            | 'cancelled'
+            | 'terminated'
+            | 'hold') ?? 'pending';
         return <Badge>{t(`contract_s_${status}`)}</Badge>;
       },
       enableSorting: true,
@@ -286,10 +287,11 @@ export function Element() {
         />
       ),
       cell: ({ row }) => {
-        const status = row.original.approvalStatus?.toLowerCase() as
-          | 'pending'
-          | 'approved'
-          | 'rejected';
+        const status =
+          (row.original.approvalStatus?.toLowerCase() as
+            | 'pending'
+            | 'approved'
+            | 'rejected') ?? 'pending';
         return (
           <Badge
             variant={
@@ -315,12 +317,13 @@ export function Element() {
         />
       ),
       cell: ({ row }) => {
-        const status = row.original.depositStatus?.toLowerCase() as
-          | 'pending'
-          | 'paid'
-          | 'refunded'
-          | 'deducted'
-          | 'cancelled';
+        const status =
+          (row.original.depositStatus?.toLowerCase() as
+            | 'pending'
+            | 'paid'
+            | 'refunded'
+            | 'deducted'
+            | 'cancelled') ?? 'pending';
         return (
           <Badge
             variant={

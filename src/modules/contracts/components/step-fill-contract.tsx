@@ -196,12 +196,12 @@ const EquipmentTable = ({
             <TableCell>{eq.code}</TableCell>
             <TableCell>
               {t(
-                `equipment_status_${eq?.status?.toLowerCase() as 'normal' | 'broken' | 'repairing' | 'disposed'}`,
+                `equipment_status_${(eq?.status?.toLowerCase() as 'normal' | 'broken' | 'repairing' | 'disposed') ?? 'normal'}`,
               )}
             </TableCell>
             <TableCell>
               {t(
-                `equipment_shared_type_${eq.sharedType?.toLowerCase() as 'house' | 'room'}`,
+                `equipment_shared_type_${(eq.sharedType?.toLowerCase() as 'house' | 'room') ?? 'house'}`,
               )}
             </TableCell>
           </TableRow>
