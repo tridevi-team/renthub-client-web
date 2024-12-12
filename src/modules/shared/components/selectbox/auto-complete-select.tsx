@@ -213,7 +213,7 @@ export const AutoComplete = ({
           disabled={disabled}
           className="pr-8 text-sm"
         />
-        {inputValue && (
+        {inputValue ? (
           <button
             onClick={handleClear}
             className="-translate-y-1/2 absolute top-1/2 right-2 rounded-full p-1 hover:bg-slate-100"
@@ -221,7 +221,7 @@ export const AutoComplete = ({
           >
             <X className="h-4 w-4 text-slate-500" />
           </button>
-        )}
+        ) : null}
         {!inputValue && (
           <ChevronDown className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-4 h-4 w-4 text-slate-500" />
         )}
