@@ -8,6 +8,8 @@ export interface Option {
   icon?: React.ComponentType<{ className?: string }>;
   withCount?: boolean;
   code?: string | number;
+  description?: string;
+  imageUrl?: string;
 }
 
 export interface FilterOption {
