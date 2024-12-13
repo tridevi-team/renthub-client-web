@@ -3,6 +3,7 @@ import { PlusIcon } from '@radix-ui/react-icons';
 import type { Table } from '@tanstack/react-table';
 import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { cn } from '@app/lib/utils';
 // import { DataTableViewOptions } from '@shared/components/data-table/data-table-view-options';
@@ -33,7 +34,7 @@ export function DataTableAdvancedToolbar<TData>({
   const options = React.useMemo<DataTableFilterOption<TData>[]>(() => {
     return filterFields.map((field) => {
       return {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         label: field.label,
         value: field.value,
         options: field.options ?? [],
