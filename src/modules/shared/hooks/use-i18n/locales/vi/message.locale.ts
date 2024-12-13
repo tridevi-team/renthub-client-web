@@ -37,7 +37,7 @@ export const messageLocale = {
   // #endregion
 
   // #region ACCOUNT
-  ms_update_account_success: 'Cập nhật thông tin tài khoản thành công',
+  ms_update_account_success: 'Cập nhật thông tin cá nhân thành công',
   ms_change_password_success: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',
   // #endregion
 
@@ -86,12 +86,18 @@ export const messageLocale = {
   ms_create_contract_success: 'Tạo hợp đồng mới thành công',
   ms_update_contract_success: 'Cập nhật hợp đồng thành công',
   ms_delete_contract_success: 'Xóa hợp đồng thành công',
+  ms_select_room_first: 'Vui lòng chọn phòng trước',
   // #endregion
 
   // #region Renter
   ms_create_renter_success: 'Tạo người thuê mới thành công',
   ms_update_renter_success: 'Cập nhật thông tin người thuê thành công',
   ms_delete_renter_success: 'Xóa người thuê thành công',
+  // #endregion
+
+  // #region Issue
+  ms_update_issue_success: 'Cập nhật phản ánh thành công',
+  ms_delete_issue_success: 'Xóa phản ánh thành công',
   // #endregion
 
   // #region Error

@@ -14,6 +14,7 @@ const userStoreStateSchema = z.object({
 const userStoreActionSchema = z.object({
   setUser: z.function().args(appUserStoreSchema).returns(z.void()),
   clearUser: z.function().args(z.void()).returns(z.void()),
+  updateAccessToken: z.function().args(z.string()).returns(z.void()),
 });
 export const userStoreSchema = userStoreStateSchema.merge(
   userStoreActionSchema,
@@ -43,6 +44,15 @@ export const useAuthUserStore = create<UserStore>()(
         clearUser: () => {
           set({ user: null });
         },
+        updateAccessToken: (newAccessToken: string) =>
+          set((state) => ({
+            user: state.user
+              ? {
+                  ...state.user,
+                  accessToken: newAccessToken,
+                }
+              : null,
+          })),
       }),
       {
         name: userStoreName, // name of the item in the storage (must be unique)

@@ -15,8 +15,8 @@ const pwaOptions: Partial<VitePWAOptions> = {
   mode: process.env.SW_DEV === 'true' ? 'development' : 'production',
   includeAssets: ['*.ico', '*.svg', '*.png'],
   manifest: {
-    name: 'RentHub',
-    short_name: 'RentHub',
+    name: 'Trọ đây! - Hệ thống Quản lý Nhà trọ',
+    short_name: 'Trọ đây!',
     description: 'Hệ thống Quản lý Nhà trọ',
     theme_color: '#ffffff',
     icons: [
@@ -84,6 +84,19 @@ export default defineConfig({
   },
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        'firebase-messaging-sw': './src/firebase-messaging-sw.js',
+      },
+      output: {
+        entryFileNames: (chunkInfo) => {
+          return chunkInfo.name === 'firebase-messaging-sw'
+            ? '[name].js' // Output service worker in root
+            : 'assets/[name]-[hash].js'; // Others in `assets/`
+        },
+      },
+    },
   },
   css: {
     postcss: {
@@ -91,12 +104,12 @@ export default defineConfig({
     },
   },
   plugins: [
+    replace(replaceOptions) as unknown as PluginOption,
     tsconfigPaths({ loose: true }),
-    react({ plugins: [['@swc/plugin-styled-components', {}]] }),
+    react(),
     visualizer({
       filename: 'html/visualizer-stats.html',
     }) as unknown as PluginOption,
     VitePWA(pwaOptions),
-    replace(replaceOptions) as unknown as PluginOption,
   ],
 });

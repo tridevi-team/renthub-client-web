@@ -47,16 +47,27 @@ export function DataTableColumnHeader<TData, TValue>({
             }
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
+            className="-ml-3 h-auto min-h-8 whitespace-normal text-left data-[state=open]:bg-accent"
           >
-            <span>{title}</span>
-            {column.getCanSort() && column.getIsSorted() === 'desc' ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : column.getIsSorted() === 'asc' ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
-            )}
+            <div className="flex items-center gap-2">
+              <span className="flex-1">{title}</span>
+              {column.getCanSort() && column.getIsSorted() === 'desc' ? (
+                <ArrowDownIcon
+                  className="size-4 flex-shrink-0"
+                  aria-hidden="true"
+                />
+              ) : column.getIsSorted() === 'asc' ? (
+                <ArrowUpIcon
+                  className="size-4 flex-shrink-0"
+                  aria-hidden="true"
+                />
+              ) : (
+                <CaretSortIcon
+                  className="size-4 flex-shrink-0"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">

@@ -1,3 +1,4 @@
+import { useAuthUserStore } from '@modules/auth/hooks/use-auth-user-store.hook';
 import {
   authForgotPasswordResponseSchema,
   authResetPasswordResponseSchema,
@@ -144,5 +145,23 @@ export const authRepositories = {
       .json<ChangePasswordResponseSchema>();
 
     return changePasswordResponseSchema.parse(resp);
+  },
+  refreshToken: async () => {
+    const user = useAuthUserStore.getState().user;
+    const refreshToken = user?.refreshToken;
+    if (!refreshToken) return null;
+    const resp = await http.instance
+      .post('auth/refresh-token', {
+        json: {
+          refreshToken,
+        },
+      })
+      .json<{
+        data: {
+          accessToken: string;
+        };
+      }>();
+
+    return resp.data.accessToken;
   },
 } as const;

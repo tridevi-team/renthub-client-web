@@ -171,7 +171,7 @@ export function ContractTemplateForm({
                       }
                       onValueChange={field.onChange}
                       placeholder={t('common_ph_select', {
-                        field: t('contract_t_isActive').toLowerCase(),
+                        field: t('contract_t_ll_gender').toLowerCase(),
                       })}
                     />
                   </FormControl>

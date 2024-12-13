@@ -162,28 +162,31 @@ export function Element() {
     return resp;
   }, []);
 
-  const onUpdate = useCallback(async (values: ServiceUpdateRequestSchema) => {
-    if (!selectedItem) return;
-    setIsSubmitting(true);
-    const [err, resp]: AwaitToResult<ServiceCreateResponseSchema> = await to(
-      serviceRepositories.update({ id: selectedItem?.id, service: values }),
-    );
-    setIsSubmitting(false);
-    if (err) {
-      if ('code' in err) {
-        toast.error(t(err.code));
-      } else {
-        toast.error(t('UNKNOWN_ERROR'));
+  const onUpdate = useCallback(
+    async (values: ServiceUpdateRequestSchema) => {
+      if (!selectedItem) return;
+      setIsSubmitting(true);
+      const [err, resp]: AwaitToResult<ServiceCreateResponseSchema> = await to(
+        serviceRepositories.update({ id: selectedItem?.id, service: values }),
+      );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
       }
-      return;
-    }
-    setIsShowServiceDialog(false);
-    toast.success(t('ms_update_service_success'));
-    await queryClient.invalidateQueries({
-      queryKey: serviceKeys.list(queryParams),
-    });
-    return resp;
-  }, []);
+      setIsShowServiceDialog(false);
+      toast.success(t('ms_update_service_success'));
+      await queryClient.invalidateQueries({
+        queryKey: serviceKeys.list(queryParams),
+      });
+      return resp;
+    },
+    [t, selectedItem, queryParams],
+  );
 
   const onClickCreateButton = useCallback(() => {
     setIsShowServiceDialog(true);

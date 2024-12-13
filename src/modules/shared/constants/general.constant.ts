@@ -1,4 +1,4 @@
-export const BRAND_NAME = 'RentHub';
+export const BRAND_NAME = 'Trọ đây!';
 export const PREFIX_FLOOR_NAME = 'Tầng';
 export const GENDER_OPTIONS = [
   { label: 'Nam', value: 'male' },
@@ -97,4 +97,107 @@ export const CONTRACT_TEMPLATE_STATUS = {
 export const CONTRACT_TEMPLATE_STATUS_OPTIONS = [
   { label: 'Đang sử dụng', value: 'ACTIVE' },
   { label: 'Ngừng sử dụng', value: 'INACTIVE' },
+];
+
+export const ISSUE_STATUS = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  DONE: 'DONE',
+  CLOSED: 'CLOSED',
+};
+
+export const ISSUE_STATUS_OPTIONS = [
+  { label: 'Mở', value: 'OPEN' },
+  { label: 'Đang xử lý', value: 'IN_PROGRESS' },
+  { label: 'Hoàn thành', value: 'DONE' },
+  { label: 'Đóng', value: 'CLOSED' },
+];
+
+export const CONTRACT_STATUS = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED',
+  TERMINATED: 'TERMINATED',
+  HOLD: 'HOLD',
+};
+
+export const CONTRACT_STATUS_OPTIONS = [
+  { label: 'Chờ ký', value: 'PENDING' },
+  { label: 'Đang hoạt động', value: 'ACTIVE' },
+  { label: 'Hết hạn', value: 'EXPIRED' },
+  { label: 'Đã hủy', value: 'CANCELLED' },
+  { label: 'Đã chấm dứt', value: 'TERMINATED' },
+  { label: 'Tạm dừng', value: 'HOLD' },
+];
+
+export const DEPOSIT_STATUS = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  REFUNDED: 'REFUNDED',
+  DEDUCTED: 'DEDUCTED',
+  CANCELLED: 'CANCELLED',
+};
+
+export const DEPOSIT_STATUS_OPTIONS = [
+  { label: 'Chờ thanh toán', value: 'PENDING' },
+  { label: 'Đã thanh toán', value: 'PAID' },
+  { label: 'Đã hoàn trả', value: 'REFUNDED' },
+  { label: 'Đã trừ', value: 'DEDUCTED' },
+  { label: 'Đã hủy', value: 'CANCELLED' },
+];
+
+export const APPROVAL_STATUS = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+};
+
+export const APPROVAL_STATUS_OPTIONS = [
+  { label: 'Chờ duyệt', value: 'PENDING' },
+  { label: 'Đã duyệt', value: 'APPROVED' },
+  { label: 'Đã từ chối', value: 'REJECTED' },
+];
+
+export const DOM_PURIFY_ALLOWED_TAGS = [
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'span',
+  'br',
+  'strong',
+  'em',
+  'ul',
+  'ol',
+  'li',
+  'table',
+  'tr',
+  'td',
+  'th',
+  'thead',
+  'tbody',
+];
+
+export const DOM_PURIFY_ALLOWED_ATTR = ['class', 'style'];
+
+export const BILL_TITLE_PREFIX = 'Hóa đơn tháng';
+
+export const BILL_STATUS = {
+  PAID: 'PAID',
+  UNPAID: 'UNPAID',
+  CANCELLED: 'CANCELLED',
+  IN_DEBT: 'IN_DEBT',
+  OVERDUE: 'OVERDUE',
+};
+
+export const BILL_STATUS_OPTIONS = [
+  { label: 'Đã thanh toán', value: 'PAID' },
+  { label: 'Chưa thanh toán', value: 'UNPAID' },
+  { label: 'Đã hủy', value: 'CANCELLED' },
+  { label: 'Nợ', value: 'IN_DEBT' },
+  { label: 'Quá hạn', value: 'OVERDUE' },
 ];

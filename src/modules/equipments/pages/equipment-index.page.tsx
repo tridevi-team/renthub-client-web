@@ -233,7 +233,7 @@ export function Element() {
         return (
           <Badge variant="outline">
             {t(
-              `equipment_status_${row.original.status?.toLowerCase() as 'normal' | 'broken' | 'repairing' | 'disposed'}`,
+              `equipment_status_${(row.original.status?.toLowerCase() as 'normal' | 'broken' | 'repairing' | 'disposed') ?? 'normal'}`,
             )}
           </Badge>
         );
@@ -252,7 +252,7 @@ export function Element() {
         return (
           <Badge variant="outline">
             {t(
-              `equipment_shared_type_${row.original.sharedType?.toLowerCase() as 'house' | 'room'}`,
+              `equipment_shared_type_${(row.original.sharedType?.toLowerCase() as 'house' | 'room') ?? 'house'}`,
             )}
           </Badge>
         );

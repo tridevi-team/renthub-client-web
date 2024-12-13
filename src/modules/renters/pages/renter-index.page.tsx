@@ -211,9 +211,9 @@ export function Element() {
       cell: ({ row }) => {
         const name = row.original.renterName || row.original.name || '';
         const gender = row.original.gender as 'male' | 'female' | 'other';
-        const genderString = t(`renter_${gender}`);
+        const genderString = t(`renter_${gender ?? 'other'}`);
         return (
-          <p className="flex items-center">
+          <div className="flex items-center">
             {name}{' '}
             <Tag
               bordered={false}
@@ -222,7 +222,7 @@ export function Element() {
             >
               {genderString}
             </Tag>
-          </p>
+          </div>
         );
       },
     },
@@ -345,7 +345,7 @@ export function Element() {
   });
 
   return (
-    <ContentLayout title={t('equipment_index_title')} pathname={pathname}>
+    <ContentLayout title={t('renter_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}

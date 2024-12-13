@@ -1,46 +1,4 @@
 import { z } from '@app/lib/vi-zod';
-// "id": "123e4567-e89b-12d3-a456-426614174000",
-// "name": "Room 1",
-// "maxRenters": 4,
-// "roomArea": 25.5,
-// "price": 2500000,
-// "description": "This is a beautiful room",
-// "contact": {
-//   "fullName": "John Doe",
-//   "phone_number": "987654321",
-//   "email": null
-// },
-// "services": [
-//       {
-//         "id": "123e4567-e89b-12d3-a456-426614174000",
-//         "name": "Elevator",
-//         "quantity": 1,
-//         "unitPrice": 50000,
-//         "type": "PEOPLE",
-//         "description": "This is an elevator"
-//       }
-//     ],
-//     "equipment": [
-//       {
-//         "id": "123e4567-e89b-12d3-a456-426614174000",
-//         "houseId": "123e4567-e89b-12d3-a456-426614174000",
-//         "floorId": "123e4567-e89b-12d3-a456-426614174000",
-//         "roomId": "123e4567-e89b-12d3-a456-426614174000",
-//         "code": "EQ0001",
-//         "name": "Air conditioner",
-//         "status": "NORMAL",
-//         "sharedType": "ROOM",
-//         "description": "This is an air conditioner"
-//       }
-//     ],
-//     "images": [
-//       "https://picsum.photos/200/300"
-//     ],
-//     "status": "AVAILABLE",
-//     "createdBy": "123e4567-e89b-12d3-a456-426614174000",
-//     "createdAt": "2024-09-26T15:09:58.000Z",
-//     "updatedBy": "123e4567-e89b-12d3-a456-426614174000",
-//     "updatedAt": "2024-09-26T15:09:58.000Z"
 
 export const room = z.object({
   id: z.string(),
@@ -65,6 +23,7 @@ export const room = z.object({
         quantity: z.coerce.number().nullable().default(0),
         unitPrice: z.coerce.number().nullable().default(0),
         type: z.string(),
+        startIndex: z.coerce.number().nullable().optional().default(0),
         description: z.string().nullable(),
       }),
     )
@@ -92,6 +51,21 @@ export const room = z.object({
   createdAt: z.string().nullable().optional(),
   updatedBy: z.string().nullable().optional(),
   updatedAt: z.string().nullable().optional(),
+});
+
+export const roomData = z.object({
+  page: z.number(),
+  pageSize: z.number(),
+  pageCount: z.number(),
+  total: z.number(),
+  results: z.array(room),
+});
+
+export const roomIndexResponseSchema = z.object({
+  success: z.boolean(),
+  code: z.string(),
+  message: z.string(),
+  data: roomData,
 });
 
 export const roomDetailRequestSchema = z.string();
@@ -190,6 +164,8 @@ export const roomDeleteManyResponseSchema = z.object({
 });
 
 export type RoomSchema = z.infer<typeof room>;
+export type RoomDataSchema = z.infer<typeof roomData>;
+export type RoomIndexResponseSchema = z.infer<typeof roomIndexResponseSchema>;
 export type RoomDetailRequestSchema = z.infer<typeof roomDetailRequestSchema>;
 export type RoomDetailResponseSchema = z.infer<typeof roomDetailResponseSchema>;
 export type RoomFormRequestSchema = z.infer<typeof roomFormRequestSchema>;

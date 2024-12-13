@@ -149,7 +149,7 @@ export function Element() {
                   icon={FileChartColumnIncreasing}
                   amount={stat.count}
                   titleCard={t(
-                    `stats_bill_${stat.status?.toLowerCase() as 'all' | 'unpaid' | 'paid' | 'in_debt' | 'cancelled' | 'overdue'}`,
+                    `stats_bill_${(stat.status?.toLowerCase() as 'all' | 'unpaid' | 'paid' | 'in_debt' | 'cancelled' | 'overdue') ?? 'overdue'}`,
                   )}
                   description={`Tổng tiền: ${formatCurrency(stat.totalPrice)}`}
                 />

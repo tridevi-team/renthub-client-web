@@ -316,7 +316,7 @@ export function Element() {
             className=" justify-center"
           >
             {t(
-              `room_s_${row.original.status?.toLowerCase() as 'available' | 'rented' | 'pending' | 'maintenance' | 'expired'}`,
+              `room_s_${(row.original.status?.toLowerCase() as 'available' | 'rented' | 'pending' | 'maintenance' | 'expired') ?? 'available'}`,
             )}
           </Badge>
         );
