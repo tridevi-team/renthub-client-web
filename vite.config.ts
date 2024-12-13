@@ -82,6 +82,9 @@ export default defineConfig({
   server: {
     port: 3456,
   },
+  preview: {
+    port: 3456,
+  },
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
     rollupOptions: {
