@@ -152,12 +152,16 @@ export function Element() {
         <DataTableColumnHeader column={column} title={t('bill_range_date')} />
       ),
       cell: ({ row }) => {
-        const startDate = dayjs(row.original.date?.from ?? new Date()).format(
-          'DD/MM/YYYY',
-        );
-        const endDate = dayjs(row.original.date?.to ?? new Date()).format(
-          'DD/MM/YYYY',
-        );
+        if (!row.original.startDate || !row.original.endDate) {
+          const title = row.original.title; // Hóa đơn tháng 3 - 2024 -> Lấy ngày ra
+          const month = title.split('-')[0].split(' ')[3];
+          const year = title.split('-')[1].trim();
+          const startDate = dayjs(`${year}-${month}-01`).format('DD/MM/YYYY');
+          const endDate = dayjs(`${year}-${month}-31`).format('DD/MM/YYYY');
+          return `${startDate} - ${endDate}`;
+        }
+        const startDate = dayjs(row.original.startDate).format('DD/MM/YYYY');
+        const endDate = dayjs(row.original.endDate).format('DD/MM/YYYY');
         return `${startDate} - ${endDate}`;
       },
     },
