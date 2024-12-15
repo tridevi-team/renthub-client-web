@@ -64,6 +64,7 @@ class Http {
 // Set config defaults when creating the instance
 export const http = new Http({
   prefixUrl: env.apiBaseUrl,
+  timeout: 30000,
   hooks: {
     beforeRequest: [
       async (request) => {
