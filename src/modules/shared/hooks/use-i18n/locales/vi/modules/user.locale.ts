@@ -1,6 +1,6 @@
 export const userLocale = {
   // #region TITLE + META
-  user_index_title: 'Danh sách tài khoản',
+  user_index_title: 'Danh sách thành viên quản lý',
   // #endregion TITLE + META
 
   // #region FORM + TABLE

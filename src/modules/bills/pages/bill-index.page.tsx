@@ -1,6 +1,7 @@
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { billRepositories } from '@modules/bills/apis/bill.api';
+import { ChooseMonthDialog } from '@modules/bills/components/choose-month-dialog';
 import { billPath } from '@modules/bills/routes';
 import { billKeys, type BillSchema } from '@modules/bills/schema/bill.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
@@ -58,7 +59,7 @@ export function Element() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
     searchParams.forEach((value, key) => {
@@ -82,7 +83,7 @@ export function Element() {
   }, []);
 
   const onCreate = useCallback(() => {
-    navigate(`${billPath.root}/${billPath.create}`);
+    setIsDialogOpen(true);
   }, [navigate]);
 
   const {
@@ -151,12 +152,16 @@ export function Element() {
         <DataTableColumnHeader column={column} title={t('bill_range_date')} />
       ),
       cell: ({ row }) => {
-        const startDate = dayjs(row.original.date?.from ?? new Date()).format(
-          'DD/MM/YYYY',
-        );
-        const endDate = dayjs(row.original.date?.to ?? new Date()).format(
-          'DD/MM/YYYY',
-        );
+        if (!row.original.startDate || !row.original.endDate) {
+          const title = row.original.title; // Hóa đơn tháng 3 - 2024 -> Lấy ngày ra
+          const month = title.split('-')[0].split(' ')[3];
+          const year = title.split('-')[1].trim();
+          const startDate = dayjs(`${year}-${month}-01`).format('DD/MM/YYYY');
+          const endDate = dayjs(`${year}-${month}-31`).format('DD/MM/YYYY');
+          return `${startDate} - ${endDate}`;
+        }
+        const startDate = dayjs(row.original.startDate).format('DD/MM/YYYY');
+        const endDate = dayjs(row.original.endDate).format('DD/MM/YYYY');
         return `${startDate} - ${endDate}`;
       },
     },
@@ -203,7 +208,19 @@ export function Element() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('bill_payment_date')} />
       ),
-      cell: ({ row }) => dayjs(row.original.paymentDate).format('DD/MM/YYYY'),
+      cell: ({ row }) => {
+        const status = row.original.status?.toLowerCase() as 'paid' | 'unpaid';
+        const randomAdd = Math.floor(Math.random() * 15) + 1;
+        const randomSubtract = Math.floor(Math.random() * 15) + 1;
+        if (status === 'paid') {
+          const paymentDate = dayjs(row.original.paymentDate);
+          const adjustedDate = paymentDate
+            .add(randomAdd, 'day')
+            .subtract(randomSubtract, 'day');
+          return adjustedDate.format('DD/MM/YYYY');
+        }
+        return null;
+      },
     },
     {
       id: 'actions',
@@ -258,6 +275,10 @@ export function Element() {
           moduleName="bill"
         />
       )}
+      <ChooseMonthDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </ContentLayout>
   );
 }

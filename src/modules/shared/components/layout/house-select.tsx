@@ -109,7 +109,7 @@ export function HouseSelect() {
             <CommandGroup>
               <CommandItem
                 asChild
-                className="mx-auto flex w-full items-center justify-center py-2"
+                className="mx-auto flex w-full cursor-pointer items-center justify-center py-2"
               >
                 {houses.length === 0 ? (
                   <Link
@@ -119,7 +119,7 @@ export function HouseSelect() {
                     {t('br_houses_create')}
                   </Link>
                 ) : (
-                  <Link to={housePath.index} className="font-medium">
+                  <Link to={housePath.root} className="font-medium">
                     {t('br_houses')}
                   </Link>
                 )}

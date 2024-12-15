@@ -20,6 +20,7 @@ export const billLocale = {
   bill_s_cancelled: 'Đã hủy',
   bill_s_in_debt: 'Nợ',
   bill_s_overdue: 'Quá hạn',
+  bill_choose_month: 'Chọn tháng tạo hóa đơn',
   // #endregion FORM + TABLE
 
   // #region BUTTON
