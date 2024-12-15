@@ -23,14 +23,17 @@ export const ImageVideoCarousel: React.FC<ImageVideoCarouselProps> = ({
       {(files.image ?? []).map((src, index) => (
         // biome-ignore lint/a11y/useValidAnchor: <explanation>
         <a
-          key={`image-${index}`}
+          key={`image-${
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            index
+          }`}
           data-src={src}
           className="gallery-item"
           style={{ margin: '5px', display: 'inline-block' }}
         >
-          {/* biome-ignore lint/a11y/noRedundantAlt: <explanation> */}
           <img
             src={src}
+            // biome-ignore lint/a11y/noRedundantAlt: <explanation>
             alt={`Image ${index + 1}`}
             className="h-40 w-40 object-cover"
             // style={{ height: '100px', width: '100px', objectFit: 'cover' }}
@@ -40,7 +43,10 @@ export const ImageVideoCarousel: React.FC<ImageVideoCarouselProps> = ({
       {(files.video ?? []).map((src, index) => (
         // biome-ignore lint/a11y/useValidAnchor: <explanation>
         <a
-          key={`video-${index}`}
+          key={`video-${
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            index
+          }`}
           data-src={src}
           className="gallery-item"
           style={{ margin: '5px', display: 'inline-block' }}
