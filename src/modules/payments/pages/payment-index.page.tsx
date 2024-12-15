@@ -1,17 +1,17 @@
 import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import { serviceRepositories } from '@modules/services/apis/service.api';
-import { ServiceDialog } from '@modules/services/components/service-dialog';
-import type {
-  ServiceCreateRequestSchema,
-  ServiceCreateResponseSchema,
-  ServiceDataSchema,
-  ServiceDeleteResponseSchema,
-  ServiceSchema,
-  ServiceUpdateRequestSchema,
-} from '@modules/services/schema/service.schema';
-import { serviceKeys } from '@modules/services/schema/service.schema';
+import { paymentRepositories } from '@modules/payments/apis/payment.api';
+import { PaymentDialog } from '@modules/payments/components/payment-dialog';
+import {
+  paymentMethodKeys,
+  type PaymentMethodCreateRequestSchema,
+  type PaymentMethodCreateResponseSchema,
+  type PaymentMethodDeleteResponseSchema,
+  type PaymentMethodSchema,
+  type PaymentMethodUpdateRequestSchema,
+  type PaymentMethodUpdateResponseSchema,
+} from '@modules/payments/schema/payment.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
@@ -22,6 +22,7 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import { BANKS } from '@shared/constants/bank.constant';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -31,8 +32,9 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
+import { Tooltip } from 'antd';
 import to from 'await-to-js';
-import { FileEdit, Trash } from 'lucide-react';
+import { Check, FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
 import {
@@ -46,7 +48,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'service',
+    module: 'payment',
     action: 'read',
   });
   if (!authed) {
@@ -66,10 +68,9 @@ export function Element() {
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<ServiceSchema>();
+  const [isShowPaymentDialog, setIsShowPaymentDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<PaymentMethodSchema>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [isShowServiceDialog, setIsShowServiceDialog] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -81,26 +82,28 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params, 'services', {
+    const searchParams = processSearchParams(params, 'paymentMethods', {
       field: 'updatedAt',
       direction: 'desc',
     });
 
-    const [err, result] = await to(serviceRepositories.index({ searchParams }));
-    if (err) return DEFAULT_RETURN_TABLE_DATA;
+    const [err, result] = await to(paymentRepositories.index({ searchParams }));
+    if (err) {
+      return DEFAULT_RETURN_TABLE_DATA;
+    }
     return result?.data;
   }, []);
 
   const onDelete = useCallback(
-    async (selectedItems: ServiceSchema[]) => {
-      if (!selectedItems.length) return;
-      const [err, _]: AwaitToResult<ServiceDeleteResponseSchema[]> = await to(
-        Promise.all(
-          selectedItems.map((item) =>
-            serviceRepositories.delete({ id: item.id }),
+    async (selectedItems: PaymentMethodSchema[]) => {
+      const [err, _]: AwaitToResult<PaymentMethodDeleteResponseSchema[]> =
+        await to(
+          Promise.all(
+            selectedItems.map((item) =>
+              paymentRepositories.delete({ id: item.id }),
+            ),
           ),
-        ),
-      );
+        );
       if (err) {
         if ('code' in err) {
           toast.error(t(err.code));
@@ -110,9 +113,9 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: serviceKeys.list(queryParams),
+        queryKey: paymentMethodKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_service_success'));
+      toast.success(t('ms_delete_payment_success'));
       return;
     },
     [t, queryParams],
@@ -120,9 +123,8 @@ export function Element() {
 
   const onDestroy = useCallback(
     async (id: string) => {
-      const [err, _]: AwaitToResult<ServiceDeleteResponseSchema> = await to(
-        serviceRepositories.delete({ id }),
-      );
+      const [err, _]: AwaitToResult<PaymentMethodDeleteResponseSchema> =
+        await to(paymentRepositories.delete({ id }));
       if (err) {
         if ('code' in err) {
           toast.error(t(err.code));
@@ -132,43 +134,26 @@ export function Element() {
         return;
       }
       await queryClient.invalidateQueries({
-        queryKey: serviceKeys.list(queryParams),
+        queryKey: paymentMethodKeys.list(queryParams),
       });
-      toast.success(t('ms_delete_service_success'));
+      toast.success(t('ms_delete_payment_success'));
       return;
     },
     [t, queryParams],
   );
 
-  const onCreate = useCallback(async (values: ServiceCreateRequestSchema) => {
-    setIsSubmitting(true);
-    const [err, resp]: AwaitToResult<ServiceCreateResponseSchema> = await to(
-      serviceRepositories.create({ service: values }),
-    );
-    setIsSubmitting(false);
-    if (err) {
-      if ('code' in err) {
-        toast.error(t(err.code));
-      } else {
-        toast.error(t('UNKNOWN_ERROR'));
-      }
-      return;
-    }
-    setIsShowServiceDialog(false);
-    toast.success(t('ms_create_service_success'));
-    await queryClient.invalidateQueries({
-      queryKey: serviceKeys.list(queryParams),
-    });
-    return resp;
-  }, []);
-
-  const onUpdate = useCallback(
-    async (values: ServiceUpdateRequestSchema) => {
-      if (!selectedItem) return;
+  const onCreate = useCallback(
+    async (value: PaymentMethodCreateRequestSchema) => {
       setIsSubmitting(true);
-      const [err, resp]: AwaitToResult<ServiceCreateResponseSchema> = await to(
-        serviceRepositories.update({ id: selectedItem?.id, service: values }),
-      );
+      const { status, isDefault } = value;
+      const [err, resp]: AwaitToResult<PaymentMethodCreateResponseSchema> =
+        await to(
+          paymentRepositories.create({
+            ...value,
+            status: !!status,
+            isDefault: !!isDefault,
+          }),
+        );
       setIsSubmitting(false);
       if (err) {
         if ('code' in err) {
@@ -178,26 +163,61 @@ export function Element() {
         }
         return;
       }
-      setIsShowServiceDialog(false);
-      toast.success(t('ms_update_service_success'));
+      setIsShowPaymentDialog(false);
       await queryClient.invalidateQueries({
-        queryKey: serviceKeys.list(queryParams),
+        queryKey: paymentMethodKeys.list(queryParams),
       });
+      toast.success(t('ms_create_payment_success'));
       return resp;
     },
-    [t, selectedItem, queryParams],
+    [t, queryParams],
+  );
+
+  const onUpdate = useCallback(
+    async (value: PaymentMethodUpdateRequestSchema) => {
+      console.log('selectedItem', selectedItem);
+      if (!selectedItem) return;
+      setIsSubmitting(true);
+      const [err, resp]: AwaitToResult<PaymentMethodUpdateResponseSchema> =
+        await to(
+          paymentRepositories.update({
+            id: selectedItem?.id,
+            payment: {
+              ...value,
+              status: !!value.status,
+              isDefault: !!value.isDefault,
+            },
+          }),
+        );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      setIsShowPaymentDialog(false);
+      await queryClient.invalidateQueries({
+        queryKey: paymentMethodKeys.list(queryParams),
+      });
+      toast.success(t('ms_update_payment_success'));
+      return resp;
+    },
+    [t, queryParams, selectedItem],
   );
 
   const onClickCreateButton = useCallback(() => {
-    setIsShowServiceDialog(true);
+    setIsShowPaymentDialog(true);
   }, []);
 
   const {
-    data: serviceData,
+    data: paymentData,
     isLoading,
     isFetching,
-  } = useQuery<ServiceDataSchema>({
-    queryKey: serviceKeys.list(queryParams),
+  } = useQuery<any>({
+    queryKey: paymentMethodKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
 
@@ -208,36 +228,24 @@ export function Element() {
     }
   }, [isLoading]);
 
-  const mesureMap = useMemo(
-    () => ({
-      people: t('service_type_people'),
-      room: t('service_type_room'),
-      water_consumption: t('service_type_index'),
-      electricity_consumption: t('service_type_index'),
-    }),
-    [t],
-  );
-
-  const actionColumn: Action<ServiceSchema>[] = [
+  const actionColumn: Action<PaymentMethodSchema>[] = [
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<ServiceSchema>) => {
-        unstable_batchedUpdates(() => {
-          setIsShowServiceDialog(true);
-          setSelectedItem(row.original);
-        });
+      onClick: async (row: Row<PaymentMethodSchema>) => {
+        setSelectedItem(row.original);
+        setIsShowPaymentDialog(true);
       },
     },
     {
       label: t('bt_delete'),
       icon: <Trash className="mr-2 h-4 w-4" />,
       isDanger: true,
-      onClick: (row: Row<ServiceSchema>) => onDestroy(row.original.id),
+      onClick: (row: Row<PaymentMethodSchema>) => onDestroy(row.original.id),
     },
   ];
 
-  const columns: ColumnDef<ServiceSchema>[] = [
+  const columns: ColumnDef<PaymentMethodSchema>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -260,49 +268,90 @@ export function Element() {
     {
       accessorKey: 'name',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('service_name')} />
+        <DataTableColumnHeader column={column} title={t('payment_name')} />
       ),
     },
     {
-      accessorKey: 'unitPrice',
+      accessorKey: 'accountNumber',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('service_unit_price')}
+          title={t('payment_account_number')}
         />
       ),
-      cell: ({ row }) => {
-        const formattedUnitPrice = row.original.unitPrice
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        return `${formattedUnitPrice} đ`;
-      },
     },
     {
-      accessorKey: 'type',
+      accessorKey: 'bankName',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('service_cal_by')} />
+        <DataTableColumnHeader column={column} title={t('payment_bank_name')} />
+      ),
+    },
+    {
+      accessorKey: 'bankLogo',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('payment_bank_logo')} />
       ),
       cell: ({ row }) => {
-        return (
-          <Badge variant="outline">
-            {
-              mesureMap[
-                row.original.type?.toLocaleLowerCase() as keyof typeof mesureMap
-              ]
-            }
-          </Badge>
-        );
+        const bankName = row.original.bankName;
+        const logo = BANKS.find((bank) => bank.shortName === bankName)?.logo;
+        return logo ? (
+          <img src={logo} alt={bankName} className="h-12 object-contain" />
+        ) : null;
       },
+      enableSorting: false,
     },
     {
-      accessorKey: 'description',
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('payment_status')} />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.original.status === 1 ? 'success' : 'outline'}>
+          {row.original.status === 1
+            ? t('payment_using')
+            : t('payment_not_using')}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: 'isDefault',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('service_description')}
+          title={t('payment_is_default')}
         />
       ),
+      cell: ({ row }) => {
+        const isDefault = row.original.isDefault;
+        return isDefault ? (
+          <Tooltip
+            title={isDefault ? t('common_yes') : t('common_no')}
+            arrow={false}
+          >
+            <Check />
+          </Tooltip>
+        ) : null;
+      },
+    },
+    {
+      accessorKey: 'payosClientId',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('payment_payos_status')}
+        />
+      ),
+      cell: ({ row }) => {
+        const isPayOS = row.original.payosClientId;
+        return isPayOS ? (
+          <Tooltip
+            title={isPayOS ? t('payment_linked') : t('payment_not_linked')}
+            arrow={false}
+          >
+            <Check />
+          </Tooltip>
+        ) : null;
+      },
     },
     {
       id: 'actions',
@@ -315,20 +364,20 @@ export function Element() {
     },
   ];
 
-  const filterFields: DataTableFilterField<ServiceSchema>[] = [
+  const filterFields: DataTableFilterField<PaymentMethodSchema>[] = [
     {
-      label: t('service_name'),
+      label: t('payment_name'),
       value: 'name',
       placeholder: t('common_ph_input', {
-        field: t('service_name').toLowerCase(),
+        field: t('payment_name').toLowerCase(),
       }),
     },
   ];
 
   const { table } = useDataTable({
-    data: serviceData?.results || [],
+    data: paymentData?.results || [],
     columns,
-    pageCount: serviceData?.pageCount || 0,
+    pageCount: paymentData?.pageCount || 0,
     filterFields,
     initialState: {
       columnPinning: { right: ['actions'], left: ['select', 'name'] },
@@ -337,12 +386,12 @@ export function Element() {
   });
 
   return (
-    <ContentLayout title={t('service_index_title')} pathname={pathname}>
+    <ContentLayout title={t('payment_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
           filterableColumnCount={2}
-          // cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
+          cellWidths={['10rem', '10rem', '10rem', '10rem', '10rem']}
           shrinkZero
         />
       ) : (
@@ -355,14 +404,14 @@ export function Element() {
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          moduleName="service"
+          moduleName="payment"
         />
       )}
-      <ServiceDialog
-        isOpen={isShowServiceDialog}
+      <PaymentDialog
+        isOpen={isShowPaymentDialog}
         onClose={() => {
           unstable_batchedUpdates(() => {
-            setIsShowServiceDialog(false);
+            setIsShowPaymentDialog(false);
             setSelectedItem(undefined);
           });
         }}

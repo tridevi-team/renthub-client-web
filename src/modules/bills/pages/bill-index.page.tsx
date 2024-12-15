@@ -1,12 +1,8 @@
-import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
-import { equipmentRepositories } from '@modules/equipments/apis/equipment.api';
-import { equipmentPath } from '@modules/equipments/routes';
-import {
-  equipmentKeys,
-  type EquipmentSchema,
-} from '@modules/equipments/schema/equiment.schema';
+import { billRepositories } from '@modules/bills/apis/bill.api';
+import { billPath } from '@modules/bills/routes';
+import { billKeys, type BillSchema } from '@modules/bills/schema/bill.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import {
@@ -21,13 +17,13 @@ import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
-import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
-import { processSearchParams } from '@shared/utils/helper.util';
+import { formatCurrency, processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
-import { FileEdit, Trash } from 'lucide-react';
+import dayjs from 'dayjs';
+import { FileEdit } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -41,7 +37,7 @@ import { toast } from 'sonner';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'equipment',
+    module: 'bill',
     action: 'read',
   });
   if (!authed) {
@@ -73,76 +69,28 @@ export function Element() {
   }, [searchParams]);
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
-    const searchParams = processSearchParams(params, 'equipment', {
-      field: 'updatedAt',
+    const searchParams = processSearchParams(params, 'bills', {
+      field: 'title',
       direction: 'desc',
     });
 
-    const [err, result] = await to(
-      equipmentRepositories.index({ searchParams }),
-    );
+    const [err, result] = await to(billRepositories.index({ searchParams }));
     if (err) {
       return DEFAULT_RETURN_TABLE_DATA;
     }
     return result?.data;
   }, []);
 
-  const onDelete = useCallback(
-    async (selectedItems: EquipmentSchema[]) => {
-      const [err, _]: AwaitToResult<any> = await to(
-        equipmentRepositories.deleteMany({
-          ids: selectedItems.map((item) => item.id),
-        }),
-      );
-      if (err) {
-        if ('code' in err) {
-          toast.error(t(err.code));
-        } else {
-          toast.error(t('UNKNOWN_ERROR'));
-        }
-        return;
-      }
-      await queryClient.invalidateQueries({
-        queryKey: equipmentKeys.list(queryParams),
-      });
-      toast.success(t('ms_delete_equipment_success'));
-      return _;
-    },
-    [t, queryParams],
-  );
-
-  const onDestroy = useCallback(
-    async (id: string) => {
-      const [err, _]: AwaitToResult<any> = await to(
-        equipmentRepositories.delete({ id }),
-      );
-      if (err) {
-        if ('code' in err) {
-          toast.error(t(err.code));
-        } else {
-          toast.error(t('UNKNOWN_ERROR'));
-        }
-        return;
-      }
-      await queryClient.invalidateQueries({
-        queryKey: equipmentKeys.list(queryParams),
-      });
-      toast.success(t('ms_delete_equipment_success'));
-      return _;
-    },
-    [t, queryParams],
-  );
-
   const onCreate = useCallback(() => {
-    navigate(`${equipmentPath.root}/${equipmentPath.create}`);
+    navigate(`${billPath.root}/${billPath.create}`);
   }, [navigate]);
 
   const {
-    data: equipmentData,
+    data: billData,
     isLoading,
     isFetching,
   } = useQuery<any>({
-    queryKey: equipmentKeys.list(queryParams),
+    queryKey: billKeys.list(queryParams),
     queryFn: async () => fetchData(searchParams),
   });
 
@@ -153,25 +101,19 @@ export function Element() {
     }
   }, [isLoading]);
 
-  const actionColumn: Action<EquipmentSchema>[] = [
+  const actionColumn: Action<BillSchema>[] = [
     {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<EquipmentSchema>) => {
+      onClick: async (row: Row<BillSchema>) => {
         navigate(
-          `${equipmentPath.root}/${equipmentPath.edit.replace(':id', row.original.id)}`,
+          `${billPath.root}/${billPath.edit.replace(':id', row.original.id)}`,
         );
       },
     },
-    {
-      label: t('bt_delete'),
-      icon: <Trash className="mr-2 h-4 w-4" />,
-      isDanger: true,
-      onClick: (row: Row<EquipmentSchema>) => onDestroy(row.original.id),
-    },
   ];
 
-  const columns: ColumnDef<EquipmentSchema>[] = [
+  const columns: ColumnDef<BillSchema>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -192,71 +134,76 @@ export function Element() {
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'title',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('equipment_name')} />
-      ),
-    },
-    {
-      accessorKey: 'code',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('equipment_code')} />
-      ),
-    },
-    {
-      accessorKey: 'floorName',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('equipment_floor')} />
+        <DataTableColumnHeader column={column} title={t('bill_title')} />
       ),
     },
     {
       accessorKey: 'roomName',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('equipment_room')} />
+        <DataTableColumnHeader column={column} title={t('bill_room')} />
       ),
     },
     {
-      accessorKey: 'description',
+      accessorKey: 'date',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('equipment_description')}
-        />
+        <DataTableColumnHeader column={column} title={t('bill_range_date')} />
       ),
+      cell: ({ row }) => {
+        const startDate = dayjs(row.original.date?.from ?? new Date()).format(
+          'DD/MM/YYYY',
+        );
+        const endDate = dayjs(row.original.date?.to ?? new Date()).format(
+          'DD/MM/YYYY',
+        );
+        return `${startDate} - ${endDate}`;
+      },
+    },
+    {
+      accessorKey: 'amount',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('bill_amount')} />
+      ),
+      cell: ({ row }) => formatCurrency(row.original.amount ?? 0),
     },
     {
       accessorKey: 'status',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('equipment_status')} />
+        <DataTableColumnHeader column={column} title={t('bill_status')} />
       ),
       cell: ({ row }) => {
+        const status =
+          (row.original.status?.toLowerCase() as
+            | 'paid'
+            | 'unpaid'
+            | 'cancelled'
+            | 'in_debt'
+            | 'overdue') ?? 'unpaid';
         return (
-          <Badge variant="outline">
-            {t(
-              `equipment_status_${(row.original.status?.toLowerCase() as 'normal' | 'broken' | 'repairing' | 'disposed') ?? 'normal'}`,
-            )}
+          <Badge
+            variant={
+              status === 'paid'
+                ? 'success'
+                : status === 'in_debt'
+                  ? 'warning'
+                  : status === 'cancelled' || status === 'overdue'
+                    ? 'destructive'
+                    : 'default'
+            }
+          >
+            {t(`bill_s_${status}`)}
           </Badge>
         );
       },
       enableSorting: true,
     },
     {
-      accessorKey: 'sharedType',
+      accessorKey: 'paymentDate',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('equipment_shared_type')}
-        />
+        <DataTableColumnHeader column={column} title={t('bill_payment_date')} />
       ),
-      cell: ({ row }) => {
-        return (
-          <Badge variant="outline">
-            {t(
-              `equipment_shared_type_${(row.original.sharedType?.toLowerCase() as 'house' | 'room') ?? 'house'}`,
-            )}
-          </Badge>
-        );
-      },
+      cell: ({ row }) => dayjs(row.original.paymentDate).format('DD/MM/YYYY'),
     },
     {
       id: 'actions',
@@ -269,20 +216,20 @@ export function Element() {
     },
   ];
 
-  const filterFields: DataTableFilterField<EquipmentSchema>[] = [
+  const filterFields: DataTableFilterField<BillSchema>[] = [
     {
-      label: t('equipment_name'),
-      value: 'name',
+      label: t('bill_title'),
+      value: 'title',
       placeholder: t('common_ph_input', {
-        field: t('equipment_name').toLowerCase(),
+        field: t('bill_title').toLowerCase(),
       }),
     },
   ];
 
   const { table } = useDataTable({
-    data: equipmentData?.results || [],
+    data: billData?.results || [],
     columns,
-    pageCount: equipmentData?.pageCount || 0,
+    pageCount: billData?.pageCount || 0,
     filterFields,
     initialState: {
       columnPinning: { right: ['actions'], left: ['select', 'name'] },
@@ -291,7 +238,7 @@ export function Element() {
   });
 
   return (
-    <ContentLayout title={t('equipment_index_title')} pathname={pathname}>
+    <ContentLayout title={t('bill_index_title')} pathname={pathname}>
       {isInitialLoading ? (
         <DataTableSkeleton
           columnCount={5}
@@ -302,14 +249,13 @@ export function Element() {
       ) : (
         <DataTable
           actions={{
-            onDelete,
             onCreate,
           }}
           table={table}
           columns={columns}
           filterOptions={filterFields}
           loading={isFetching}
-          moduleName="equipment"
+          moduleName="bill"
         />
       )}
     </ContentLayout>

@@ -47,4 +47,5 @@ export const commonLocale = {
   common_upload_image: 'Tải ảnh lên',
   common_count_uploaded_image: '{count} ảnh đã được tải lên',
   common_no: 'Không',
+  common_yes: 'Có',
 } as const;

@@ -3,7 +3,8 @@ import { getUserAppStore } from '@shared/utils/helper.util';
 import { getFingerprint } from '@thumbmarkjs/thumbmarkjs';
 import { initializeApp } from 'firebase/app';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import { getMessaging, getToken } from 'firebase/messaging';
+import { getToken } from 'firebase/messaging';
+import { getMessaging } from 'firebase/messaging/sw';
 
 const firebaseConfig = {
   apiKey: env.firebaseApiKey,

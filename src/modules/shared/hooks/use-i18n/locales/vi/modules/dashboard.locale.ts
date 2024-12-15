@@ -17,7 +17,7 @@ export const dashboardLocale = {
   // #endregion COMMON
 
   // #region ACCOUNT
-  account_title: 'Thông tin Tài khoản',
+  account_title: 'Thông tin cá nhân',
   account_full_name: 'Họ và tên',
   account_email: 'Email',
   account_city: 'Thành phố',

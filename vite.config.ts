@@ -15,8 +15,8 @@ const pwaOptions: Partial<VitePWAOptions> = {
   mode: process.env.SW_DEV === 'true' ? 'development' : 'production',
   includeAssets: ['*.ico', '*.svg', '*.png'],
   manifest: {
-    name: 'RentHub',
-    short_name: 'RentHub',
+    name: 'Trọ đây! - Hệ thống Quản lý Nhà trọ',
+    short_name: 'Trọ đây!',
     description: 'Hệ thống Quản lý Nhà trọ',
     theme_color: '#ffffff',
     icons: [
@@ -80,6 +80,9 @@ if (process.env.RELOAD_SW === 'true') replaceOptions.__RELOAD_SW__ = 'true';
 
 export default defineConfig({
   server: {
+    port: 3456,
+  },
+  preview: {
     port: 3456,
   },
   build: {

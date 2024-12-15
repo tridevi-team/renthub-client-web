@@ -8,6 +8,7 @@ import ky, { type Options, type SearchParamsOption, HTTPError } from 'ky';
 
 class Http {
   instance: typeof ky;
+  public isRetrying = false;
 
   constructor(config: Options) {
     this.instance = ky.create(config);
@@ -75,7 +76,15 @@ export const http = new Http({
     afterResponse: [
       async (_request, _options, response) => {
         if (response.status === 401) {
+          if (http.isRetrying) {
+            // Nếu đang trong quá trình retry, logout và chuyển hướng
+            useAuthUserStore.getState().clearUser();
+            navigate('/login');
+            throw new HTTPError(response, _request, _options);
+          }
+
           try {
+            http.isRetrying = true;
             const refreshToken = await authRepositories.refreshToken();
             if (!refreshToken) {
               throw new HTTPError(response, _request, _options);
@@ -95,10 +104,13 @@ export const http = new Http({
               throw parsedError.data;
             }
 
+            http.isRetrying = false;
             return retryResponse;
           } catch {
+            http.isRetrying = false;
             useAuthUserStore.getState().clearUser();
             navigate('/login');
+            throw new HTTPError(response, _request, _options);
           }
         }
 

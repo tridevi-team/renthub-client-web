@@ -1,36 +1,37 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
-import { roleRepositories } from '@modules/roles/apis/role.api';
-import { RoleForm } from '@modules/roles/components/role-form';
-import { rolePath } from '@modules/roles/routes';
+import { equipmentRepositories } from '@modules/equipments/apis/equipment.api';
+import { EquipmentForm } from '@modules/equipments/components/equipment-form';
+import { equipmentPath } from '@modules/equipments/routes';
 import {
-  type RoleDetailResponseSchema,
-  type RoleUpdateRequestSchema,
-  roleUpdateRequestSchema,
-  type RoleUpdateResponseSchema,
-} from '@modules/roles/schema/role.schema';
+  equipmentCreateRequestSchema,
+  type EquipmentCreateRequestSchema,
+  type EquipmentCreateResponseSchema,
+} from '@modules/equipments/schema/equiment.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import {
+  EQUIPMENT_SHARED_TYPE,
+  EQUIPMENT_STATUS,
+} from '@shared/constants/general.constant';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import to from 'await-to-js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   type LoaderFunction,
   redirect,
   useLocation,
   useNavigate,
-  useParams,
 } from 'react-router-dom';
 import { toast } from 'sonner';
-
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
-    module: 'room',
-    action: 'update',
+    module: 'equipment',
+    action: 'create',
   });
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
@@ -45,41 +46,25 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const form = useForm<RoleUpdateRequestSchema>({
+  const form = useForm<EquipmentCreateRequestSchema>({
     mode: 'onChange',
-    resolver: zodResolver(roleUpdateRequestSchema),
+    resolver: zodResolver(equipmentCreateRequestSchema),
+    defaultValues: {
+      code: '',
+      status: EQUIPMENT_STATUS.NORMAL,
+      sharedType: EQUIPMENT_SHARED_TYPE.ROOM,
+    },
   });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
-  const { id } = useParams<{ id: string }>();
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (!id) return;
-      const [err, role]: AwaitToResult<RoleDetailResponseSchema> = await to(
-        roleRepositories.detail({ id }),
-      );
-      if (err) {
-        toast.error(t('UNKNOWN_ERROR'));
-        return;
-      }
-      form.reset({
-        ...role?.data,
-        status: role?.data.status === 1 ? 'active' : 'inactive',
-      });
-    };
-    fetchRole();
-  }, [id, form, t]);
-
-  const onSubmit = async (values: RoleUpdateRequestSchema) => {
-    if (!id) return;
+  const onSubmit = async (values: any) => {
     setLoading(true);
-    const [err, _]: AwaitToResult<RoleUpdateResponseSchema> = await to(
-      roleRepositories.update({
-        id,
-        role: values,
+    const [err, _]: AwaitToResult<EquipmentCreateResponseSchema> = await to(
+      equipmentRepositories.create({
+        equipment: values,
       }),
     );
     setLoading(false);
@@ -91,14 +76,14 @@ export function Element() {
       }
       return;
     }
-    toast.success(t('ms_update_role_success'));
-    navigate(`${rolePath.root}`);
+    toast.success(t('ms_create_equipment_success'));
+    navigate(`${equipmentPath.root}`);
     return _;
   };
 
   return (
-    <ContentLayout title={t('role_edit_title')} pathname={pathname}>
-      <RoleForm form={form} onSubmit={onSubmit} loading={loading} isEdit />
+    <ContentLayout title={t('bill_create_title')} pathname={pathname}>
+      <EquipmentForm form={form} onSubmit={onSubmit} loading={loading} />
     </ContentLayout>
   );
 }

@@ -4,6 +4,7 @@ import {
   notFoundRoute,
   notPermissionRoute,
 } from '@auth/routes';
+import { billRoute } from '@modules/bills/routes';
 import { contractTemplateRoute } from '@modules/contract-templates/routes';
 import { contractRoute } from '@modules/contracts/routes';
 import { dashboardRoute } from '@modules/dashboard/routes';
@@ -11,6 +12,7 @@ import { equipmentRoute } from '@modules/equipments/routes';
 import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { issueRoute } from '@modules/issues/routes';
+import { paymentRoute } from '@modules/payments/routes';
 import { renterRoute } from '@modules/renters/routes';
 import { roleRoute } from '@modules/roles/routes';
 import { roomRoute } from '@modules/rooms/routes';
@@ -39,6 +41,8 @@ export const browserRouter = createBrowserRouter(
     renterRoute,
     contractRoute,
     issueRoute,
+    paymentRoute,
+    billRoute,
   ],
   {
     future: {

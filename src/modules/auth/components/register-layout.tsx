@@ -20,11 +20,11 @@ export default function RegisterLayout({
       />
       <div className="relative z-10 w-full max-w-3xl rounded-lg bg-white p-10 shadow-2xl md:w-[600px]">
         {/* title register */}
-        <div className="md:-mt-24 mb-2 flex items-center justify-center gap-2">
+        <div className="md:-mt-24 mx-48 mb-2 flex items-center justify-center gap-2 rounded-full bg-white">
           <img
             src={logoImg}
             alt={BRAND_NAME}
-            className={cn('h-36 w-36 bg-white', 'rounded-full')}
+            className={cn('h-36 w-36')}
             loading="lazy"
             aria-label={BRAND_NAME}
           />

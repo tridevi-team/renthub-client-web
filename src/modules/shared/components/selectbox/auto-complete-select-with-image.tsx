@@ -32,7 +32,7 @@ type AutoCompleteProps = {
   debounceTime?: number;
 };
 
-export const AutoComplete = ({
+export const AutoCompleteWithImage = ({
   options: initialOptions,
   placeholder,
   emptyMessage,
@@ -163,10 +163,12 @@ export const AutoComplete = ({
     ? options
     : searchValue
       ? initialOptions.filter((option) => {
-          if (!option.label) return false;
           const labelString = safeToString(option.label);
-          const searchString = safeToString(searchValue);
-          return labelString.toLowerCase().includes(searchString.toLowerCase());
+          const descriptionString = safeToString(option.description || '');
+          const searchString = safeToString(searchValue).toLowerCase();
+          return `${labelString} ${descriptionString}`
+            .toLowerCase()
+            .includes(searchString);
         })
       : initialOptions;
 
@@ -254,13 +256,25 @@ export const AutoComplete = ({
                         event.stopPropagation();
                       }}
                       onSelect={() => handleSelectOption(option)}
-                      className={cn(
-                        'flex w-full items-center gap-2',
-                        !isSelected ? 'pl-8' : null,
-                      )}
                     >
-                      {isSelected ? <Check className="w-4" /> : null}
-                      {option.label}
+                      <div className="flex w-full items-center">
+                        {isSelected && <Check className="mr-2 w-4" />}
+                        <div className="flex flex-col">
+                          <span>{option.label}</span>
+                          {option.description && (
+                            <span className="text-gray-500 text-sm">
+                              {option.description}
+                            </span>
+                          )}
+                        </div>
+                        {option.imageUrl && (
+                          <img
+                            src={option.imageUrl}
+                            alt=""
+                            className="ml-auto h-8"
+                          />
+                        )}
+                      </div>
                     </CommandItem>
                   );
                 })}
