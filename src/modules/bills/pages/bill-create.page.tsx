@@ -1,5 +1,6 @@
 import { authPath } from '@auth/routes';
 import { billRepositories } from '@modules/bills/apis/bill.api';
+import { billPath } from '@modules/bills/routes';
 import { renterRepositories } from '@modules/renters/apis/renter.api';
 import { roomRepositories } from '@modules/rooms/apis/room.api';
 import type { RoomSchema } from '@modules/rooms/schema/room.schema';
@@ -27,14 +28,19 @@ import to from 'await-to-js';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useState } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
-import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
+import {
+  redirect,
+  useLocation,
+  useNavigate,
+  type LoaderFunction,
+} from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
     module: 'bill',
-    action: 'read',
+    action: 'create',
   });
   if (!authed) {
     toast.error(errorLocale.LOGIN_REQUIRED);
@@ -66,11 +72,13 @@ const { RangePicker } = DatePicker;
 export function Element() {
   const [t] = useI18n();
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location.pathname;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<RoomSchema>();
   const [rooms, setRooms] = useState<RoomSchema[]>();
   const [renterName, setRenterName] = useState<string>();
+  const [roomPrice, setRoomPrice] = useState<number>();
   const [rangeDate, setRangeDate] = useState<any>([
     dayjs(`${dayjs().month() + 1}/15/${dayjs().year()}`, 'MM/DD/YYYY'),
     dayjs(`${dayjs().month() + 1}/15/${dayjs().year()}`, 'MM/DD/YYYY').add(
@@ -401,11 +409,25 @@ export function Element() {
                     </Table>
                   </Col>
                   <Col xs={24} className="flex justify-end">
+                    <h3 className="font-semibold text-lg">
+                      Giá phòng: {formatCurrency(roomPrice || 0)}
+                    </h3>
+                  </Col>
+                  <Col xs={24} className="flex justify-end">
                     <h3 className="font-semibold text-xl">
-                      Tổng cộng: {formatCurrency(totalAmount || 0)}
+                      Tổng cộng:{' '}
+                      {formatCurrency((totalAmount ?? 0) + (roomPrice ?? 0))}
                     </h3>
                   </Col>
                   <Col xs={24} className="flex">
+                    <Button
+                      type="button"
+                      onClick={() => navigate(billPath.root)}
+                      className="mr-2"
+                      variant={'outline'}
+                    >
+                      Quay lại
+                    </Button>
                     <Button onClick={onSubmit} loading={isSubmitting}>
                       Tạo hóa đơn
                     </Button>
