@@ -1,6 +1,8 @@
+import { generateToken, messaging } from '@app/firebase';
 import { ConfigProvider } from 'antd';
 import vi_VN from 'antd/lib/locale/vi_VN';
-import { StrictMode } from 'react';
+import { onMessage } from 'firebase/messaging';
+import { StrictMode, useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { AppI18nProvider } from './providers/i18n/provider';
 import { AppQueryProvider } from './providers/query/provider';
@@ -9,6 +11,12 @@ import { AppToastProvider } from './providers/toast/provider';
 import { ReloadPromptSw } from './reload-prompt-sw';
 
 export function Entry() {
+    useEffect(() => {
+        generateToken();
+        onMessage(messaging, (payload) => {
+            console.log(payload);
+        });
+    }, []);
   return (
     <StrictMode>
       <ConfigProvider locale={vi_VN}>

@@ -156,7 +156,7 @@ export function Element() {
       if (!selectedItem) return;
       setIsSubmitting(true);
       const [err, _]: AwaitToResult<FloorCreateResponseSchema> = await to(
-        floorRepositories.update({ id: selectedItem?.id, floor: data }),
+        floorRepositories.update({ id: selectedItem?.id, floor: {...data, name: "Tầng " + data.name} }),
       );
       setIsSubmitting(false);
       if (err) {
