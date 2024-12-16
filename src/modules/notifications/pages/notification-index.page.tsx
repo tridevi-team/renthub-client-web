@@ -1,3 +1,5 @@
+import { updateSignupInfoStatus } from '@app/firebase';
+import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import {
@@ -20,10 +22,9 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button } from 'antd';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { FilePenIcon } from 'lucide-react';
+import { FilePenIcon, Phone } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -223,24 +224,30 @@ export function Element() {
           return null;
         }
         return (
-          <Button
-            type="link"
-            onClick={() => {
-              setPrefillContractForm({
-                notificationId: id,
-                renter: {
-                  fullName: row.original.fullName,
-                  phoneNumber: row.original.phoneNumber,
-                  email: row.original.email,
-                },
-              });
-              navigate('/contracts/create');
-            }}
-            className="m-0 items-start justify-start p-0"
-          >
-            <FilePenIcon className="h-5" />
-            {t('notification_create_contract')}
-          </Button>
+          <div className="flex items-center justify-center space-x-2">
+            <FilePenIcon
+              className="h-5 hover:cursor-pointer hover:text-primary"
+              onClick={() => {
+                setPrefillContractForm({
+                  notificationId: id,
+                  renter: {
+                    fullName: row.original.fullName,
+                    phoneNumber: row.original.phoneNumber,
+                    email: row.original.email,
+                  },
+                });
+                navigate('/contracts/create');
+              }}
+            />
+            <Phone
+              className="h-5 hover:cursor-pointer hover:text-primary"
+              onClick={async () => {
+                await updateSignupInfoStatus(id, 'CONTACTED');
+                await queryClient.invalidateQueries();
+                toast.success(t('notification_contacted'));
+              }}
+            />
+          </div>
         );
       },
     },

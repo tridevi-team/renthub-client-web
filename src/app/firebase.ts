@@ -2,7 +2,7 @@ import { env } from '@shared/constants/env.constant';
 import { getUserAppStore } from '@shared/utils/helper.util';
 import { getFingerprint } from '@thumbmarkjs/thumbmarkjs';
 import { initializeApp } from 'firebase/app';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import { doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 import { getToken } from 'firebase/messaging';
 import { getMessaging } from 'firebase/messaging/sw';
 
@@ -40,4 +40,16 @@ export const generateToken = async () => {
   } catch (error) {
     console.error('Error retrieving FCM token:', error);
   }
+};
+
+export const updateSignupInfoStatus = async (
+  recordId: string,
+  status: 'WAITING_FOR_CONTACT' | 'CONTACTED' | 'SIGNED_CONTRACT',
+) => {
+  const docRef = doc(db, 'signup_receive_information', recordId);
+
+  await updateDoc(docRef, {
+    status,
+    updatedAt: new Date(),
+  });
 };

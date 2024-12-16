@@ -1,3 +1,4 @@
+import { updateSignupInfoStatus } from '@app/firebase';
 import { authPath } from '@modules/auth/routes';
 import { contractTemplateRepositories } from '@modules/contract-templates/api/contract-template.api';
 import type {
@@ -292,6 +293,14 @@ export function Element() {
       }
       return;
     }
+
+    const prefill = JSON.parse(
+      localStorage.getItem('prefill-contract-form') || '{}',
+    );
+    if (prefill?.notificationId) {
+      await updateSignupInfoStatus(prefill.notificationId, 'SIGNED_CONTRACT');
+    }
+
     toast.success(t('ms_create_contract_success'));
     localStorage.removeItem('contract-fill-form');
     localStorage.removeItem('prefill-contract-form');

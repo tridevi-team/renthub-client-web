@@ -16,8 +16,11 @@ export const notificationLocale = {
   notification_email: 'Email',
   notification_action: 'Thao tác',
   notification_create_contract: 'Tạo hợp đồng',
+  notification_contacted: 'Đã liên hệ',
   notification_status: 'Trạng thái',
   notification_status_waiting_for_contact: 'Chờ liên hệ',
+  notification_status_contacted: 'Đã liên hệ',
+  notification_status_signed_contract: 'Đã ký hợp đồng',
   // #endregion FORM + TABLE
 
   // #region BUTTON
