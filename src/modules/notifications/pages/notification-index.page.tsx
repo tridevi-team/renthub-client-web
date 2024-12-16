@@ -8,18 +8,22 @@ import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
+import { useLocalStorageState } from '@shared/hooks/use-local-storage-state.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
+import { Button } from 'antd';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
+import { FilePenIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -53,6 +57,12 @@ export function Element() {
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [_, setPrefillContractForm] = useLocalStorageState(
+    'prefill-contract-form',
+    {
+      defaultValue: {} as Record<string, any>,
+    },
+  );
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const queryParams = useMemo(() => {
@@ -171,6 +181,59 @@ export function Element() {
       cell: ({ row }) => {
         const { seconds } = row.original.createdAt;
         return dayjs.unix(seconds).format('DD/MM/YYYY HH:mm');
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('notification_status')}
+        />
+      ),
+      cell: ({ row }) => {
+        const status =
+          (row.original.status?.toLowerCase() as 'waiting_for_contact') ??
+          'waiting_for_contact';
+        return (
+          <Badge
+            variant={status === 'waiting_for_contact' ? 'warning' : 'success'}
+          >
+            {t(`notification_status_${status}`)}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('notification_action')}
+        />
+      ),
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <Button
+            type="link"
+            onClick={() => {
+              setPrefillContractForm({
+                notificationId: id,
+                renter: {
+                  fullName: row.original.fullName,
+                  phoneNumber: row.original.phoneNumber,
+                  email: row.original.email,
+                },
+              });
+              navigate('/contracts/create');
+            }}
+            className="m-0 items-start justify-start p-0"
+          >
+            <FilePenIcon className="h-5" />
+            {t('notification_create_contract')}
+          </Button>
+        );
       },
     },
   ];

@@ -294,6 +294,7 @@ export function Element() {
     }
     toast.success(t('ms_create_contract_success'));
     localStorage.removeItem('contract-fill-form');
+    localStorage.removeItem('prefill-contract-form');
     navigate(`${contractPath.root}`);
     return _;
   };

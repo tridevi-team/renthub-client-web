@@ -14,6 +14,10 @@ export const notificationLocale = {
   notification_created_at: 'Ngày đăng ký',
   notification_phone: 'Số điện thoại',
   notification_email: 'Email',
+  notification_action: 'Thao tác',
+  notification_create_contract: 'Tạo hợp đồng',
+  notification_status: 'Trạng thái',
+  notification_status_waiting_for_contact: 'Chờ liên hệ',
   // #endregion FORM + TABLE
 
   // #region BUTTON

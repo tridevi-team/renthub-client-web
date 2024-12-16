@@ -229,6 +229,12 @@ const StepFillContract = ({
       },
     },
   );
+  const prefillContractForm = localStorage.getItem(
+    'prefill-contract-form',
+  ) as any;
+
+  const paresedPrefillContractForm = JSON.parse(prefillContractForm || '{}');
+
   const [selectedServices, setSelectedServices] = useState<any[]>(
     currentFormValue?.services || [],
   );
@@ -238,7 +244,10 @@ const StepFillContract = ({
   const form = useForm<ContractCreateFillFormRequestSchema>({
     mode: 'onChange',
     resolver: zodResolver(contractCreateFillFormRequestSchema),
-    defaultValues: currentFormValue,
+    defaultValues: {
+      ...currentFormValue,
+      ...paresedPrefillContractForm,
+    },
   });
 
   useEffect(() => {
