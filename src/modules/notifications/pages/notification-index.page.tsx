@@ -154,15 +154,6 @@ export function Element() {
       ),
     },
     {
-      accessorKey: 'houseName',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('notification_house_name')}
-        />
-      ),
-    },
-    {
       accessorKey: 'roomName',
       header: ({ column }) => (
         <DataTableColumnHeader
