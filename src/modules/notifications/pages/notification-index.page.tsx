@@ -214,6 +214,14 @@ export function Element() {
       ),
       cell: ({ row }) => {
         const id = row.original.id;
+        const canCreateContract =
+          checkPermissionPage({
+            module: 'contract',
+            action: 'create',
+          }) && row.original.status === 'WAITING_FOR_CONTACT';
+        if (!canCreateContract) {
+          return null;
+        }
         return (
           <Button
             type="link"
