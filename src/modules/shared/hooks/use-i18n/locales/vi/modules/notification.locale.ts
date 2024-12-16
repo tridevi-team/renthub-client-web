@@ -8,6 +8,12 @@ export const notificationLocale = {
   // #region FORM + TABLE
   notification_title: 'Tiêu đề',
   notification_content: 'Nội dung',
+  notification_house_name: 'Nhà',
+  notification_room_name: 'Phòng',
+  notification_fullname: 'Người đăng ký',
+  notification_created_at: 'Ngày đăng ký',
+  notification_phone: 'Số điện thoại',
+  notification_email: 'Email',
   // #endregion FORM + TABLE
 
   // #region BUTTON

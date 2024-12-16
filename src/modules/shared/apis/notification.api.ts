@@ -14,7 +14,7 @@ export const notificationRepositories = {
   index: async ({ searchParams }: { searchParams: QueryOptions }) => {
     const houseId = getHouseSelected()?.id;
     const resp = await http.instance
-      .get(`houses/${houseId}/revice-information`, {
+      .get(`houses/${houseId}/receive-information`, {
         searchParams: http._makeQuery(searchParams),
       })
       .json();
@@ -31,4 +31,10 @@ export const notificationRepositories = {
       .json();
     return resp;
   },
+};
+
+export const notificationKeys = {
+  all: ['notifications'] as const,
+  list: (params: Record<string, string | string[]> | undefined) =>
+    [...notificationKeys.all, 'list', ...(params ? [params] : [])] as const,
 };
