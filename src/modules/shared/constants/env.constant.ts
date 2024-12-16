@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from '@app/lib/vi-zod';
 
 export const envSchema = z.object({
   VITE_APP_TITLE: z.string(),
