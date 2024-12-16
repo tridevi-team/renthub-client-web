@@ -1,6 +1,7 @@
 import type { DataTableFilterOption } from '@app/types';
 import { ChevronDownIcon, PlusIcon, TextIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '@shared/components/ui/button';
 import {
@@ -107,7 +108,7 @@ export function DataTableFilterCombobox<TData>({
                   setSelectedOptions([
                     ...selectedOptions,
                     {
-                      id: crypto.randomUUID(),
+                      id: uuidv4(),
                       label: selectedOption?.label ?? '',
                       value: selectedOption?.value ?? '',
                       options: selectedOption?.options ?? [],

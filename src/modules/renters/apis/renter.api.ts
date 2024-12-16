@@ -23,4 +23,16 @@ export const renterRepositories = {
 
     return resp;
   },
+  getRenterByRoom: async ({ roomId }: { roomId: string }) => {
+    const resp = await http.instance
+      .get(`renters/rooms/${roomId}/search`, {
+        searchParams: http._makeQuery({
+          page: -1,
+          pageSize: -1,
+        }),
+      })
+      .json<any>();
+
+    return resp;
+  },
 };

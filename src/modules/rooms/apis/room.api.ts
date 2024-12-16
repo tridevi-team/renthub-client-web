@@ -65,4 +65,11 @@ export const roomRepositories = {
 
     return resp;
   },
+  latestServices: async ({ id }: { id: string }) => {
+    const resp = await http.instance
+      .get(`rooms/${id}/latest-services`)
+      .json<any>();
+
+    return resp;
+  },
 };

@@ -37,7 +37,10 @@ export const paymentRepositories = {
   }: { id: string; payment: PaymentMethodUpdateRequestSchema }) => {
     const resp = await http.instance
       .put(`payment/${id}/update`, {
-        json: payment,
+        json: {
+          ...payment,
+          description: payment?.description || 'Mô tả',
+        },
       })
       .json<PaymentMethodUpdateResponseSchema>();
 

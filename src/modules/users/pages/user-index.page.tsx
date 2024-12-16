@@ -20,7 +20,10 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import { DEFAULT_DATE_FORMAT } from '@shared/constants/general.constant';
+import {
+  DEFAULT_DATE_FORMAT,
+  DEFAULT_RETURN_TABLE_DATA,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -84,13 +87,7 @@ export function Element() {
     const [err, resp]: AwaitToResult<UserIndexResponseSchema> = await to(
       userRepositories.index({ searchParams }),
     );
-    if (err) {
-      return {
-        results: [],
-        page: 1,
-        pageCount: 1,
-      };
-    }
+    if (err) return DEFAULT_RETURN_TABLE_DATA;
     return resp?.data;
   }, []);
 
@@ -269,6 +266,7 @@ export function Element() {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
+  console.log('userData?.results:', userData?.results);
 
   return (
     <ContentLayout title={t('user_index_title')} pathname={pathname}>

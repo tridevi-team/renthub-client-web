@@ -2,6 +2,7 @@ import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { issueRepositories } from '@modules/issues/apis/issue.api';
+import { ImageVideoCarousel } from '@modules/issues/components/image-video-carousel';
 import {
   issueKeys,
   type IssueDeleteManyResponseSchema,
@@ -16,7 +17,9 @@ import {
 } from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
+import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import { Dialog, DialogContent } from '@shared/components/ui/dialog';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
@@ -26,13 +29,14 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
+import { Space } from 'antd';
 import to from 'await-to-js';
-import { FileEdit, Trash } from 'lucide-react';
+import dayjs from 'dayjs';
+import { FileEdit, ImageIcon, Trash, VideoIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
   useLocation,
-  useNavigate,
   useSearchParams,
   type LoaderFunction,
 } from 'react-router-dom';
@@ -60,8 +64,9 @@ export function Element() {
   const location = useLocation();
   const pathname = location.pathname;
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<any>(null);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -163,6 +168,12 @@ export function Element() {
     },
   ];
 
+  const handleIconClick = (files: string) => {
+    const parsedFiles = JSON.parse(files);
+    setSelectedFiles(parsedFiles);
+    setIsOpen(true);
+  };
+
   const columns: ColumnDef<IssueSchema>[] = [
     {
       id: 'select',
@@ -184,6 +195,51 @@ export function Element() {
       enableHiding: false,
     },
     {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('issue_title')} />
+      ),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('issue_created_at')} />
+      ),
+      cell: ({ row }) => {
+        return dayjs(row.original.createdAt ?? new Date()).format(
+          'DD/MM/YYYY HH:mm',
+        );
+      },
+    },
+    {
+      accessorKey: 'files',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={'Hình ảnh/Video'} />
+      ),
+      cell: ({ row }) => {
+        const files: any = row.original.files;
+        const fileParsed = JSON.parse(files);
+        const isHasImage = (fileParsed.image ?? []).length > 0;
+        const isHasVideo = (fileParsed.video ?? []).length > 0;
+        return (
+          <Space direction="horizontal">
+            {isHasImage && (
+              <ImageIcon
+                onClick={() => handleIconClick(files)}
+                style={{ cursor: 'pointer' }}
+              />
+            )}
+            {isHasVideo && (
+              <VideoIcon
+                onClick={() => handleIconClick(files)}
+                style={{ cursor: 'pointer' }}
+              />
+            )}
+          </Space>
+        );
+      },
+    },
+    {
       accessorKey: 'floorName',
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t('renter_floor')} />
@@ -196,6 +252,35 @@ export function Element() {
         <DataTableColumnHeader column={column} title={t('renter_room')} />
       ),
       enableSorting: true,
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('issue_status')} />
+      ),
+      cell: ({ row }) => {
+        const status =
+          (row.original.status?.toLowerCase() as
+            | 'open'
+            | 'in_progress'
+            | 'done'
+            | 'closed') ?? 'open';
+        return (
+          <Badge
+            variant={
+              status === 'open'
+                ? 'default'
+                : status === 'in_progress'
+                  ? 'outline'
+                  : status === 'done'
+                    ? 'success'
+                    : 'destructive'
+            }
+          >
+            {t(`issue_s_${status}`)}
+          </Badge>
+        );
+      },
     },
     {
       id: 'actions',
@@ -229,6 +314,16 @@ export function Element() {
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
 
+  const renderDialog = () => {
+    return (
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-4xl">
+          {selectedFiles && <ImageVideoCarousel files={selectedFiles} />}
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   return (
     <ContentLayout title={t('issue_index_title')} pathname={pathname}>
       {isInitialLoading ? (
@@ -239,16 +334,19 @@ export function Element() {
           shrinkZero
         />
       ) : (
-        <DataTable
-          actions={{
-            onDelete,
-          }}
-          table={table}
-          columns={columns}
-          filterOptions={filterFields}
-          loading={isFetching}
-          moduleName="issue"
-        />
+        <>
+          <DataTable
+            actions={{
+              onDelete,
+            }}
+            table={table}
+            columns={columns}
+            filterOptions={filterFields}
+            loading={isFetching}
+            moduleName="issue"
+          />
+          {renderDialog()}
+        </>
       )}
     </ContentLayout>
   );

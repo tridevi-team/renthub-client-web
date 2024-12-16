@@ -6,10 +6,14 @@ export const bill = z.object({
   roomName: z.string(),
   title: z.string(),
   amount: z.number(),
-  date: z.object({
-    from: z.string(),
-    to: z.string(),
-  }),
+  date: z
+    .object({
+      from: z.string(),
+      to: z.string(),
+    })
+    .nullable(),
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
   paymentDate: z.string().nullable(),
   status: z.string(),
   description: z.string().nullable(),

@@ -13,7 +13,7 @@ export const user = z.object({
       ward: z.string().nullable(),
       street: z.string().nullable(),
     })
-    .nullable(),
+    .or(z.string().nullable()),
   birthday: z.string().nullable(),
   role: z.string(),
 });

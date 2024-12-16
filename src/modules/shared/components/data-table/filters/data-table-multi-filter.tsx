@@ -34,9 +34,9 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { Table } from '@tanstack/react-table';
 import * as React from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 const { selectableOperators, comparisonOperators, numberOperators } =
   dataTableConfig;
-
 interface DataTableMultiFilterProps<TData> {
   table: Table<TData>;
   allOptions: DataTableFilterOption<TData>[];
@@ -291,7 +291,7 @@ export function MultiFilterRow<TData>({
               setSelectedOptions((prev) => [
                 ...prev,
                 {
-                  id: crypto.randomUUID(),
+                  id: uuidv4(),
                   label: selectedOption.label,
                   value: selectedOption.value,
                   options: selectedOption.options ?? [],
