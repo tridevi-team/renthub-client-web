@@ -154,10 +154,13 @@ export function Element() {
     const roomNotHasBills = roomResp?.data?.results?.filter(
       (room: any) => !roomHasBills?.includes(room.id),
     );
-    unstable_batchedUpdates(() => {
-      setRooms(roomNotHasBills);
-      setSelectedRoom(roomNotHasBills?.[0]);
-    });
+
+    if(roomNotHasBills?.length === 0){
+      toast.error(t('ms_no_room_to_create_bill'));
+      return navigate(billPath.root);
+    }
+
+
   }, []);
 
   const fetchLatestServiceIndex = async () => {
@@ -195,7 +198,8 @@ export function Element() {
     });
     unstable_batchedUpdates(() => {
       setRenterName(renter?.name);
-      setServiceData(services);
+      setServiceData(services.filter((service: { id: string; })=>service.id!== ''));
+      setRoomPrice(services.find((service: { id: string;name:string })=>service.id === '' && service.name=== 'Tiền phòng')?.unitPrice);
     });
   };
 
