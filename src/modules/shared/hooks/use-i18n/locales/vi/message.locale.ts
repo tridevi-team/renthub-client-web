@@ -57,6 +57,7 @@ export const messageLocale = {
   ms_create_bill_success: 'Tạo hóa đơn mới thành công',
   ms_update_bill_success: 'Cập nhật hóa đơn thành công',
   ms_delete_bill_success: 'Xóa hóa đơn thành công',
+  ms_no_room_to_create_bill: 'Không có phòng nào để tạo hóa đơn',
   // #endregion
 
   // #region Payment
