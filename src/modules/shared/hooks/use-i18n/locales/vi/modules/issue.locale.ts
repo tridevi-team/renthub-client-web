@@ -21,6 +21,7 @@ export const issueLocale = {
   issue_s_closed: 'Đóng',
   issue_created_at: 'Ngày tạo',
   issue_updated_at: 'Ngày cập nhật',
+  issue_feedback: 'Phản hồi',
   // #endregion FORM + TABLE
 
   // #region BUTTON
