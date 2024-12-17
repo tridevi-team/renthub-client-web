@@ -29,7 +29,7 @@ export const CountStatsCard = ({
         {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
       </CardHeader>
       <CardContent>
-        <div className="font-bold text-2xl">
+        <div className="flex items-center font-bold text-2xl">
           <AnimatedNumbers
             includeComma
             transitions={(index) => ({
