@@ -191,6 +191,7 @@ export function RoleForm({
                                         className="mx-auto"
                                         checked={field.value}
                                         onCheckedChange={field.onChange}
+                                        disabled={key === 'house'}
                                       />
                                     </FormControl>
                                   </FormItem>
@@ -225,6 +226,7 @@ export function RoleForm({
                                         className="mx-auto"
                                         checked={field.value}
                                         onCheckedChange={field.onChange}
+                                        disabled={key === 'house'}
                                       />
                                     </FormControl>
                                   </FormItem>
