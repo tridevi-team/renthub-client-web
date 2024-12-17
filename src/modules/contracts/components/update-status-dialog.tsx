@@ -81,7 +81,7 @@ export function UpdateContractStatusDialog({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('floor_name')}</FormLabel>
+                      <FormLabel>{t('contract_status')}</FormLabel>
                       <FormControl>
                         <AutoComplete
                           {...field}
