@@ -1,5 +1,5 @@
+import { z } from '@app/lib/vi-zod';
 import { appUserStoreSchema } from '@modules/auth/schemas/auth.schema';
-import { z } from 'zod';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 

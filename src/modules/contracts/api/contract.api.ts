@@ -42,4 +42,13 @@ export const contractRepositories = {
 
     return resp;
   },
+  updateStatus: async ({ id, data }: { id: string; data: any }) => {
+    const resp = await http.instance
+      .patch(`contracts/${id}/update-contract-status`, {
+        json: data,
+      })
+      .json();
+
+    return resp;
+  },
 };

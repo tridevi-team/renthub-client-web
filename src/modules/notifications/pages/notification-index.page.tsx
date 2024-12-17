@@ -22,6 +22,7 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
+import { Tooltip } from 'antd';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
 import { FilePenIcon, Phone } from 'lucide-react';
@@ -210,34 +211,44 @@ export function Element() {
           checkPermissionPage({
             module: 'contract',
             action: 'create',
+          }) && row.original.status !== 'SIGNED_CONTRACT';
+        const canUpdateNotification =
+          checkPermissionPage({
+            module: 'notification',
+            action: 'update',
           }) && row.original.status === 'WAITING_FOR_CONTACT';
-        if (!canCreateContract) {
-          return null;
-        }
         return (
-          <div className="flex items-center justify-center space-x-2">
-            <FilePenIcon
-              className="h-5 hover:cursor-pointer hover:text-primary"
-              onClick={() => {
-                setPrefillContractForm({
-                  notificationId: id,
-                  renter: {
-                    fullName: row.original.fullName,
-                    phoneNumber: row.original.phoneNumber,
-                    email: row.original.email,
-                  },
-                });
-                navigate('/contracts/create');
-              }}
-            />
-            <Phone
-              className="h-5 hover:cursor-pointer hover:text-primary"
-              onClick={async () => {
-                await updateSignupInfoStatus(id, 'CONTACTED');
-                await queryClient.invalidateQueries();
-                toast.success(t('notification_contacted'));
-              }}
-            />
+          <div className="flex space-x-2">
+            {canCreateContract && (
+              <Tooltip title={t('notification_create_contract')}>
+                <FilePenIcon
+                  className="h-4 hover:cursor-pointer hover:text-primary"
+                  onClick={() => {
+                    setPrefillContractForm({
+                      notificationId: id,
+                      renter: {
+                        fullName: row.original.fullName,
+                        phoneNumber: row.original.phoneNumber,
+                        email: row.original.email,
+                      },
+                    });
+                    navigate('/contracts/create');
+                  }}
+                />
+              </Tooltip>
+            )}
+            {canUpdateNotification && (
+              <Tooltip title={t('notification_status_contacted')}>
+                <Phone
+                  className="h-4 hover:cursor-pointer hover:text-primary"
+                  onClick={async () => {
+                    await updateSignupInfoStatus(id, 'CONTACTED');
+                    await queryClient.invalidateQueries();
+                    toast.success(t('ms_update_notification_success'));
+                  }}
+                />
+              </Tooltip>
+            )}
           </div>
         );
       },

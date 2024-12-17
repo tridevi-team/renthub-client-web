@@ -3,7 +3,7 @@ import { ContentLayout } from '@shared/components/layout/content-layout';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
-import { DatePicker } from 'antd';
+import { DatePicker, Skeleton } from 'antd';
 import to from 'await-to-js';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import {
   statsRepositories,
 } from '@modules/stats/apis/stats.api';
 import { BillBarChartMultipe } from '@modules/stats/components/bill-bar-chart-multiple';
+import { BillPieChart } from '@modules/stats/components/bill-pie-chart';
 import { CountStatsCard } from '@modules/stats/components/count-stats-card';
 import { useUpdateEffect } from '@shared/hooks/use-update-effect.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
@@ -159,12 +160,21 @@ export function Element() {
       </Row>
       <Row className="mt-4">
         <Col xs={12} md={6}>
-          {chartStatBills && (
+          {chartStatBills ? (
             <BillBarChartMultipe
               data={chartStatBills?.barChartConsumption?.data}
               config={chartStatBills?.barChartConsumption?.config}
               dateRange={rangeDate}
             />
+          ) : (
+            <Skeleton active />
+          )}
+        </Col>
+        <Col xs={12} md={6}>
+          {chartStatBills ? (
+            <BillPieChart data={chartStatBills?.pieChartConsumption} />
+          ) : (
+            <Skeleton active />
           )}
         </Col>
       </Row>

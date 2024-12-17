@@ -46,4 +46,17 @@ export const issueRepositories = {
 
     return resp;
   },
+  updateStatus: async ({
+    id,
+    status,
+    description,
+  }: { id: string; status: string; description: string }) => {
+    const resp = await http.instance
+      .patch(`issues/${id}/update-status`, {
+        json: { status, description },
+      })
+      .json();
+
+    return resp;
+  },
 };

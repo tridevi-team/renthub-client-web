@@ -49,7 +49,6 @@ export function BillBarChartMultipe({
   const monthCount = data?.length || 0;
 
   return (
-    // <div className="max-h-[300px]">
     <Card>
       <CardHeader>
         <CardTitle>Thống kê tiền dịch vụ theo tháng</CardTitle>

@@ -3,6 +3,7 @@ import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { issueRepositories } from '@modules/issues/apis/issue.api';
 import { ImageVideoCarousel } from '@modules/issues/components/image-video-carousel';
+import { UpdateIssueStatusDialog } from '@modules/issues/components/update-status-dialog';
 import {
   issueKeys,
   type IssueDeleteManyResponseSchema,
@@ -34,6 +35,7 @@ import to from 'await-to-js';
 import dayjs from 'dayjs';
 import { FileEdit, ImageIcon, Trash, VideoIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import {
   redirect,
   useLocation,
@@ -67,6 +69,12 @@ export function Element() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any>(null);
+  const [isShowUpdateStatusDialog, setIsShowUpdateStatusDialog] =
+    useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<IssueSchema | null>(
+    null,
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -136,6 +144,35 @@ export function Element() {
     [t, queryParams],
   );
 
+  const updateIssueStatus = useCallback(
+    async (data: any) => {
+      setIsSubmitting(true);
+      const [err, _]: AwaitToResult<any> = await to(
+        issueRepositories.updateStatus({
+          id: selectedRecord?.id ?? '',
+          status: data.status,
+          description: data.description,
+        }),
+      );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      await queryClient.invalidateQueries({
+        queryKey: issueKeys.list(queryParams),
+      });
+      toast.success(t('ms_update_issue_success'));
+      setIsShowUpdateStatusDialog(false);
+      return;
+    },
+    [t, queryParams, selectedRecord],
+  );
+
   const {
     data: issueData,
     isLoading,
@@ -157,7 +194,10 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: async (row: Row<IssueSchema>) => {
-        // #TODO: Mở modal sửa trạng thái
+        unstable_batchedUpdates(() => {
+          setSelectedRecord(row.original);
+          setIsShowUpdateStatusDialog(true);
+        });
       },
     },
     {
@@ -348,6 +388,13 @@ export function Element() {
           {renderDialog()}
         </>
       )}
+      <UpdateIssueStatusDialog
+        isOpen={isShowUpdateStatusDialog}
+        onClose={() => setIsShowUpdateStatusDialog(false)}
+        onSubmit={updateIssueStatus}
+        isSubmitting={isSubmitting}
+        initialData={selectedRecord}
+      />
     </ContentLayout>
   );
 }
