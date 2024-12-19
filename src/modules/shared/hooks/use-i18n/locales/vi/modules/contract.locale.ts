@@ -17,7 +17,7 @@ export const contractLocale = {
   contract_room: 'Phòng',
   constract_status: 'Trạng thái',
   contract_s_pending: 'Chờ ký',
-  contract_s_active: 'Đang hoạt động',
+  contract_s_active: 'Hiệu lực',
   contract_s_expired: 'Hết hạn',
   contract_s_cancelled: 'Đã hủy',
   contract_s_terminated: 'Đã chấm dứt',
