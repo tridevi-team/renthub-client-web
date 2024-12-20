@@ -50,13 +50,26 @@ export const ImageVideoCarousel: React.FC<ImageVideoCarouselProps> = ({
           data-src={src}
           className="gallery-item"
           style={{ margin: '5px', display: 'inline-block' }}
-          data-sub-html={`<h4>Video ${index + 1}</h4>`}
+          data-sub-html={<h4>Video ${index + 1}</h4>}
+          data-poster={videoPlaceholder}
+          data-html={
+            <video class="lg-video-object lg-html5" controls>
+              <source src="${src}" type="video/mp4" />
+              <track
+                kind="captions"
+                src="captions.vtt"
+                srclang="en"
+                label="English"
+              />
+              Your browser does not support the video tag.
+            </video>
+          }
         >
-          <img
-            src={videoPlaceholder}
-            alt={`Video ${index + 1}`}
+          <iframe
+            allowFullScreen={true}
+            title={`Video ${index}`}
+            src={src}
             className="h-40 w-40 object-cover"
-            // style={{ height: '100px', width: '100px', objectFit: 'cover' }}
           />
         </a>
       ))}
