@@ -125,6 +125,7 @@ export const errorLocale = {
     'Người thuê phải được chấp thuận trước khi cập nhật hợp đồng',
   CONTRACT_ALREADY_EXISTS: 'Hợp đồng đã tồn tại',
   CONTRACT_STATUS_UPDATED_FAILED: 'Cập nhật trạng thái hợp đồng thất bại',
+  CONTRACT_STATUS_EXPIRED_ONLY: 'Chỉ có thể gia hạn hợp đồng đã hết hạn',
   // #endregion
 
   // #region Statistical

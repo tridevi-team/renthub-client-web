@@ -45,6 +45,11 @@ export const contractLocale = {
   contract_selected_room: 'Phòng đã chọn',
   contract_selected_template: 'Mẫu hợp đồng đã chọn',
   contract_confirm: 'Tổng hợp thông tin hợp đồng',
+
+  contract_extend: 'Gia hạn',
+  contract_extend_title: 'Gia hạn hợp đồng',
+  contract_new_start_date: 'Ngày bắt đầu mới',
+  contract_new_end_date: 'Ngày kết thúc mới',
   // #endregion FORM + TABLE
 
   // #region BUTTON

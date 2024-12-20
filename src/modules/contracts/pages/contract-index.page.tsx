@@ -2,6 +2,7 @@ import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { contractRepositories } from '@modules/contracts/api/contract.api';
+import { ExtendContractDialog } from '@modules/contracts/components/extend-contract-dialog';
 import { UpdateContractStatusDialog } from '@modules/contracts/components/update-status-dialog';
 import { contractPath } from '@modules/contracts/routes';
 import {
@@ -36,7 +37,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { Download, FileEdit, Trash } from 'lucide-react';
+import { CalendarArrowUp, Download, FileEdit, Trash } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { unstable_batchedUpdates } from 'react-dom';
@@ -75,8 +76,8 @@ export function Element() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<ContractSchema[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<ContractSchema>();
+  const [showExtendDialog, setShowExtendDialog] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -192,6 +193,38 @@ export function Element() {
     toast.success(t('ms_update_contract_success'));
   };
 
+  const onExtend = async (data: any) => {
+    if (!selectedRecord) {
+      return;
+    }
+    setIsSubmitting(true);
+    const [err, _]: AwaitToResult<any> = await to(
+      contractRepositories.extendContract({
+        id: selectedRecord?.id,
+        data: {
+          ...data,
+          depositDate: dayjs(selectedRecord?.depositDate).format('YYYY-MM-DD'),
+          rentalStartDate: dayjs(data.rentalStartDate).format('YYYY-MM-DD'),
+          rentalEndDate: dayjs(data.rentalEndDate).format('YYYY-MM-DD'),
+        },
+      }),
+    );
+    setIsSubmitting(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    setShowExtendDialog(false);
+    await queryClient.invalidateQueries({
+      queryKey: contractKeys.list(queryParams),
+    });
+    toast.success(t('ms_extend_contract_success'));
+  };
+
   const {
     data: contractData,
     isLoading,
@@ -223,6 +256,16 @@ export function Element() {
         unstable_batchedUpdates(() => {
           setSelectedRecord(row.original);
           setShowUpdateDialog(true);
+        });
+      },
+    },
+    {
+      label: t('contract_extend'),
+      icon: <CalendarArrowUp className="mr-2 h-4 w-4" />,
+      onClick: async (row: Row<ContractSchema>) => {
+        unstable_batchedUpdates(() => {
+          setSelectedRecord(row.original);
+          setShowExtendDialog(true);
         });
       },
     },
@@ -438,6 +481,13 @@ export function Element() {
         isSubmitting={isSubmitting}
         initialData={selectedRecord}
         onSubmit={onUpdateStatus}
+      />
+      <ExtendContractDialog
+        isOpen={showExtendDialog}
+        onClose={() => setShowExtendDialog(false)}
+        isSubmitting={isSubmitting}
+        initialData={selectedRecord}
+        onSubmit={onExtend}
       />
     </ContentLayout>
   );
