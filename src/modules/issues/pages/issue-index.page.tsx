@@ -23,6 +23,7 @@ import { Checkbox } from '@shared/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
   DialogTitle,
 } from '@shared/components/ui/dialog';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
@@ -364,8 +365,10 @@ export function Element() {
     const title = selectedRecord?.title;
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTitle>{t('issue_content')}</DialogTitle>
         <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Chi tiết phản ánh</DialogTitle>
+          </DialogHeader>
           {title && (
             <h2 className="mb-2 font-semibold text-xl">Tiêu đề: {title}</h2>
           )}
@@ -374,6 +377,7 @@ export function Element() {
               <b>Nội dung:</b> {content}
             </p>
           )}
+          <hr />
           <b>Tệp đính kèm:</b>
           {selectedFiles && <ImageVideoCarousel files={selectedFiles} />}
         </DialogContent>
