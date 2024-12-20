@@ -265,22 +265,17 @@ export function Element() {
       ),
       cell: ({ row }) => {
         const files: any = row.original.files;
-        const fileParsed = JSON.parse(files);
-        const isHasImage = (fileParsed.image ?? []).length > 0;
-        const isHasVideo = (fileParsed.video ?? []).length > 0;
         return (
           <Space direction="horizontal">
-            {(isHasImage || isHasVideo) && (
-              <Tooltip title="Xem file đính kèm">
-                <ImageIcon
-                  onClick={() => {
-                    setSelectedRecord(row.original);
-                    handleIconClick(files);
-                  }}
-                  style={{ cursor: 'pointer' }}
-                />
-              </Tooltip>
-            )}
+            <Tooltip title="Xem file đính kèm">
+              <ImageIcon
+                onClick={() => {
+                  setSelectedRecord(row.original);
+                  handleIconClick(files);
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </Tooltip>
           </Space>
         );
       },
