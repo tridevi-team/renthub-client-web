@@ -317,11 +317,17 @@ export function Element() {
                   </Col>
                   <Col xs={24} sm={12}>
                     <Label>Tên người thuê</Label>
-                    <Input className="mt-1" disabled value={renterName} />
+                    <Input
+                      key="renter-name-input"
+                      className="mt-1"
+                      disabled
+                      value={renterName}
+                    />
                   </Col>
                   <Col xs={24} sm={12} className="gap-2">
                     <Label>Ngày bắt đầu - Ngày kết thúc</Label>
                     <RangePicker
+                      key="date-range-picker"
                       defaultValue={rangeDate}
                       className="mt-1 h-9 w-full"
                       onChange={(dates) => setRangeDate(dates)}
@@ -350,6 +356,7 @@ export function Element() {
                               <>
                                 <TableCell className="w-1/6">
                                   <Input
+                                    key={`old-value-${service.id}`}
                                     value={service.oldValue}
                                     onChange={(e) =>
                                       handleServiceChange(
@@ -363,6 +370,7 @@ export function Element() {
                                 </TableCell>
                                 <TableCell className="w-1/6">
                                   <Input
+                                    key={`new-value-${service.id}`}
                                     value={service.newValue}
                                     onChange={(e) =>
                                       handleServiceChange(
@@ -385,6 +393,7 @@ export function Element() {
                               {service.type === 'ELECTRICITY_CONSUMPTION' ||
                               service.type === 'WATER_CONSUMPTION' ? (
                                 <Input
+                                  key={`quantity-disabled-${service.id}`}
                                   value={service.quantity}
                                   disabled
                                   className="h-8 text-sm"
@@ -392,12 +401,14 @@ export function Element() {
                               ) : service.type === 'PEOPLE' ||
                                 service.type === 'ROOM' ? (
                                 <Input
+                                  key={`quantity-fixed-${service.id}`}
                                   value={service.quantity}
                                   disabled
                                   className="h-8 text-sm"
                                 />
                               ) : (
                                 <Input
+                                  key={`quantity-editable-${service.id}`}
                                   value={service.quantity}
                                   onChange={(e) =>
                                     handleServiceChange(
