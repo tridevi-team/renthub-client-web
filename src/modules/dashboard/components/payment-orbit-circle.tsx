@@ -13,7 +13,7 @@ export function PaymentOrbit() {
   const outerBanks = getRandomBanks(8);
 
   return (
-    <div className="absolute top-10 flex h-[300px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background [--duration:20s] [mask-image:linear-gradient(to_top,transparent_1%,#000_100%)] md:shadow-xl">
+    <div className="absolute flex h-[300px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background [--duration:20s] [mask-image:linear-gradient(to_top,transparent_1%,#000_100%)] md:shadow-xl">
       <img
         className="pointer-events-none w-36 whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300 bg-clip-text text-center font-semibold text-8xl text-transparent leading-none dark:from-white dark:to-black"
         src={payOSLogo}

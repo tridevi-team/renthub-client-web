@@ -51,4 +51,13 @@ export const contractRepositories = {
 
     return resp;
   },
+  extendContract: async ({ id, data }: { id: string; data: any }) => {
+    const resp = await http.instance
+      .post(`contracts/${id}/extend`, {
+        json: data,
+      })
+      .json();
+
+    return resp;
+  },
 };
