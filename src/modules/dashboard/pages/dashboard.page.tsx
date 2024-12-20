@@ -34,7 +34,11 @@ import {
   BadgeDollarSign,
   BellIcon,
   CalendarIcon,
+  DollarSignIcon,
   FileTextIcon,
+  HouseIcon,
+  MessageCircleWarning,
+  UserCircle2,
 } from 'lucide-react';
 import * as React from 'react';
 import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
@@ -61,7 +65,7 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const pathname = useLocation().pathname;
-  const [timeRange, setTimeRange] = React.useState('3');
+  const [timeRange, setTimeRange] = React.useState('6');
   const [chartData, setChartData] = React.useState<
     { date: string; revenue: number; occupancy: number }[]
   >([]);
@@ -153,16 +157,17 @@ export function Element() {
         <Col xs={24} sm={12}>
           <Row gutter={[16, 8]}>
             {[
-              { title: 'Tổng phòng', value: 45 },
-              { title: 'Phòng đã thuê', value: 38 },
-              { title: 'Phòng trống', value: 7 },
-              { title: 'Doanh thu tháng', value: 154000 },
+              { title: 'Phòng đã thuê', value: 38, icon: HouseIcon },
+              { title: 'Phản ánh', value: 3, icon: MessageCircleWarning },
+              { title: 'Số khách thuê', value: 50, icon: UserCircle2 },
+              { title: 'Hóa đơn', value: 154000, icon: DollarSignIcon },
             ].map((item) => (
               <Col key={item.title} xs={24} sm={12}>
                 <CountStatsCard
                   amount={item.value}
                   titleCard={item.title}
-                  isCurrency={item.title === 'Doanh thu tháng'}
+                  isCurrency={item.title === 'Hóa đơn'}
+                  icon={item.icon}
                 />
               </Col>
             ))}
@@ -177,7 +182,7 @@ export function Element() {
                   </div>
                   <Select value={timeRange} onValueChange={setTimeRange}>
                     <SelectTrigger className="w-[160px] rounded-lg sm:ml-auto">
-                      <SelectValue placeholder="3 tháng gần đây" />
+                      <SelectValue placeholder="6 tháng gần đây" />
                     </SelectTrigger>
                     <SelectContent>
                       {[...Array(12).keys()].map((i) => (
