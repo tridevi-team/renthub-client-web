@@ -282,6 +282,13 @@ const StepFillContract = ({
       <form
         className="space-y-4 px-2"
         onSubmit={form.handleSubmit((values) => {
+          const { rentalStartDate, rentalEndDate } = values;
+          if (dayjs(rentalStartDate).isAfter(dayjs(rentalEndDate))) {
+            return form.setError('rentalEndDate', {
+              type: 'manual',
+              message: 'Ngày kết thúc không được nhỏ hơn ngày bắt đầu',
+            });
+          }
           const restInfo = {
             ...values,
             services: selectedServices,
