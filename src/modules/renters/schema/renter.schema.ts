@@ -65,7 +65,7 @@ export const renterFormRequestSchema = z.object({
   citizenId: z
     .string()
     .trim()
-    .refine((data) => data?.length !== 12, {
+    .refine((data) => data?.length === 12, {
       params: {
         i18n: {
           key: 'vld_cccd',
