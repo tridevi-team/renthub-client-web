@@ -169,20 +169,29 @@ export const contractCreateFillFormRequestSchema = z
             },
           },
         }),
-      placeOfIssue: z.string(),
+      placeOfIssue: z.string().trim().min(1),
       gender: z.string(),
       email: z.string().nullable().optional(),
     }),
     renter: z.object({
       fullName: z.string(),
-      citizenId: z.string(),
+      citizenId: z
+        .string()
+        .trim()
+        .refine((data) => data?.length !== 12, {
+          params: {
+            i18n: {
+              key: 'vld_cccd',
+            },
+          },
+        }),
       address: z.object({
-        city: z.string(),
-        district: z.string(),
-        ward: z.string(),
-        street: z.string(),
+        city: z.string().trim().min(1),
+        district: z.string().trim().min(1),
+        ward: z.string().trim().min(1),
+        street: z.string().nullable().optional(),
       }),
-      phoneNumber: z.string(),
+      phoneNumber: z.string().trim().length(10),
       birthday: z
         .string()
         .or(z.date())

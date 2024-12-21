@@ -9,4 +9,5 @@ export const validationLocale = {
     'Ngày bắt đầu thuê không được lớn hơn ngày kết thúc thuê',
   vld_dateOfIssue: 'Ngày cấp không hợp lệ',
   vld_depositDate: 'Ngày đặt cọc không hợp lệ',
+  vld_cccd: 'Căn cước công dân không hợp lệ',
 } as const;

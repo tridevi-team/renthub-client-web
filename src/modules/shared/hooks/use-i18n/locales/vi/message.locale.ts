@@ -95,6 +95,7 @@ export const messageLocale = {
   ms_create_renter_success: 'Tạo người thuê mới thành công',
   ms_update_renter_success: 'Cập nhật thông tin người thuê thành công',
   ms_delete_renter_success: 'Xóa người thuê thành công',
+  ms_room_required: 'Phòng không được để trống',
   // #endregion
 
   // #region Issue

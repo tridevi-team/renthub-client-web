@@ -59,6 +59,46 @@ export const renterDetailResponseSchema = z.object({
   data: renter,
 });
 
+export const renterFormRequestSchema = z.object({
+  name: z.string().trim().min(1),
+  roomId: z.string().trim().min(1),
+  citizenId: z
+    .string()
+    .trim()
+    .refine((data) => data?.length !== 12, {
+      params: {
+        i18n: {
+          key: 'vld_cccd',
+        },
+      },
+    }),
+  tempReg: z.boolean().or(z.string()).nullable(),
+  email: z.string().email().nullable(),
+  phoneNumber: z.string().trim().length(10),
+  gender: z.string(),
+  address: z.object({
+    city: z.string().trim().min(1),
+    district: z.string().trim().min(1),
+    ward: z.string().trim().min(1),
+    street: z.string(),
+  }),
+  birthday: z
+    .string()
+    .or(z.date())
+    .refine(
+      (date) => {
+        const today = new Date();
+        const inputDate = new Date(date);
+        return inputDate <= today;
+      },
+      {
+        message: 'Ngày sinh không hợp lệ',
+      },
+    ),
+  represent: z.string().or(z.boolean()).nullable(),
+  note: z.string().nullable(),
+});
+
 export type RenterSchema = z.infer<typeof renter>;
 export type RenterDataSchema = z.infer<typeof renterData>;
 export type RenterIndexResponseSchema = z.infer<
@@ -70,6 +110,7 @@ export type RenterDetailResponseSchema = z.infer<
 export type RenterDetailRequestSchema = z.infer<
   typeof renterDetailRequestSchema
 >;
+export type RenterFormRequestSchema = z.infer<typeof renterFormRequestSchema>;
 
 export const renterKeys = {
   all: ['renters'] as const,
