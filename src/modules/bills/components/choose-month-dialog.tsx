@@ -24,7 +24,7 @@ export function ChooseMonthDialog({ isOpen, onClose }: Props) {
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
   const [selectedYear, setSelectedYear] = useState(dayjs().year().toString());
 
-  const currentYear = dayjs().year();
+  const currentYear = dayjs().add(1, 'year').year();
   const years = Array.from({ length: 5 }, (_, i) => `${currentYear - i}`);
 
   const selectAfter = (
@@ -63,6 +63,9 @@ export function ChooseMonthDialog({ isOpen, onClose }: Props) {
           </Col>
         </Row>
         <DialogFooter>
+          <Button onClick={onClose} variant="outline">
+            {t('bt_back')}
+          </Button>
           <Button onClick={onSubmit}>{t('bt_next')}</Button>
         </DialogFooter>
       </DialogContent>

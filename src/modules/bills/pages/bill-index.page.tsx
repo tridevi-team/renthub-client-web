@@ -14,7 +14,10 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
+import {
+  BILL_STATUS_OPTIONS,
+  DEFAULT_RETURN_TABLE_DATA,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -240,6 +243,14 @@ export function Element() {
       placeholder: t('common_ph_input', {
         field: t('bill_title').toLowerCase(),
       }),
+    },
+    {
+      label: t('bill_status'),
+      value: 'status',
+      placeholder: t('common_ph_select', {
+        field: t('bill_status').toLowerCase(),
+      }),
+      options: BILL_STATUS_OPTIONS,
     },
   ];
 
