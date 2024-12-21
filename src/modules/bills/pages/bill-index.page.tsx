@@ -73,7 +73,7 @@ export function Element() {
 
   const fetchData = useCallback(async (params: URLSearchParams) => {
     const searchParams = processSearchParams(params, 'bills', {
-      field: 'title',
+      field: 'createdAt',
       direction: 'desc',
     });
 

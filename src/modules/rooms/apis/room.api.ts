@@ -80,8 +80,8 @@ export const roomRepositories = {
     const resp = await http.instance
       .get(`houses/${houseId}/room-create-bill`, {
         searchParams: {
-          page: 1,
-          pageSize: 999,
+          page: -1,
+          pageSize: -1,
           month,
           year,
         },
