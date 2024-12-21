@@ -2,17 +2,14 @@ import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { billRepositories } from '@modules/bills/apis/bill.api';
 import { ChooseMonthDialog } from '@modules/bills/components/choose-month-dialog';
-import { billPath } from '@modules/bills/routes';
+import { InvoiceModal } from '@modules/bills/components/invoice-dialog';
 import { billKeys, type BillSchema } from '@modules/bills/schema/bill.schema';
 import { DataTable } from '@shared/components/data-table/data-table';
 import { DataTableColumnHeader } from '@shared/components/data-table/data-table-column-header';
-import {
-  DataTableRowActions,
-  type Action,
-} from '@shared/components/data-table/data-table-row-actions';
 import { DataTableSkeleton } from '@shared/components/data-table/data-table-skeleton';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
+import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import {
   BILL_STATUS_OPTIONS,
@@ -24,10 +21,9 @@ import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { formatCurrency, processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
-import type { ColumnDef, Row } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { FileEdit } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   redirect,
@@ -63,6 +59,9 @@ export function Element() {
   const navigate = useNavigate();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(
+    null,
+  );
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
     searchParams.forEach((value, key) => {
@@ -104,18 +103,6 @@ export function Element() {
       setIsInitialLoading(false);
     }
   }, [isLoading]);
-
-  const actionColumn: Action<BillSchema>[] = [
-    {
-      label: t('bt_edit'),
-      icon: <FileEdit className="mr-2 h-4 w-4" />,
-      onClick: async (row: Row<BillSchema>) => {
-        navigate(
-          `${billPath.root}/${billPath.edit.replace(':id', row.original.id)}`,
-        );
-      },
-    },
-  ];
 
   const columns: ColumnDef<BillSchema>[] = [
     {
@@ -226,11 +213,29 @@ export function Element() {
       },
     },
     {
-      id: 'actions',
-      header: () => null,
-      cell: ({ row }) => (
-        <DataTableRowActions row={row} actions={actionColumn} />
+      id: 'detail',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={'Chi tiết'} />
       ),
+      cell: ({ row }) => {
+        const invoiceId = row.original.id;
+        return (
+          <>
+            <Button
+              variant="link"
+              className="m-0 p-0"
+              onClick={() => setSelectedInvoiceId(invoiceId)}
+            >
+              Xem chi tiết
+            </Button>
+            <InvoiceModal
+              isOpen={selectedInvoiceId === invoiceId}
+              onClose={() => setSelectedInvoiceId(null)}
+              invoiceId={invoiceId}
+            />
+          </>
+        );
+      },
       enableSorting: false,
       enableHiding: false,
     },
