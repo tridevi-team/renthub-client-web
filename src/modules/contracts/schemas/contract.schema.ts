@@ -1,4 +1,5 @@
 import { z } from '@app/lib/vi-zod';
+import dayjs from 'dayjs';
 
 export const contract = z.object({
   id: z.string(),
@@ -136,46 +137,102 @@ export const contractDeleteResponseSchema = z.object({
   message: z.string(),
 });
 
-export const contractCreateFillFormRequestSchema = z.object({
-  landlord: z.object({
-    fullName: z.string(),
-    citizenId: z.string(),
-    address: z.object({
-      city: z.string(),
-      district: z.string(),
-      ward: z.string(),
-      street: z.string(),
+export const contractCreateFillFormRequestSchema = z
+  .object({
+    landlord: z.object({
+      fullName: z.string(),
+      citizenId: z.string(),
+      address: z.object({
+        city: z.string(),
+        district: z.string(),
+        ward: z.string(),
+        street: z.string(),
+      }),
+      phoneNumber: z.string(),
+      birthday: z
+        .string()
+        .or(z.date())
+        .refine((date) => dayjs(date).isBefore(dayjs()), {
+          params: {
+            i18n: {
+              key: 'vld_birthday',
+            },
+          },
+        }),
+      dateOfIssue: z
+        .string()
+        .or(z.date())
+        .refine((date) => dayjs(date).isBefore(dayjs()), {
+          params: {
+            i18n: {
+              key: 'vld_dateOfIssue',
+            },
+          },
+        }),
+      placeOfIssue: z.string(),
+      gender: z.string(),
+      email: z.string().nullable().optional(),
     }),
-    phoneNumber: z.string(),
-    birthday: z.string().or(z.date()),
-    dateOfIssue: z.string().or(z.date()),
-    placeOfIssue: z.string(),
-    gender: z.string(),
-    email: z.string().nullable().optional(),
-  }),
-  renter: z.object({
-    fullName: z.string(),
-    citizenId: z.string(),
-    address: z.object({
-      city: z.string(),
-      district: z.string(),
-      ward: z.string(),
-      street: z.string(),
+    renter: z.object({
+      fullName: z.string(),
+      citizenId: z.string(),
+      address: z.object({
+        city: z.string(),
+        district: z.string(),
+        ward: z.string(),
+        street: z.string(),
+      }),
+      phoneNumber: z.string(),
+      birthday: z
+        .string()
+        .or(z.date())
+        .refine((date) => dayjs(date).isBefore(dayjs()), {
+          params: {
+            i18n: {
+              key: 'vld_birthday',
+            },
+          },
+        }),
+      dateOfIssue: z
+        .string()
+        .or(z.date())
+        .refine((date) => dayjs(date).isBefore(dayjs()), {
+          params: {
+            i18n: {
+              key: 'vld_dateOfIssue',
+            },
+          },
+        }),
+      placeOfIssue: z.string(),
+      gender: z.string(),
+      email: z.string().nullable().optional(),
     }),
-    phoneNumber: z.string(),
-    birthday: z.string().or(z.date()),
-    dateOfIssue: z.string().or(z.date()),
-    placeOfIssue: z.string(),
-    gender: z.string(),
-    email: z.string().nullable().optional(),
-  }),
-  depositAmount: z.coerce.number(),
-  depositDate: z.string().or(z.date()),
-  rentalStartDate: z.string().or(z.date()),
-  rentalEndDate: z.string().or(z.date()),
-  depositStatus: z.string().nullable().optional(),
-});
-
+    depositAmount: z.coerce.number(),
+    depositDate: z
+      .string()
+      .or(z.date())
+      .refine((date) => dayjs(date).isBefore(dayjs()), {
+        params: {
+          i18n: {
+            key: 'vld_depositDate',
+          },
+        },
+      }),
+    rentalStartDate: z.string().or(z.date()),
+    rentalEndDate: z.string().or(z.date()),
+    depositStatus: z.string().nullable().optional(),
+  })
+  .superRefine(({ rentalStartDate, rentalEndDate }, ctx) => {
+    if (rentalStartDate && rentalEndDate) {
+      if (dayjs(rentalStartDate).isAfter(dayjs(rentalEndDate))) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Ngày bắt đầu thuê không được lớn hơn ngày kết thúc thuê',
+          path: ['rentalStartDate'],
+        });
+      }
+    }
+  });
 export const contractCreateRequestSchema = z.object({
   roomId: z.string(),
   data: z.object({
