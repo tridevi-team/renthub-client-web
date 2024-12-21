@@ -240,6 +240,12 @@ export function Element() {
       onClick: async (row: Row<any>) => {
         navigate(
           `${roomPath.root}/${roomPath.edit.replace(':id', row.original.id)}`,
+          {
+            state: {
+              status: row.original.status,
+              floor: floors.find((floor) => floor.value === activeTab),
+            },
+          },
         );
       },
     },

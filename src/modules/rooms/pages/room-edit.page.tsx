@@ -1,14 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
-import { roleRepositories } from '@modules/roles/apis/role.api';
-import { RoleForm } from '@modules/roles/components/role-form';
-import { rolePath } from '@modules/roles/routes';
-import {
-  type RoleDetailResponseSchema,
-  type RoleUpdateRequestSchema,
-  roleUpdateRequestSchema,
-  type RoleUpdateResponseSchema,
-} from '@modules/roles/schema/role.schema';
+import { roomRepositories } from '@modules/rooms/apis/room.api';
+import { RoomForm } from '@modules/rooms/components/room-form';
+import { roomPath } from '@modules/rooms/routes';
+import type {
+  RoomFormRequestSchema,
+  RoomUpdateResponseSchema,
+} from '@modules/rooms/schema/room.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -25,7 +23,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import { toast } from 'sonner';
-
+import { z } from 'zod';
 export const loader: LoaderFunction = () => {
   const authed = checkAuthUser();
   const hasPermission = checkPermissionPage({
@@ -45,41 +43,46 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const form = useForm<RoleUpdateRequestSchema>({
-    mode: 'onChange',
-    resolver: zodResolver(roleUpdateRequestSchema),
-  });
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
+  const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
+  const { status, floor } = location.state || { status: 'AVAILABLE' };
+  console.log('floor:', floor);
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (!id) return;
-      const [err, role]: AwaitToResult<RoleDetailResponseSchema> = await to(
-        roleRepositories.detail({ id }),
-      );
-      if (err) {
-        toast.error(t('UNKNOWN_ERROR'));
-        return;
-      }
-      form.reset({
-        ...role?.data,
-        status: role?.data.status === 1 ? 'active' : 'inactive',
-      });
-    };
-    fetchRole();
-  }, [id, form, t]);
+  const form = useForm<RoomFormRequestSchema>({
+    mode: 'onChange',
+    resolver: zodResolver(z.any()),
+  });
 
-  const onSubmit = async (values: RoleUpdateRequestSchema) => {
+  const fetchDetail = async () => {
     if (!id) return;
+    const [err, resp]: AwaitToResult<any> = await to(
+      roomRepositories.detail({ id }),
+    );
+    if (err) {
+      toast.error(t('UNKNOWN_ERROR'));
+      return;
+    }
+    const service = resp?.data?.services?.map((service: any) => {
+      return service.id;
+    });
+    form.reset({
+      ...resp?.data,
+      serviceIds: service,
+      status: status,
+      floor: floor.value,
+    });
+  };
+
+  const onSubmit = async (values: any) => {
+    if (!id) return navigate(`${roomPath.root}`);
     setLoading(true);
-    const [err, _]: AwaitToResult<RoleUpdateResponseSchema> = await to(
-      roleRepositories.update({
-        id,
-        role: values,
+    const [err, _]: AwaitToResult<RoomUpdateResponseSchema> = await to(
+      roomRepositories.update({
+        id: id,
+        data: values,
       }),
     );
     setLoading(false);
@@ -91,14 +94,23 @@ export function Element() {
       }
       return;
     }
-    toast.success(t('ms_update_role_success'));
-    navigate(`${rolePath.root}`);
+    toast.success(t('ms_update_room_success'));
+    navigate(`${roomPath.root}`);
     return _;
   };
 
+  useEffect(() => {
+    fetchDetail();
+  }, []);
+
   return (
-    <ContentLayout title={t('role_edit_title')} pathname={pathname}>
-      <RoleForm form={form} onSubmit={onSubmit} loading={loading} isEdit />
+    <ContentLayout title={t('room_edit_title')} pathname={pathname}>
+      <RoomForm
+        form={form}
+        onSubmit={onSubmit}
+        loading={loading}
+        isEdit={true}
+      />
     </ContentLayout>
   );
 }
