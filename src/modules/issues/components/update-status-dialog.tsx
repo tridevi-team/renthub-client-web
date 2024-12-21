@@ -39,6 +39,7 @@ export function UpdateIssueStatusDialog({
   isSubmitting,
   initialData,
 }: Props) {
+  console.log('🚀 ~ initialData:', initialData);
   const [t] = useI18n();
 
   const form = useForm({
@@ -83,6 +84,22 @@ export function UpdateIssueStatusDialog({
                           options={ISSUE_STATUS_OPTIONS}
                           onValueChange={field.onChange}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Col>
+              <Col xs={12}>
+                <FormField
+                  name="content"
+                  disabled
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('issue_content')}</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
