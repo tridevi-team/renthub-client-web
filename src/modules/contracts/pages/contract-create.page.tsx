@@ -88,11 +88,8 @@ export function Element() {
       }),
     );
     if (err) {
-      if ('code' in err) {
-        toast.error(t(err.code));
-      } else {
-        toast.error(t('UNKNOWN_ERROR'));
-      }
+      toast.error('Đã hết phòng có thể thuê/tạo hợp đồng');
+      navigate(contractPath.root);
       return setRooms([]);
     }
     setRooms(resp?.data?.results || []);
