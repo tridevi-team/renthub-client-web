@@ -1,3 +1,4 @@
+import { queryClient } from '@app/providers/query/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
 import { equipmentRepositories } from '@modules/equipments/apis/equipment.api';
@@ -77,6 +78,7 @@ export function Element() {
       return;
     }
     toast.success(t('ms_create_equipment_success'));
+    await queryClient.invalidateQueries();
     navigate(`${equipmentPath.root}`);
     return _;
   };
