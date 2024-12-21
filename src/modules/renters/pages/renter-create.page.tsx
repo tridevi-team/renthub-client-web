@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
-import { equipmentPath } from '@modules/equipments/routes';
 import { renterRepositories } from '@modules/renters/apis/renter.api';
 import { RenterForm } from '@modules/renters/components/renter-form';
+import { renterPath } from '@modules/renters/routes';
 import {
   type RenterFormRequestSchema,
   renterFormRequestSchema,
@@ -83,7 +83,7 @@ export function Element() {
       return;
     }
     toast.success(t('ms_create_renter_success'));
-    navigate(`${equipmentPath.root}`);
+    navigate(`${renterPath.root}`);
     return _;
   };
 
