@@ -1,24 +1,19 @@
-import { queryClient } from '@app/providers/query/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authPath } from '@modules/auth/routes';
-import { equipmentRepositories } from '@modules/equipments/apis/equipment.api';
-import { EquipmentForm } from '@modules/equipments/components/equipment-form';
-import { equipmentPath } from '@modules/equipments/routes';
+import { renterRepositories } from '@modules/renters/apis/renter.api';
+import { RenterForm } from '@modules/renters/components/renter-form';
+import { renterPath } from '@modules/renters/routes';
 import {
-  equipmentCreateRequestSchema,
-  type EquipmentCreateRequestSchema,
-  type EquipmentCreateResponseSchema,
-} from '@modules/equipments/schema/equiment.schema';
+  type RenterFormRequestSchema,
+  renterFormRequestSchema,
+} from '@modules/renters/schema/renter.schema';
 import { ContentLayout } from '@shared/components/layout/content-layout';
-import {
-  EQUIPMENT_SHARED_TYPE,
-  EQUIPMENT_STATUS,
-} from '@shared/constants/general.constant';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import type { AwaitToResult } from '@shared/types/date.type';
 import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import to from 'await-to-js';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -47,13 +42,13 @@ export const loader: LoaderFunction = () => {
 
 export function Element() {
   const [t] = useI18n();
-  const form = useForm<EquipmentCreateRequestSchema>({
+  const form = useForm<RenterFormRequestSchema>({
     mode: 'onChange',
-    resolver: zodResolver(equipmentCreateRequestSchema),
+    resolver: zodResolver(renterFormRequestSchema),
     defaultValues: {
-      code: '',
-      status: EQUIPMENT_STATUS.NORMAL,
-      sharedType: EQUIPMENT_SHARED_TYPE.ROOM,
+      gender: 'male',
+      tempReg: 'YES',
+      represent: 'NO',
     },
   });
   const navigate = useNavigate();
@@ -62,10 +57,20 @@ export function Element() {
   const pathname = location.pathname;
 
   const onSubmit = async (values: any) => {
+    const { roomId, tempReg, represent, ...rest } = values;
+    if (!roomId) {
+      toast.error(t('ms_room_required'));
+    }
     setLoading(true);
-    const [err, _]: AwaitToResult<EquipmentCreateResponseSchema> = await to(
-      equipmentRepositories.create({
-        equipment: values,
+    const [err, _]: AwaitToResult<any> = await to(
+      renterRepositories.create({
+        roomId: roomId,
+        data: {
+          ...rest,
+          birthday: dayjs(rest.birthday).format('YYYY-MM-DD'),
+          tempReg: tempReg === 'YES',
+          represent: represent === 'YES',
+        },
       }),
     );
     setLoading(false);
@@ -77,15 +82,16 @@ export function Element() {
       }
       return;
     }
-    toast.success(t('ms_create_equipment_success'));
-    await queryClient.invalidateQueries();
-    navigate(`${equipmentPath.root}`);
+    toast.success(t('ms_create_renter_success'));
+    navigate(`${renterPath.root}`);
     return _;
   };
 
   return (
-    <ContentLayout title={t('equipment_create_title')} pathname={pathname}>
-      <EquipmentForm form={form} onSubmit={onSubmit} loading={loading} />
+    <ContentLayout title={t('renter_create_title')} pathname={pathname}>
+      <div className="sm:mx-10 lg:mx-36">
+        <RenterForm form={form} onSubmit={onSubmit} loading={loading} />
+      </div>
     </ContentLayout>
   );
 }

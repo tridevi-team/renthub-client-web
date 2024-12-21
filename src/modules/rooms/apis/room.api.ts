@@ -72,4 +72,22 @@ export const roomRepositories = {
 
     return resp;
   },
+  getRoomNotHasBill: async ({
+    month,
+    year,
+  }: { month: number; year: number }) => {
+    const houseId = getHouseSelected()?.id;
+    const resp = await http.instance
+      .get(`houses/${houseId}/room-create-bill`, {
+        searchParams: {
+          page: -1,
+          pageSize: -1,
+          month,
+          year,
+        },
+      })
+      .json<any>();
+
+    return resp;
+  },
 };

@@ -201,3 +201,13 @@ export const BILL_STATUS_OPTIONS = [
   { label: 'Nợ', value: 'IN_DEBT' },
   { label: 'Quá hạn', value: 'OVERDUE' },
 ];
+
+export const TEMP_REG_OPTIONS = [
+  { label: 'Chưa đăng ký', value: 'NO' },
+  { label: 'Đã đăng ký', value: 'YES' },
+];
+
+export const REPRESENT_ROOM_OPTIONS = [
+  { label: 'Không', value: 'NO' },
+  { label: 'Có', value: 'YES' },
+];

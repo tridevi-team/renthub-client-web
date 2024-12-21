@@ -30,9 +30,24 @@ const renterIndexRoute = {
   },
 } satisfies RouteObject;
 
+const renterCreateRoute = {
+  id: renterId.create,
+  index: true,
+  path: renterPath.create,
+  lazy: async () => {
+    const index = await import('./pages/renter-create.page.tsx');
+
+    return {
+      loader: index.loader,
+      element: <index.Element />,
+      errorElement: <RouteErrorBoundary />,
+    };
+  },
+} satisfies RouteObject;
+
 export const renterRoute = {
   id: renterId.root,
   path: renterPath.root,
   element: <PageWrapper />,
-  children: [renterIndexRoute],
+  children: [renterIndexRoute, renterCreateRoute],
 } satisfies RouteObject;

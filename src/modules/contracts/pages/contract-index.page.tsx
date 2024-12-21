@@ -9,7 +9,6 @@ import {
   contractKeys,
   type ContractDataSchema,
   type ContractDeleteResponseSchema,
-  type ContractDetailResponseSchema,
   type ContractIndexResponseSchema,
   type ContractSchema,
 } from '@modules/contracts/schemas/contract.schema';
@@ -135,30 +134,7 @@ export function Element() {
   }, [navigate]);
 
   const onExport = async (id: string) => {
-    const [err, resp]: AwaitToResult<ContractDetailResponseSchema> = await to(
-      contractRepositories.detail({ id }),
-    );
-    if (err) {
-      if ('code' in err) {
-        toast.error(t(err.code));
-      } else {
-        toast.error(t('UNKNOWN_ERROR'));
-      }
-      return;
-    }
-    const data = resp?.data;
-    if (!data) {
-      return;
-    }
-    const { contract, keys } = data || {};
-    const fileName = `Hop_dong_${contract?.room?.name || ''}_${contract?.renter?.fullName || ''}.pdf`;
-    const htmlContent = contract?.content || '';
-    const replacedHtmlContent = Object.entries(keys).reduce(
-      (acc, [key, value]) => {
-        return acc.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
-      },
-      htmlContent,
-    );
+    window.open(`..../generate-pdf?contractId=${id}`, '_blank');
   };
 
   const onUpdateStatus = async (data: any) => {

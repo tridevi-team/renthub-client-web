@@ -26,7 +26,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@shared/components/ui/dialog';
-import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
+import {
+  DEFAULT_RETURN_TABLE_DATA,
+  ISSUE_STATUS_OPTIONS,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -341,6 +344,14 @@ export function Element() {
       placeholder: t('common_ph_input', {
         field: t('issue_title').toLowerCase(),
       }),
+    },
+    {
+      label: t('issue_status'),
+      value: 'status',
+      placeholder: t('common_ph_select', {
+        field: t('issue_status').toLowerCase(),
+      }),
+      options: ISSUE_STATUS_OPTIONS,
     },
   ];
 

@@ -33,12 +33,11 @@ import dayjs from 'dayjs';
 import {
   BadgeDollarSign,
   BellIcon,
+  Cable,
   CalendarIcon,
-  DollarSignIcon,
   FileTextIcon,
   HouseIcon,
   MessageCircleWarning,
-  UserCircle2,
 } from 'lucide-react';
 import * as React from 'react';
 import { redirect, useLocation, type LoaderFunction } from 'react-router-dom';
@@ -69,12 +68,14 @@ export function Element() {
   const [chartData, setChartData] = React.useState<
     { date: string; revenue: number; occupancy: number }[]
   >([]);
+
   const { data: countResp } = useSWR('count-stats', () =>
     statsRepositories.count({
       from: dayjs().subtract(2, 'month').format('YYYY-MM-DD'),
       to: dayjs().format('YYYY-MM-DD'),
     }),
   );
+  console.log('countResp:', countResp);
   const generateChartData = (months: number, seed: number) => {
     const data = [];
     const today = new Date();
@@ -157,10 +158,39 @@ export function Element() {
         <Col xs={24} sm={12}>
           <Row gutter={[16, 8]}>
             {[
-              { title: 'Phòng đã thuê', value: 38, icon: HouseIcon },
-              { title: 'Phản ánh', value: 3, icon: MessageCircleWarning },
-              { title: 'Số khách thuê', value: 50, icon: UserCircle2 },
-              { title: 'Hóa đơn', value: 154000, icon: DollarSignIcon },
+              {
+                title: 'Phòng đang thuê',
+                value:
+                  countResp?.data?.rooms?.find(
+                    (room: { status: string }) => room.status === 'RENTED',
+                  )?.count || 0,
+                icon: HouseIcon,
+              },
+              {
+                title: 'Phản ánh chưa giải quyết',
+                value:
+                  countResp?.data?.issues?.find(
+                    (i: { status: string }) => i.status === 'OPEN',
+                  )?.count || 0,
+                icon: MessageCircleWarning,
+              },
+              {
+                title: 'Số hóa đơn còn nợ',
+                value:
+                  countResp?.data?.bills?.find(
+                    (bill: { status: string }) => bill.status === 'UNPAID',
+                  )?.count || 0,
+                icon: FileTextIcon,
+              },
+              {
+                title: 'Số thiết bị đang sửa',
+                value:
+                  countResp?.data?.equipment?.find(
+                    (device: { status: string }) =>
+                      device.status === 'REPAIRING',
+                  )?.count || 0,
+                icon: Cable,
+              },
             ].map((item) => (
               <Col key={item.title} xs={24} sm={12}>
                 <CountStatsCard

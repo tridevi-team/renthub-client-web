@@ -105,56 +105,68 @@ export function Element() {
   };
 
   const fetchData = useCallback(async () => {
-    const [roomErr, roomResp]: AwaitToResult<any> = await to(
-      roomRepositories.all({
-        searchParams: {
-          filters: [
-            {
-              field: 'rooms.status',
-              operator: 'in',
-              value: 'RENTED|PENDING',
-            },
-          ],
-          sorting: [
-            {
-              field: 'rooms.name',
-              direction: 'desc',
-            },
-          ],
-          page: -1,
-          pageSize: -1,
-        },
-        isSelect: false,
+    const [err, resp]: AwaitToResult<any> = await to(
+      roomRepositories.getRoomNotHasBill({
+        month,
+        year,
       }),
     );
-    const [billErr, billResp]: AwaitToResult<any> = await to(
-      billRepositories.index({
-        searchParams: {
-          filters: [
-            {
-              field: 'bills.title',
-              operator: 'eq',
-              value: `Hóa đơn tháng ${month} - ${year}`,
-            },
-          ],
-          page: -1,
-          pageSize: -1,
-        },
-      }),
-    );
-    if (roomErr || billErr || !roomResp || !billResp) {
-      if (roomErr && 'code' in roomErr) {
+    // const [roomErr, roomResp]: AwaitToResult<any> = await to(
+    //   roomRepositories.all({
+    //     searchParams: {
+    //       filters: [
+    //         {
+    //           field: 'rooms.status',
+    //           operator: 'in',
+    //           value: 'RENTED|PENDING',
+    //         },
+    //       ],
+    //       sorting: [
+    //         {
+    //           field: 'rooms.name',
+    //           direction: 'desc',
+    //         },
+    //       ],
+    //       page: -1,
+    //       pageSize: -1,
+    //     },
+    //     isSelect: false,
+    //   }),
+    // );
+    // const [billErr, billResp]: AwaitToResult<any> = await to(
+    //   billRepositories.index({
+    //     searchParams: {
+    //       filters: [
+    //         {
+    //           field: 'bills.title',
+    //           operator: 'eq',
+    //           value: `Hóa đơn tháng ${month} - ${year}`,
+    //         },
+    //       ],
+    //       page: -1,
+    //       pageSize: -1,
+    //     },
+    //   }),
+    // );
+    // if (roomErr || billErr || !roomResp || !billResp) {
+    //   if (roomErr && 'code' in roomErr) {
+    //     setRooms([]);
+    //     return toast.error(t(roomErr?.code));
+    //   }
+    // }
+    // const roomHasBills = billResp?.data?.results?.map(
+    //   (bill: any) => bill.roomId,
+    // );
+    // const roomNotHasBills = roomResp?.data?.results?.filter(
+    //   (room: any) => !roomHasBills?.includes(room.id),
+    // );
+    if (err || !resp) {
+      if (err && 'code' in err) {
         setRooms([]);
-        return toast.error(t(roomErr?.code));
+        return toast.error(t(err?.code));
       }
     }
-    const roomHasBills = billResp?.data?.results?.map(
-      (bill: any) => bill.roomId,
-    );
-    const roomNotHasBills = roomResp?.data?.results?.filter(
-      (room: any) => !roomHasBills?.includes(room.id),
-    );
-
+    const roomNotHasBills = resp?.data?.results || [];
     if (roomNotHasBills?.length === 0) {
       toast.error(t('ms_no_room_to_create_bill'));
       return navigate(billPath.root);
