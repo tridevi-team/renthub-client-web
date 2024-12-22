@@ -17,6 +17,12 @@ import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge, type BadgeVariant } from '@shared/components/ui/badge';
 import { Button } from '@shared/components/ui/button';
 import { Checkbox } from '@shared/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@shared/components/ui/dialog';
 import { ScrollArea } from '@shared/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
@@ -35,6 +41,7 @@ import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
 import { ChevronDown, ChevronUp, Edit, FileEdit, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import {
   redirect,
   useLocation,
@@ -61,22 +68,26 @@ export const loader: LoaderFunction = () => {
   return null;
 };
 
+const SHOW_MORE_BUTTON_WIDTH = 100;
+
 export function Element() {
   const [t] = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
   const { data: houseSelected } = useHouseStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tabRef = useRef<HTMLButtonElement>(null);
   const [searchParams] = useSearchParams();
+
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [floors, setFloors] = useState<Option[]>([]);
   const [activeTab, setActiveTab] = useState<string>('');
   const [showMore, setShowMore] = useState(false);
   const [editingTab, setEditingTab] = useState<Option | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tabRef = useRef<HTMLButtonElement>(null);
   const [visibleTabs, setVisibleTabs] = useState(5);
-  const SHOW_MORE_BUTTON_WIDTH = 100;
+  const [selectedRecord, setSelectedRecord] = useState<any>(null);
+  const [showServiceDialog, setShowServiceDialog] = useState(false);
 
   const updateVisibleTabs = useCallback(() => {
     if (!containerRef.current || !tabRef.current) return;
@@ -229,6 +240,12 @@ export function Element() {
       onClick: async (row: Row<any>) => {
         navigate(
           `${roomPath.root}/${roomPath.edit.replace(':id', row.original.id)}`,
+          {
+            state: {
+              status: row.original.status,
+              floor: floors.find((floor) => floor.value === activeTab),
+            },
+          },
         );
       },
     },
@@ -333,6 +350,28 @@ export function Element() {
       },
     },
     {
+      id: 'services',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('room_services')} />
+      ),
+      cell: ({ row }) => {
+        return (
+          <Button
+            className="m-0 p-0"
+            variant="link"
+            onClick={() => {
+              unstable_batchedUpdates(() => {
+                setSelectedRecord(row.original);
+                setShowServiceDialog(true);
+              });
+            }}
+          >
+            Xem chi tiết
+          </Button>
+        );
+      },
+    },
+    {
       id: 'actions',
       header: () => null,
       cell: ({ row }) => (
@@ -363,6 +402,53 @@ export function Element() {
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
   });
+
+  const renderServiceDialog = () => {
+    return (
+      <Dialog
+        open={showServiceDialog}
+        onOpenChange={() => {
+          unstable_batchedUpdates(() => {
+            setSelectedRecord(null);
+            setShowServiceDialog(false);
+          });
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Chi tiết dịch vụ phòng</DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <div className="flex justify-between border-b pb-2">
+              <div className="font-semibold">Dịch vụ</div>
+              <div className="font-semibold">Chỉ số ban đầu</div>
+              <div className="font-semibold">Đơn giá</div>
+            </div>
+            <div className="mt-2">
+              {selectedRecord?.services?.map(
+                (service: {
+                  id: string;
+                  name: string;
+                  startIndex: number | null;
+                  quantity: number;
+                  unitPrice: number;
+                }) => (
+                  <div
+                    key={service.id}
+                    className="flex justify-between border-b py-2"
+                  >
+                    <div>{service.name}</div>
+                    <div>{service.startIndex ?? '-'}</div>
+                    <div>{service.unitPrice.toLocaleString()}đ</div>
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
   useEffect(() => {
     queryClient.invalidateQueries({
@@ -483,6 +569,7 @@ export function Element() {
           moduleName="room"
         />
       )}
+      {renderServiceDialog()}
     </ContentLayout>
   );
 }

@@ -35,6 +35,7 @@ import {
 } from '@shared/constants/general.constant';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
 import { useUpdateEffect } from '@shared/hooks/use-update-effect.hook';
+import { Skeleton } from 'antd';
 import to from 'await-to-js';
 import { ChevronLeft, Save, Trash } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -223,10 +224,28 @@ export function RoomForm({
     fetchFloorData();
   }, [selectedHouse]);
 
+  useEffect(() => {
+    if (isEdit) {
+      const selectedServices = houseServices.filter((service) =>
+        form.getValues().serviceIds.includes(service.id),
+      );
+      setUrlImages(form.getValues().images || []);
+      setSelectedServices(selectedServices);
+    }
+  }, [form.getValues().serviceIds]);
+
+  if (isEdit) {
+    if (!form.getValues().serviceIds?.length) {
+      return <Skeleton active />;
+    }
+  }
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleDataSubmit)}
+        onSubmit={form.handleSubmit(handleDataSubmit, () => {
+          console.log('form:', form.getValues());
+        })}
         className="space-y-4 px-2"
       >
         <Row className="gap-y-3 px-36">
@@ -356,7 +375,7 @@ export function RoomForm({
                 <FormItem>
                   <FormLabel>{t('room_services')}</FormLabel>
                   <MultiSelect
-                    onValueChange={(value) => {
+                    onValueChange={async (value) => {
                       field.onChange(value);
                       setSelectedServices(
                         houseServices.filter((service) =>
@@ -364,6 +383,7 @@ export function RoomForm({
                         ),
                       );
                     }}
+                    defaultValue={field.value || []}
                     options={serviceOptions}
                     value={field.value || []}
                     placeholder={t('common_ph_select', {

@@ -12,6 +12,7 @@ import { equipmentRoute } from '@modules/equipments/routes';
 import { floorRoute } from '@modules/floors/routes';
 import { houseRoute } from '@modules/houses/routes';
 import { issueRoute } from '@modules/issues/routes';
+import { notificationRoute } from '@modules/notifications/routes';
 import { paymentRoute } from '@modules/payments/routes';
 import { renterRoute } from '@modules/renters/routes';
 import { roleRoute } from '@modules/roles/routes';
@@ -43,6 +44,7 @@ export const browserRouter = createBrowserRouter(
     issueRoute,
     paymentRoute,
     billRoute,
+    notificationRoute,
   ],
   {
     future: {

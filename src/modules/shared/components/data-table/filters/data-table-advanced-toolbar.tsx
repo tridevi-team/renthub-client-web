@@ -31,6 +31,10 @@ export function DataTableAdvancedToolbar<TData>({
   const [searchParams] = useSearchParams();
   const [t] = useI18n();
 
+  const searchFilters = React.useMemo(() => {
+    return searchParams.getAll('filter');
+  }, [searchParams]);
+
   const options = React.useMemo<DataTableFilterOption<TData>[]>(() => {
     return filterFields.map((field) => {
       return {
@@ -43,6 +47,21 @@ export function DataTableAdvancedToolbar<TData>({
   }, [filterFields]);
 
   const initialSelectedOptions = React.useMemo(() => {
+    if (searchFilters.length > 0) {
+      const parsedOptions: DataTableFilterOption<TData>[] = [];
+      for (const f of searchFilters) {
+        const [col, operator, val] = f.split(':');
+        const found = options.find((opt) => String(opt.value) === col);
+        if (found) {
+          parsedOptions.push({
+            ...found,
+            filterOperator: operator,
+            filterValues: operator === 'in' ? val.split('|') : [val],
+          });
+        }
+      }
+      return parsedOptions;
+    }
     return options
       .filter((option) => searchParams.get(option.value as string))
       .map((option) => {
@@ -54,7 +73,7 @@ export function DataTableAdvancedToolbar<TData>({
           filterValues: filterValue?.split('.') ?? [],
         };
       });
-  }, [options, searchParams]);
+  }, [searchFilters, options, searchParams]);
 
   const [selectedOptions, setSelectedOptions] = React.useState<
     DataTableFilterOption<TData>[]

@@ -1,5 +1,5 @@
+import { z } from '@app/lib/vi-zod';
 import { createGenericStore } from '@shared/hooks/use-store';
-import { z } from 'zod';
 
 const emailSchema = z
   .object({

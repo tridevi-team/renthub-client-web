@@ -1,3 +1,4 @@
+import type { Option } from '@app/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { ContractTemplateSchema } from '@modules/contract-templates/schemas/contract-template.schema';
 import {
@@ -5,6 +6,7 @@ import {
   contractCreateFillFormRequestSchema,
 } from '@modules/contracts/schemas/contract.schema';
 import type { RoomSchema } from '@modules/rooms/schema/room.schema';
+import { provinceRepositories } from '@shared/apis/city.api';
 import { AutoComplete } from '@shared/components/selectbox/auto-complete-select';
 import { Button } from '@shared/components/ui/button';
 import DatePicker from '@shared/components/ui/date-picker';
@@ -34,8 +36,9 @@ import { useLocalStorageState } from '@shared/hooks/use-local-storage-state.hook
 import { formatCurrency } from '@shared/utils/helper.util';
 import { Checkbox, Col, Row, Space } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import useSWR from 'swr';
 
 interface StepFillContract {
   roomDetail?: RoomSchema;
@@ -229,17 +232,68 @@ const StepFillContract = ({
       },
     },
   );
+  const prefillContractForm = localStorage.getItem(
+    'prefill-contract-form',
+  ) as any;
+
+  const paresedPrefillContractForm = JSON.parse(prefillContractForm || '{}');
+
   const [selectedServices, setSelectedServices] = useState<any[]>(
     currentFormValue?.services || [],
   );
   const [selectedEquipment, setSelectedEquipment] = useState<any[]>(
     currentFormValue?.equipment || [],
   );
+
+  const [districts, setDistricts] = useState<Option[]>([]);
+  const [wards, setWards] = useState<Option[]>([]);
+
+  const { data: provinces } = useSWR('/provinces', provinceRepositories.city);
+
   const form = useForm<ContractCreateFillFormRequestSchema>({
     mode: 'onChange',
     resolver: zodResolver(contractCreateFillFormRequestSchema),
-    defaultValues: currentFormValue,
+    defaultValues: {
+      ...currentFormValue,
+      ...paresedPrefillContractForm,
+    },
   });
+
+  const onChangeCity = useCallback(
+    async (selectedCity: string | undefined | number) => {
+      if (!selectedCity) {
+        form.setValue('renter.address.district', '');
+        form.setValue('renter.address.ward', '');
+        setDistricts([]);
+        setWards([]);
+        return;
+      }
+      const city = provinces?.find((item) => item.value === selectedCity);
+      if (city) {
+        const resp = await provinceRepositories.district(city.code);
+        setDistricts(resp);
+      }
+    },
+    [provinces, form],
+  );
+
+  const onChangeDistrict = useCallback(
+    async (selectedDistrict: string | undefined | number) => {
+      if (!selectedDistrict) {
+        form.setValue('renter.address.ward', '');
+        setWards([]);
+        return;
+      }
+      const district = districts.find(
+        (item) => item.value === selectedDistrict,
+      );
+      if (district) {
+        const resp = await provinceRepositories.ward(district.code);
+        setWards(resp);
+      }
+    },
+    [districts, form],
+  );
 
   useEffect(() => {
     if (selectedContractTemplate) {
@@ -273,6 +327,13 @@ const StepFillContract = ({
       <form
         className="space-y-4 px-2"
         onSubmit={form.handleSubmit((values) => {
+          const { rentalStartDate, rentalEndDate } = values;
+          if (dayjs(rentalStartDate).isAfter(dayjs(rentalEndDate))) {
+            return form.setError('rentalEndDate', {
+              type: 'manual',
+              message: 'Ngày kết thúc không được nhỏ hơn ngày bắt đầu',
+            });
+          }
           const restInfo = {
             ...values,
             services: selectedServices,
@@ -640,10 +701,14 @@ const StepFillContract = ({
                 <FormItem>
                   <FormLabel>{t('contract_t_ll_city')}</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value || ''}
-                      placeholder={t('common_ph_input', {
+                    <AutoComplete
+                      options={provinces || []}
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        onChangeCity(value);
+                      }}
+                      placeholder={t('common_ph_select', {
                         field: t('contract_t_ll_city').toLowerCase(),
                       })}
                     />
@@ -661,10 +726,14 @@ const StepFillContract = ({
                 <FormItem>
                   <FormLabel>{t('contract_t_ll_district')}</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value || ''}
-                      placeholder={t('common_ph_input', {
+                    <AutoComplete
+                      options={districts || []}
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        onChangeDistrict(value);
+                      }}
+                      placeholder={t('common_ph_select', {
                         field: t('contract_t_ll_district').toLowerCase(),
                       })}
                     />
@@ -682,10 +751,11 @@ const StepFillContract = ({
                 <FormItem>
                   <FormLabel>{t('contract_t_ll_ward')}</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      value={field.value || ''}
-                      placeholder={t('common_ph_input', {
+                    <AutoComplete
+                      options={wards || []}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder={t('common_ph_select', {
                         field: t('contract_t_ll_ward').toLowerCase(),
                       })}
                     />

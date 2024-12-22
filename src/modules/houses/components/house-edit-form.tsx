@@ -334,7 +334,7 @@ export default function HouseEditForm({
           </div>
         </div>
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="contractDefault"
           render={({ field }) => (
@@ -351,7 +351,7 @@ export default function HouseEditForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}

@@ -2,12 +2,13 @@ import { queryClient } from '@app/providers/query/client';
 import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { contractRepositories } from '@modules/contracts/api/contract.api';
+import { ExtendContractDialog } from '@modules/contracts/components/extend-contract-dialog';
+import { UpdateContractStatusDialog } from '@modules/contracts/components/update-status-dialog';
 import { contractPath } from '@modules/contracts/routes';
 import {
   contractKeys,
   type ContractDataSchema,
   type ContractDeleteResponseSchema,
-  type ContractDetailResponseSchema,
   type ContractIndexResponseSchema,
   type ContractSchema,
 } from '@modules/contracts/schemas/contract.schema';
@@ -35,9 +36,10 @@ import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { Download, FileEdit, Trash } from 'lucide-react';
+import { CalendarArrowUp, Download, FileEdit, Trash } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import {
   redirect,
   useLocation,
@@ -68,9 +70,13 @@ export function Element() {
   const [t] = useI18n();
   const location = useLocation();
   const pathname = location.pathname;
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<ContractSchema>();
+  const [showExtendDialog, setShowExtendDialog] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -128,9 +134,26 @@ export function Element() {
   }, [navigate]);
 
   const onExport = async (id: string) => {
-    const [err, resp]: AwaitToResult<ContractDetailResponseSchema> = await to(
-      contractRepositories.detail({ id }),
+    window.open(`..../generate-pdf?contractId=${id}`, '_blank');
+  };
+
+  const onUpdateStatus = async (data: any) => {
+    if (!selectedRecord) {
+      return;
+    }
+    setIsSubmitting(true);
+    const [err, _]: AwaitToResult<any> = await to(
+      contractRepositories.updateStatus({
+        id: selectedRecord?.id,
+        data: {
+          ...data,
+          depositDate: data.depositDate
+            ? dayjs(data.depositDate).format('YYYY-MM-DD')
+            : null,
+        },
+      }),
     );
+    setIsSubmitting(false);
     if (err) {
       if ('code' in err) {
         toast.error(t(err.code));
@@ -139,19 +162,43 @@ export function Element() {
       }
       return;
     }
-    const data = resp?.data;
-    if (!data) {
+    setShowUpdateDialog(false);
+    await queryClient.invalidateQueries({
+      queryKey: contractKeys.list(queryParams),
+    });
+    toast.success(t('ms_update_contract_success'));
+  };
+
+  const onExtend = async (data: any) => {
+    if (!selectedRecord) {
       return;
     }
-    const { contract, keys } = data || {};
-    const fileName = `Hop_dong_${contract?.room?.name || ''}_${contract?.renter?.fullName || ''}.pdf`;
-    const htmlContent = contract?.content || '';
-    const replacedHtmlContent = Object.entries(keys).reduce(
-      (acc, [key, value]) => {
-        return acc.replace(new RegExp(`{{${key}}}`, 'g'), String(value));
-      },
-      htmlContent,
+    setIsSubmitting(true);
+    const [err, _]: AwaitToResult<any> = await to(
+      contractRepositories.extendContract({
+        id: selectedRecord?.id,
+        data: {
+          ...data,
+          depositDate: dayjs(selectedRecord?.depositDate).format('YYYY-MM-DD'),
+          rentalStartDate: dayjs(data.rentalStartDate).format('YYYY-MM-DD'),
+          rentalEndDate: dayjs(data.rentalEndDate).format('YYYY-MM-DD'),
+        },
+      }),
     );
+    setIsSubmitting(false);
+    if (err) {
+      if ('code' in err) {
+        toast.error(t(err.code));
+      } else {
+        toast.error(t('UNKNOWN_ERROR'));
+      }
+      return;
+    }
+    setShowExtendDialog(false);
+    await queryClient.invalidateQueries({
+      queryKey: contractKeys.list(queryParams),
+    });
+    toast.success(t('ms_extend_contract_success'));
   };
 
   const {
@@ -182,9 +229,20 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: async (row: Row<ContractSchema>) => {
-        navigate(
-          `${contractPath.root}/${contractPath.edit.replace(':id', row.original.id)}`,
-        );
+        unstable_batchedUpdates(() => {
+          setSelectedRecord(row.original);
+          setShowUpdateDialog(true);
+        });
+      },
+    },
+    {
+      label: t('contract_extend'),
+      icon: <CalendarArrowUp className="mr-2 h-4 w-4" />,
+      onClick: async (row: Row<ContractSchema>) => {
+        unstable_batchedUpdates(() => {
+          setSelectedRecord(row.original);
+          setShowExtendDialog(true);
+        });
       },
     },
     {
@@ -393,6 +451,20 @@ export function Element() {
           moduleName="contract"
         />
       )}
+      <UpdateContractStatusDialog
+        isOpen={showUpdateDialog}
+        onClose={() => setShowUpdateDialog(false)}
+        isSubmitting={isSubmitting}
+        initialData={selectedRecord}
+        onSubmit={onUpdateStatus}
+      />
+      <ExtendContractDialog
+        isOpen={showExtendDialog}
+        onClose={() => setShowExtendDialog(false)}
+        isSubmitting={isSubmitting}
+        initialData={selectedRecord}
+        onSubmit={onExtend}
+      />
     </ContentLayout>
   );
 }

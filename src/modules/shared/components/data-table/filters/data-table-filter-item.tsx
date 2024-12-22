@@ -79,25 +79,31 @@ export function DataTableFilterItem<TData>({
 
     if (selectedOption.options.length > 0) {
       if (filterValues.length > 0) {
-        for (const value of filterValues) {
-          const newFilter = `${String(selectedOption.value)}:${selectedOperator?.value}:${value}`;
-          if (!filters.includes(newFilter)) {
+        if (selectedOperator?.value === 'in') {
+          const existingFilterIndex = filters.findIndex((item) =>
+            item.startsWith(
+              `${String(selectedOption.value)}:${selectedOperator?.value}:`,
+            ),
+          );
+          if (existingFilterIndex !== -1) {
+            filters[existingFilterIndex] =
+              `${String(selectedOption.value)}:${selectedOperator?.value}:${filterValues.join('|')}`;
+          } else {
+            const newFilter = `${String(selectedOption.value)}:${selectedOperator?.value}:${filterValues.join('|')}`;
             filters.push(newFilter);
           }
-          newSearchParams.append('filter', newFilter);
-        }
-      } else {
-        filters.splice(
-          filters.findIndex(
-            (item) =>
-              item.startsWith(`${String(selectedOption.value)}:`) &&
-              item.includes(`:${selectedOperator?.value}:`),
-          ),
-          1,
-        );
-        newSearchParams.delete('filter');
-        for (const filter of filters) {
-          newSearchParams.append('filter', filter);
+          newSearchParams.delete('filter');
+          for (const filter of filters) {
+            newSearchParams.append('filter', filter);
+          }
+        } else {
+          for (const value of filterValues) {
+            const newFilter = `${String(selectedOption.value)}:${selectedOperator?.value}:${value}`;
+            if (!filters.includes(newFilter)) {
+              filters.push(newFilter);
+            }
+            newSearchParams.append('filter', newFilter);
+          }
         }
       }
     } else {
@@ -110,15 +116,6 @@ export function DataTableFilterItem<TData>({
         for (const filter of filters) {
           newSearchParams.append('filter', filter);
         }
-      } else {
-        filters.splice(
-          filters.findIndex(
-            (item) =>
-              item.startsWith(`${String(selectedOption.value)}:`) &&
-              item.includes(`:${selectedOperator?.value}:`),
-          ),
-          1,
-        );
       }
     }
 
@@ -200,8 +197,16 @@ export function DataTableFilterItem<TData>({
               setSelectedOptions((prev) =>
                 prev.filter((item) => item.value !== selectedOption.value),
               );
-              searchParams.delete(String(selectedOption.value));
-              navigate(`${location.pathname}?${searchParams.toString()}`, {
+              const newSearchParams = new URLSearchParams(searchParams);
+              const filters = newSearchParams.getAll('filter');
+              const updatedFilters = filters.filter(
+                (f) => !f.startsWith(`${String(selectedOption.value)}:`),
+              );
+              newSearchParams.delete('filter');
+              for (const filter of updatedFilters) {
+                newSearchParams.append('filter', filter);
+              }
+              navigate(`${location.pathname}?${newSearchParams.toString()}`, {
                 replace: true,
               });
             }}

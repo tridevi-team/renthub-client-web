@@ -1,4 +1,5 @@
 import { z } from '@app/lib/vi-zod';
+import dayjs from 'dayjs';
 
 export const contract = z.object({
   id: z.string(),
@@ -139,38 +140,101 @@ export const contractDeleteResponseSchema = z.object({
 export const contractCreateFillFormRequestSchema = z.object({
   landlord: z.object({
     fullName: z.string(),
-    citizenId: z.string(),
+    citizenId: z
+      .string()
+      .trim()
+      .refine((data) => data?.length === 12, {
+        params: {
+          i18n: {
+            key: 'vld_cccd',
+          },
+        },
+      }),
     address: z.object({
-      city: z.string(),
-      district: z.string(),
-      ward: z.string(),
-      street: z.string(),
+      city: z.string().trim().min(1),
+      district: z.string().trim().min(1),
+      ward: z.string().trim().min(1),
+      street: z.string().nullable().optional(),
     }),
     phoneNumber: z.string(),
-    birthday: z.string().or(z.date()),
-    dateOfIssue: z.string().or(z.date()),
-    placeOfIssue: z.string(),
+    birthday: z
+      .string()
+      .or(z.date())
+      .refine((date) => dayjs(date).isBefore(dayjs()), {
+        params: {
+          i18n: {
+            key: 'vld_birthday',
+          },
+        },
+      }),
+    dateOfIssue: z
+      .string()
+      .or(z.date())
+      .refine((date) => dayjs(date).isBefore(dayjs()), {
+        params: {
+          i18n: {
+            key: 'vld_dateOfIssue',
+          },
+        },
+      }),
+    placeOfIssue: z.string().trim().min(1),
     gender: z.string(),
     email: z.string().nullable().optional(),
   }),
   renter: z.object({
     fullName: z.string(),
-    citizenId: z.string(),
+    citizenId: z
+      .string()
+      .trim()
+      .refine((data) => data?.length === 12, {
+        params: {
+          i18n: {
+            key: 'vld_cccd',
+          },
+        },
+      }),
     address: z.object({
-      city: z.string(),
-      district: z.string(),
-      ward: z.string(),
-      street: z.string(),
+      city: z.string().trim().min(1),
+      district: z.string().trim().min(1),
+      ward: z.string().trim().min(1),
+      street: z.string().nullable().optional(),
     }),
-    phoneNumber: z.string(),
-    birthday: z.string().or(z.date()),
-    dateOfIssue: z.string().or(z.date()),
+    phoneNumber: z.string().trim().length(10),
+    birthday: z
+      .string()
+      .or(z.date())
+      .refine((date) => dayjs(date).isBefore(dayjs()), {
+        params: {
+          i18n: {
+            key: 'vld_birthday',
+          },
+        },
+      }),
+    dateOfIssue: z
+      .string()
+      .or(z.date())
+      .refine((date) => dayjs(date).isBefore(dayjs()), {
+        params: {
+          i18n: {
+            key: 'vld_dateOfIssue',
+          },
+        },
+      }),
     placeOfIssue: z.string(),
     gender: z.string(),
     email: z.string().nullable().optional(),
   }),
   depositAmount: z.coerce.number(),
-  depositDate: z.string().or(z.date()),
+  depositDate: z
+    .string()
+    .or(z.date())
+    .refine((date) => dayjs(date).isBefore(dayjs()), {
+      params: {
+        i18n: {
+          key: 'vld_depositDate',
+        },
+      },
+    }),
   rentalStartDate: z.string().or(z.date()),
   rentalEndDate: z.string().or(z.date()),
   depositStatus: z.string().nullable().optional(),

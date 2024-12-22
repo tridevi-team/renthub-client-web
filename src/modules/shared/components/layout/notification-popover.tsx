@@ -17,6 +17,7 @@ import { onMessage } from 'firebase/messaging';
 import { Bell } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-aria-components';
+import { unstable_batchedUpdates } from 'react-dom';
 import { toast } from 'sonner';
 dayjs.extend(relativeTime);
 
@@ -58,10 +59,12 @@ export function NotificationPopover() {
         read: status === 'read',
       };
     });
-    setNotifications(mappedData);
-    setUnreadCount(
-      (mappedData || []).filter((n: Notification) => !n.read).length,
-    );
+    unstable_batchedUpdates(() => {
+      setNotifications(mappedData);
+      setUnreadCount(
+        (mappedData || []).filter((n: Notification) => !n.read).length,
+      );
+    });
   };
 
   const handleOnNewNotification = ({
@@ -90,12 +93,17 @@ export function NotificationPopover() {
   };
 
   useEffect(() => {
-    fetchNotifications();
     generateToken();
-    onMessage(messaging, (payload) => {
+    const unsubscribe = onMessage(messaging, (payload) => {
       const { title, body } = payload.notification ?? {};
       if (title) handleOnNewNotification({ title, body });
     });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
   }, []);
 
   return (

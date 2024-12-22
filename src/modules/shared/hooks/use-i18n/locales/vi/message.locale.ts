@@ -57,7 +57,7 @@ export const messageLocale = {
   ms_create_bill_success: 'Tạo hóa đơn mới thành công',
   ms_update_bill_success: 'Cập nhật hóa đơn thành công',
   ms_delete_bill_success: 'Xóa hóa đơn thành công',
-  ms_no_room_to_create_bill: 'Không có phòng nào để tạo hóa đơn',
+  ms_no_room_to_create_bill: 'Các phòng đã được tạo hết hóa đơn cho tháng này',
   // #endregion
 
   // #region Payment
@@ -88,12 +88,14 @@ export const messageLocale = {
   ms_update_contract_success: 'Cập nhật hợp đồng thành công',
   ms_delete_contract_success: 'Xóa hợp đồng thành công',
   ms_select_room_first: 'Vui lòng chọn phòng trước',
+  ms_extend_contract_success: 'Gia hạn hợp đồng thành công',
   // #endregion
 
   // #region Renter
   ms_create_renter_success: 'Tạo người thuê mới thành công',
   ms_update_renter_success: 'Cập nhật thông tin người thuê thành công',
   ms_delete_renter_success: 'Xóa người thuê thành công',
+  ms_room_required: 'Phòng không được để trống',
   // #endregion
 
   // #region Issue

@@ -105,62 +105,76 @@ export function Element() {
   };
 
   const fetchData = useCallback(async () => {
-    const [roomErr, roomResp]: AwaitToResult<any> = await to(
-      roomRepositories.all({
-        searchParams: {
-          filters: [
-            {
-              field: 'rooms.status',
-              operator: 'in',
-              value: 'RENTED|PENDING',
-            },
-          ],
-          sorting: [
-            {
-              field: 'rooms.name',
-              direction: 'desc',
-            },
-          ],
-          page: -1,
-          pageSize: -1,
-        },
-        isSelect: false,
+    const [err, resp]: AwaitToResult<any> = await to(
+      roomRepositories.getRoomNotHasBill({
+        month,
+        year,
       }),
     );
-    const [billErr, billResp]: AwaitToResult<any> = await to(
-      billRepositories.index({
-        searchParams: {
-          filters: [
-            {
-              field: 'bills.title',
-              operator: 'eq',
-              value: `Hóa đơn tháng ${month} - ${year}`,
-            },
-          ],
-          page: -1,
-          pageSize: -1,
-        },
-      }),
-    );
-    if (roomErr || billErr || !roomResp || !billResp) {
-      if (roomErr && 'code' in roomErr) {
+    // const [roomErr, roomResp]: AwaitToResult<any> = await to(
+    //   roomRepositories.all({
+    //     searchParams: {
+    //       filters: [
+    //         {
+    //           field: 'rooms.status',
+    //           operator: 'in',
+    //           value: 'RENTED|PENDING',
+    //         },
+    //       ],
+    //       sorting: [
+    //         {
+    //           field: 'rooms.name',
+    //           direction: 'desc',
+    //         },
+    //       ],
+    //       page: -1,
+    //       pageSize: -1,
+    //     },
+    //     isSelect: false,
+    //   }),
+    // );
+    // const [billErr, billResp]: AwaitToResult<any> = await to(
+    //   billRepositories.index({
+    //     searchParams: {
+    //       filters: [
+    //         {
+    //           field: 'bills.title',
+    //           operator: 'eq',
+    //           value: `Hóa đơn tháng ${month} - ${year}`,
+    //         },
+    //       ],
+    //       page: -1,
+    //       pageSize: -1,
+    //     },
+    //   }),
+    // );
+    // if (roomErr || billErr || !roomResp || !billResp) {
+    //   if (roomErr && 'code' in roomErr) {
+    //     setRooms([]);
+    //     return toast.error(t(roomErr?.code));
+    //   }
+    // }
+    // const roomHasBills = billResp?.data?.results?.map(
+    //   (bill: any) => bill.roomId,
+    // );
+    // const roomNotHasBills = roomResp?.data?.results?.filter(
+    //   (room: any) => !roomHasBills?.includes(room.id),
+    // );
+    if (err || !resp) {
+      if (err && 'code' in err) {
         setRooms([]);
-        return toast.error(t(roomErr?.code));
+        return toast.error(t(err?.code));
       }
     }
-    const roomHasBills = billResp?.data?.results?.map(
-      (bill: any) => bill.roomId,
-    );
-    const roomNotHasBills = roomResp?.data?.results?.filter(
-      (room: any) => !roomHasBills?.includes(room.id),
-    );
-
-    if(roomNotHasBills?.length === 0){
+    const roomNotHasBills = resp?.data?.results || [];
+    if (roomNotHasBills?.length === 0) {
       toast.error(t('ms_no_room_to_create_bill'));
       return navigate(billPath.root);
     }
-
-
+    unstable_batchedUpdates(() => {
+      setRooms(roomNotHasBills);
+      setSelectedRoom(roomNotHasBills?.[0]);
+    });
   }, []);
 
   const fetchLatestServiceIndex = async () => {
@@ -198,8 +212,15 @@ export function Element() {
     });
     unstable_batchedUpdates(() => {
       setRenterName(renter?.name);
-      setServiceData(services.filter((service: { id: string; })=>service.id!== ''));
-      setRoomPrice(services.find((service: { id: string;name:string })=>service.id === '' && service.name=== 'Tiền phòng')?.unitPrice);
+      setServiceData(
+        services.filter((service: { id: string }) => service.id !== ''),
+      );
+      setRoomPrice(
+        services.find(
+          (service: { id: string; name: string }) =>
+            service.id === '' && service.name === 'Tiền phòng',
+        )?.unitPrice,
+      );
     });
   };
 
@@ -308,11 +329,17 @@ export function Element() {
                   </Col>
                   <Col xs={24} sm={12}>
                     <Label>Tên người thuê</Label>
-                    <Input className="mt-1" disabled value={renterName} />
+                    <Input
+                      key="renter-name-input"
+                      className="mt-1"
+                      disabled
+                      value={renterName}
+                    />
                   </Col>
                   <Col xs={24} sm={12} className="gap-2">
                     <Label>Ngày bắt đầu - Ngày kết thúc</Label>
                     <RangePicker
+                      key="date-range-picker"
                       defaultValue={rangeDate}
                       className="mt-1 h-9 w-full"
                       onChange={(dates) => setRangeDate(dates)}
@@ -341,6 +368,7 @@ export function Element() {
                               <>
                                 <TableCell className="w-1/6">
                                   <Input
+                                    key={`old-value-${service.id}`}
                                     value={service.oldValue}
                                     onChange={(e) =>
                                       handleServiceChange(
@@ -354,6 +382,7 @@ export function Element() {
                                 </TableCell>
                                 <TableCell className="w-1/6">
                                   <Input
+                                    key={`new-value-${service.id}`}
                                     value={service.newValue}
                                     onChange={(e) =>
                                       handleServiceChange(
@@ -376,6 +405,7 @@ export function Element() {
                               {service.type === 'ELECTRICITY_CONSUMPTION' ||
                               service.type === 'WATER_CONSUMPTION' ? (
                                 <Input
+                                  key={`quantity-disabled-${service.id}`}
                                   value={service.quantity}
                                   disabled
                                   className="h-8 text-sm"
@@ -383,12 +413,14 @@ export function Element() {
                               ) : service.type === 'PEOPLE' ||
                                 service.type === 'ROOM' ? (
                                 <Input
+                                  key={`quantity-fixed-${service.id}`}
                                   value={service.quantity}
                                   disabled
                                   className="h-8 text-sm"
                                 />
                               ) : (
                                 <Input
+                                  key={`quantity-editable-${service.id}`}
                                   value={service.quantity}
                                   onChange={(e) =>
                                     handleServiceChange(

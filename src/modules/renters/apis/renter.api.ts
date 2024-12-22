@@ -23,6 +23,15 @@ export const renterRepositories = {
 
     return resp;
   },
+  create: async ({ roomId, data }: { roomId: string; data: any }) => {
+    const resp = await http.instance
+      .post(`renters/${roomId}/add`, {
+        json: data,
+      })
+      .json<any>();
+
+    return resp;
+  },
   getRenterByRoom: async ({ roomId }: { roomId: string }) => {
     const resp = await http.instance
       .get(`renters/rooms/${roomId}/search`, {

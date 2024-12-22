@@ -11,12 +11,12 @@ import { AppToastProvider } from './providers/toast/provider';
 import { ReloadPromptSw } from './reload-prompt-sw';
 
 export function Entry() {
-    useEffect(() => {
-        generateToken();
-        onMessage(messaging, (payload) => {
-            console.log(payload);
-        });
-    }, []);
+  useEffect(() => {
+    generateToken();
+    onMessage(messaging, (payload) => {
+      console.log(payload);
+    });
+  }, []);
   return (
     <StrictMode>
       <ConfigProvider locale={vi_VN}>
@@ -36,7 +36,7 @@ export function Entry() {
         richColors
         expand
         closeButton
-        visibleToasts={3}
+        visibleToasts={1}
         toastOptions={{
           style: {
             zIndex: 9999,

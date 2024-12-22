@@ -3,6 +3,7 @@ import type { DataTableFilterField } from '@app/types';
 import { authPath } from '@auth/routes';
 import { issueRepositories } from '@modules/issues/apis/issue.api';
 import { ImageVideoCarousel } from '@modules/issues/components/image-video-carousel';
+import { UpdateIssueStatusDialog } from '@modules/issues/components/update-status-dialog';
 import {
   issueKeys,
   type IssueDeleteManyResponseSchema,
@@ -19,8 +20,16 @@ import { DataTableSkeleton } from '@shared/components/data-table/data-table-skel
 import { ContentLayout } from '@shared/components/layout/content-layout';
 import { Badge } from '@shared/components/ui/badge';
 import { Checkbox } from '@shared/components/ui/checkbox';
-import { Dialog, DialogContent } from '@shared/components/ui/dialog';
-import { DEFAULT_RETURN_TABLE_DATA } from '@shared/constants/general.constant';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@shared/components/ui/dialog';
+import {
+  DEFAULT_RETURN_TABLE_DATA,
+  ISSUE_STATUS_OPTIONS,
+} from '@shared/constants/general.constant';
 import { useDataTable } from '@shared/hooks/use-data-table';
 import { errorLocale } from '@shared/hooks/use-i18n/locales/vi/error.locale';
 import { useI18n } from '@shared/hooks/use-i18n/use-i18n.hook';
@@ -29,11 +38,12 @@ import { checkAuthUser, checkPermissionPage } from '@shared/utils/checker.util';
 import { processSearchParams } from '@shared/utils/helper.util';
 import { useQuery } from '@tanstack/react-query';
 import type { ColumnDef, Row } from '@tanstack/react-table';
-import { Space } from 'antd';
+import { Space, Tooltip } from 'antd';
 import to from 'await-to-js';
 import dayjs from 'dayjs';
-import { FileEdit, ImageIcon, Trash, VideoIcon } from 'lucide-react';
+import { FileEdit, ImageIcon, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { unstable_batchedUpdates } from 'react-dom';
 import {
   redirect,
   useLocation,
@@ -67,6 +77,12 @@ export function Element() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any>(null);
+  const [isShowUpdateStatusDialog, setIsShowUpdateStatusDialog] =
+    useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<IssueSchema | null>(
+    null,
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryParams = useMemo(() => {
     const params: Record<string, string | string[]> = {};
@@ -136,6 +152,35 @@ export function Element() {
     [t, queryParams],
   );
 
+  const updateIssueStatus = useCallback(
+    async (data: any) => {
+      setIsSubmitting(true);
+      const [err, _]: AwaitToResult<any> = await to(
+        issueRepositories.updateStatus({
+          id: selectedRecord?.id ?? '',
+          status: data.status,
+          description: data.description,
+        }),
+      );
+      setIsSubmitting(false);
+      if (err) {
+        if ('code' in err) {
+          toast.error(t(err.code));
+        } else {
+          toast.error(t('UNKNOWN_ERROR'));
+        }
+        return;
+      }
+      await queryClient.invalidateQueries({
+        queryKey: issueKeys.list(queryParams),
+      });
+      toast.success(t('ms_update_issue_success'));
+      setIsShowUpdateStatusDialog(false);
+      return;
+    },
+    [t, queryParams, selectedRecord],
+  );
+
   const {
     data: issueData,
     isLoading,
@@ -157,7 +202,10 @@ export function Element() {
       label: t('bt_edit'),
       icon: <FileEdit className="mr-2 h-4 w-4" />,
       onClick: async (row: Row<IssueSchema>) => {
-        // #TODO: Mở modal sửa trạng thái
+        unstable_batchedUpdates(() => {
+          setSelectedRecord(row.original);
+          setIsShowUpdateStatusDialog(true);
+        });
       },
     },
     {
@@ -170,8 +218,10 @@ export function Element() {
 
   const handleIconClick = (files: string) => {
     const parsedFiles = JSON.parse(files);
-    setSelectedFiles(parsedFiles);
-    setIsOpen(true);
+    unstable_batchedUpdates(() => {
+      setSelectedFiles(parsedFiles);
+      setIsOpen(true);
+    });
   };
 
   const columns: ColumnDef<IssueSchema>[] = [
@@ -214,27 +264,21 @@ export function Element() {
     {
       accessorKey: 'files',
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={'Hình ảnh/Video'} />
+        <DataTableColumnHeader column={column} title={'Nội dung'} />
       ),
       cell: ({ row }) => {
         const files: any = row.original.files;
-        const fileParsed = JSON.parse(files);
-        const isHasImage = (fileParsed.image ?? []).length > 0;
-        const isHasVideo = (fileParsed.video ?? []).length > 0;
         return (
           <Space direction="horizontal">
-            {isHasImage && (
+            <Tooltip title="Xem file đính kèm">
               <ImageIcon
-                onClick={() => handleIconClick(files)}
+                onClick={() => {
+                  setSelectedRecord(row.original);
+                  handleIconClick(files);
+                }}
                 style={{ cursor: 'pointer' }}
               />
-            )}
-            {isHasVideo && (
-              <VideoIcon
-                onClick={() => handleIconClick(files)}
-                style={{ cursor: 'pointer' }}
-              />
-            )}
+            </Tooltip>
           </Space>
         );
       },
@@ -301,6 +345,14 @@ export function Element() {
         field: t('issue_title').toLowerCase(),
       }),
     },
+    {
+      label: t('issue_status'),
+      value: 'status',
+      placeholder: t('common_ph_select', {
+        field: t('issue_status').toLowerCase(),
+      }),
+      options: ISSUE_STATUS_OPTIONS,
+    },
   ];
 
   const { table } = useDataTable({
@@ -315,9 +367,24 @@ export function Element() {
   });
 
   const renderDialog = () => {
+    const content = selectedRecord?.content;
+    const title = selectedRecord?.title;
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Chi tiết phản ánh</DialogTitle>
+          </DialogHeader>
+          {title && (
+            <h2 className="mb-2 font-semibold text-xl">Tiêu đề: {title}</h2>
+          )}
+          {content && (
+            <p className="mb-4 text-base text-gray-700">
+              <b>Nội dung:</b> {content}
+            </p>
+          )}
+          <hr />
+          <b>Tệp đính kèm:</b>
           {selectedFiles && <ImageVideoCarousel files={selectedFiles} />}
         </DialogContent>
       </Dialog>
@@ -348,6 +415,13 @@ export function Element() {
           {renderDialog()}
         </>
       )}
+      <UpdateIssueStatusDialog
+        isOpen={isShowUpdateStatusDialog}
+        onClose={() => setIsShowUpdateStatusDialog(false)}
+        onSubmit={updateIssueStatus}
+        isSubmitting={isSubmitting}
+        initialData={selectedRecord}
+      />
     </ContentLayout>
   );
 }
